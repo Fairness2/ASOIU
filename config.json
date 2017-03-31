@@ -15,7 +15,8 @@
 	"auth": {
 		"saltRounds": 10,
 		"secret": "motherfuckingwebsite",
-		"cookieAge": 1200000
+		"cookieAge": 1200000,
+		"sessionName": "genericname"
 	},
 	"redis": {
 		"host": "localhost"

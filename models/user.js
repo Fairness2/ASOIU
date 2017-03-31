@@ -64,6 +64,7 @@ module.exports = function (sq, DataTypes) {
 				associate: models => {
 					models.User.belongsTo(models.Employee, { as: 'employee', foreignKey: 'employeeId' });
 					models.User.belongsToMany(models.Role, { through: 'UserRole', /*as: 'roles', */foreignKey: 'userId' });
+					models.User.hasMany(models.Log, { as: 'log', foreignKey: 'userId' });
 				}
 			},
 			instanceMethods: {
