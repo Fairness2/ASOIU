@@ -34,14 +34,14 @@ exports.register = (req, res) => {
 			});
 		})
 		.catch(Sequelize.ValidationError, err => {
-			let response = { errors: {} };
+			let response = {
+				errors: err.errors.map(item => ({
+					path: item.path,
+					message: item.message
+				}))
+			};
 
-			response.errors = err.errors.map(item => ({
-				path: item.path,
-				message: item.message
-			}));
-
-			res.status(200).json(err);
+			res.status(200).json(response);
 		})
 		.catch(internalErrorHandler);
 };
