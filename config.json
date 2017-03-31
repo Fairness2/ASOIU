@@ -1,7 +1,7 @@
 ﻿{
 	"server": {
 		"host": "localhost",
-		"port": "80"
+		"port": 80
 	},
 	"db": {
 		"dialect": "postgres",
@@ -10,9 +10,13 @@
 		"name": "asoiu",
 		"user": "postgres",
 		"password": "postgres",
-		"timeout": "120"
+		"timeout": 120
 	},
 	"auth": {
-		"saltRounds": 10
+		"saltRounds": 10,
+		"secret": "motherfuckingwebsite",
+		"cookieAge": 1200000
+	},
+	"redis": {
+		"host": "localhost"
 	}
-}

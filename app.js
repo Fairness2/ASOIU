@@ -10,11 +10,21 @@ const config = require('./config.json'),
 	morgan = require('morgan'),
 	db = require('./models'),
 	routes = require('./routes'),
-	Sequelize = require('sequelize');
+	Sequelize = require('sequelize'),
+	session = require('express-session'),
+	RedisStore = require('connect-redis')(session);
 
 // Sequelize использует bluebirdовские обещания,
 // поэтому мы тоже будем использовать их для совместимости
 global.Promise = Sequelize.Promise;
+
+const sessionConfig = {
+	secret: config.auth.secret,
+	cookie: {
+		maxAge: config.auth.cookieAge
+	},
+	store: new RedisStore(config.redis)
+};
 
 const app = express();
 
@@ -23,6 +33,7 @@ app.use(morgan('dev', { immediate: true }));
 app.use(bodyParser.urlencoded({ 'extended': 'true' }));			// application/x-www-form-urlencoded
 app.use(bodyParser.json());										// application/json
 app.use(bodyParser.json({ type: 'application/vnd.api+json' }));	// application/vnd.api+json as json
+app.use(session(sessionConfig));
 app.use(methodOverride());
 
 // Маршруты
