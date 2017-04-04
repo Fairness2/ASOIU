@@ -27,12 +27,12 @@ module.exports = function (sq, DataTypes) {
 				type: DataTypes.INTEGER(2),
 				allowNull: false,
 				defaultValue: 0,
-				validate: {
+				/*validate: {
 					max: {
 						args: numPeriods - 1,
 						msg: 'Номер периода превышает максимальный'
 					}
-				}
+				}*/
 			}
 		}, {
 			freezeTableName: true,

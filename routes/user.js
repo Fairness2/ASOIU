@@ -12,7 +12,11 @@ module.exports = function (root) {
 
 	router.use('/logout', auth.authenticate)
 		.use('/info', auth.authenticate);
-	
+
+	/*router.get('/', function (req, res) {
+		res.render(__rootdir + '/view/login.html');
+	});*/
+
 	router.post('/register', user.register)
 		.post('/login', user.login)
 		.post('/logout', user.logout)

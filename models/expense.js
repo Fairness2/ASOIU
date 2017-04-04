@@ -11,7 +11,7 @@ module.exports = function (sq, DataTypes) {
 			},
 			costItemId: {
 				type: DataTypes.UUID,
-				allowNull: false,
+				allowNull: false
 			},
 			periodId: {
 				type: DataTypes.UUID,

@@ -43,7 +43,7 @@ module.exports = function (sq, DataTypes) {
 			},
 		}, {
 			freezeTableName: true,
-			timestamps: false
+			timestamps: false,
 			classMethods: {
 				associate: models => {
 					models.Log.belongsTo(models.User, { as: 'user', foreignKey: 'userId' });
