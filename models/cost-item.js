@@ -42,8 +42,8 @@ module.exports = function (sq, DataTypes) {
 			freezeTableName: true,
 			timestamps: false,
 			indexes: [
-				{ fields: 'parentId' },
-				{ fields: 'frcId' }
+				{ fields: ['parentId'] },
+				{ fields: ['frcId'] }
 			],
 			classMethods: {
 				associate: models => {
@@ -52,7 +52,7 @@ module.exports = function (sq, DataTypes) {
 					models.CostItem.hasMany(models.EstimateItem, { as: 'estimateItems', foreignKey: 'costItemId' });
 					models.CostItem.hasMany(models.Product, { as: 'products', foreignKey: 'costItemId' });
 					models.CostItem.hasMany(models.Limit, { as: 'limits', foreignKey: 'costItemId' });
-					models.CostItem.hasMany(models.Expanse, { as: 'expenses', foreignKey: 'costItemId' });
+					models.CostItem.hasMany(models.Expense, { as: 'expenses', foreignKey: 'costItemId' });
 				}
 			},
 			instanceMethods: {

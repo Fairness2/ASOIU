@@ -21,6 +21,8 @@ global.Promise = Sequelize.Promise;
 const sessionConfig = {
 	secret: config.auth.secret,
 	name: config.auth.sessionName,
+	resave: false,
+	saveUninitialized: false,
 	cookie: {
 		maxAge: config.auth.cookieAge
 	},

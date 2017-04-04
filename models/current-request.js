@@ -35,8 +35,8 @@ module.exports = function (sq, DataTypes) {
 			freezeTableName: true,
 			timestamps: false,
 			indexes: [
-				{ fields: 'requestId' },
-				{ fields: 'periodId' }
+				{ fields: ['requestId'] },
+				{ fields: ['periodId'] }
 			],
 			classMethods: {
 				associate: models => {

@@ -29,16 +29,16 @@ module.exports = function (sq, DataTypes) {
 			}
 		}, {
 			freezeTableName: true,
-			timestamps: false,
+			timestamps: true,
 			indexes: [
-				{ fields: 'requesterId' }
+				{ fields: ['requesterId'] }
 			],
 			classMethods: {
 				associate: models => {
-					models.Request.hasMany(models.Employee, { as: 'requester', foreignKey: 'requesterId' });
 					models.Request.hasMany(models.RequestItem, { as: 'items', foreignKey: 'requestId' });
 					models.Request.hasMany(models.CurrentRequest, { as: 'currentRequests', foreignKey: 'requestId' });
-					models.Request.belongsToMany(models.Estimate, { through: 'RequestEstimate', foreignKey: 'requestId' });
+					models.Request.belongsTo(models.Employee, { as: 'requester', foreignKey: 'requesterId' });
+					models.Request.belongsToMany(models.Estimate, { as: 'estimates', through: 'RequestEstimate', foreignKey: 'requestId' });
 				}
 			},
 			instanceMethods: {

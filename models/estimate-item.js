@@ -31,7 +31,7 @@ module.exports = function (sq, DataTypes) {
 			classMethods: {
 				associate: models => {
 					models.EstimateItem.belongsTo(models.Estimate, { as: 'estimate', foreignKey: 'estimateId' });
-					models.EstimateItem.belongsTo(models.CostItem, { as: 'costItem', foreignKey: 'costItemIdId' });
+					models.EstimateItem.belongsTo(models.CostItem, { as: 'costItem', foreignKey: 'costItemId' });
 					models.EstimateItem.hasMany(models.EstimateItemValue, { as: 'values', foreignKey: 'estimateItemId' });
 				}
 			},

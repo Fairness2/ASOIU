@@ -32,8 +32,8 @@ module.exports = function (sq, DataTypes) {
 			freezeTableName: true,
 			timestamps: false,
 			indexes: [
-				{ fields: 'currentRequestId' },
-				{ fields: 'productId' }
+				{ fields: ['currentRequestId'] },
+				{ fields: ['productId'] }
 			],
 			classMethods: {
 				associate: models => {

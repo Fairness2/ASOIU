@@ -1,6 +1,6 @@
 ﻿'use strict';
 
-const passport = require('passport');
+//const passport = require('passport');
 const models = require(__rootdir + '/models');
 const Sequelize = models.Sequelize;
 const User = models.User;
