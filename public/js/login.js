@@ -31,12 +31,12 @@ var loginin = new Vue({
             this.isload = true;
             this.message = errorThrown;
           },
-          statusCode:{
+          /*statusCode:{
             400: function () {
               this.isload = true;
               this.message = 'Вход уже выполнен';
             }
-          },
+          },*/
           success:function (res) {
             this.isload = false;
             this.message = res;
