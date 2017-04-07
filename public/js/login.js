@@ -21,25 +21,29 @@ var loginin = new Vue({
           url:'api/user/login',
           type:'POST',
           data: {'username': login, 'password': password},
-          beforSend: function (jqXHR) {
-            this.isload = true;
+          beforeSend: function (data) {
+            loginin.isload = true;
           },
           dataType: "json",
           jsonp: false,
           timeout: 30000,
-          error: function (jqXHR, textStatus, errorThrown) {
-            this.isload = true;
-            this.message = errorThrown;
+          error: function (data) {
+            loginin.isload = false;
+            loginin.message = 'Ошибка';
           },
-          /*statusCode:{
+          statusCode:{
             400: function () {
-              this.isload = true;
-              this.message = 'Вход уже выполнен';
+              loginin.isload = false;
+              loginin.message = 'Вход уже выполнен';
+            },
+            500: function functionName() {
+              loginin.isload = false;
+              loginin.message = 'Ошибка входа';
             }
-          },*/
+          },
           success:function (res) {
-            this.isload = false;
-            this.message = res;
+            loginin.isload = false;
+            loginin.message = res;
           }
         });
       }
