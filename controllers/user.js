@@ -5,14 +5,16 @@ const models = require(__rootdir + '/models');
 const Sequelize = models.Sequelize;
 const User = models.User;
 
-function internalErrorHandler(err) {
-	res.status(500).json({
-		errors: {
-			internal: 'Internal server error'
-		}
-	});
+function internalErrorHandler(req, res) {
+	return function (err) {
+		res.status(500).json({
+			errors: {
+				internal: 'Internal server error'
+			}
+		});
 
-	console.log(err);
+		console.log(err);
+	};
 }
 
 exports.register = (req, res) => {
@@ -46,7 +48,7 @@ exports.register = (req, res) => {
 
 			res.status(200).json(response);
 		})
-		.catch(internalErrorHandler);
+		.catch(internalErrorHandler(req, res));
 };
 
 exports.login = (req, res) => {
@@ -78,7 +80,7 @@ exports.login = (req, res) => {
 			} else
 				throw err;
 		})
-		.catch(internalErrorHandler);
+		.catch(internalErrorHandler(req, res));
 };
 
 // Средний слой должен проверить наличие сессии
@@ -100,5 +102,5 @@ exports.info = (req, res) => {
 				});
 			} else throw new Error('Пользователь из сессии не найден');
 		})
-		.catch(internalErrorHandler);
+		.catch(internalErrorHandler(req, res));
 };
