@@ -16,7 +16,10 @@ function internalErrorHandler(err) {
 }
 
 exports.register = (req, res) => {
-	let user = User.build({ username: req.body.username });
+	let user = User.build({
+		username: req.body.username,
+		employeeId: req.body.employeeId
+	});
 
 	Promise.try(() => { User.validatePassword(req.body.password); })
 		.then(user.setPassword.bind(user, req.body.password))
