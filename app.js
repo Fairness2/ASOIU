@@ -32,6 +32,7 @@ const sessionConfig = {
 const app = express();
 
 // Обработчики
+app.use(express.static('public'));
 app.use(morgan('dev', { immediate: true }));
 app.use(bodyParser.urlencoded({ 'extended': 'true' }));			// application/x-www-form-urlencoded
 app.use(bodyParser.json());										// application/json

@@ -14,7 +14,9 @@ module.exports = function (root) {
 		.use('/info', auth.authenticate);
 
 	/*router.get('/', function (req, res) {
-		res.render(__rootdir + '/view/login.html');
+		//var page = require(__rootdir + '/view/test.html')
+		//res.send(require(__rootdir + '/view/login.html'));
+		res.send('Bled');
 	});*/
 
 	router.post('/register', user.register)

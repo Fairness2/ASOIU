@@ -57,7 +57,7 @@ exports.login = (req, res) => {
 
 		return;
 	}
-
+	console.log(req.body);
 	User.findOne({ username: req.body.username })
 		.then(user => {
 			const err = new Error('Неверное имя пользователя или пароль');

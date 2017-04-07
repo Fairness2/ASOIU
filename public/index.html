@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>WoodPC</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <!--Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="js/materialize.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="css/style.css"  media="screen,projection"/>
+    <script src="js/vue.js"></script>
+  </head>
+  <body>
+    <!--Верхнее меню-->
+    <div class="navbar-fixed">
+      <nav class="nav-extended blue darken-4">
+        <div class="nav-wrapper">
+          <a href="#" class="brand-logo right hide-on-med-and-down">ООО "WoodPC"</a>
+          <a href="#" data-activates="slide-out" class="button-collapse waves-effect waves-light"><i class="material-icons">menu</i></a>
+          <ul class="left">
+            <li><a href="#" data-activates="slide-out" class="open-side-nav hide-on-med-and-down"><i class="material-icons left">menu</i>Меню</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+      <div class="row">
+        <h3 class="left col s12">Добро пожаловать</h3>
+        <span>Это Основная страница</span>
+      </div>
+      <div class="row">
+
+        <!--Заявки-->
+        <div class="card col s12" id="application">
+          <h4>Заявки</h4>
+          <div class="row">
+            <div class="section col s12">
+              <a href="#new_application" class="waves-effect wave-light btn blue darken-4">Новая заявка<i class="material-icons left">add</i></a>
+              <a href="#" v-on:click="check_v" class="waves-effect wave-light btn blue darken-4">Выбрать заявку</a>
+              <a href="#" v-on:click="del_v" class="waves-effect wave-light btn blue darken-4">Удалить заявку</a>
+            </div>
+            <div>
+              <div class="section col s12" v-if="seen_check">
+                <h5 class="col s12">Выбрать заявку</h5>
+                <div class="col s12 l2"><a v-on:click="hiden_v" class="waves-effect wave-light btn blue darken-4">Скрыть</a></div>
+
+                <div class="centre-preload col s12" v-if="load_check">
+                  <div class="preloader-wrapper big active" >
+                    <div class="spinner-layer spinner-blue-only">
+                      <div class="circle-clipper left">
+                        <div class="circle"></div>
+                      </div><div class="gap-patch">
+                        <div class="circle"></div>
+                      </div><div class="circle-clipper right">
+                        <div class="circle"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col s12 l10" v-if="!load_check">
+                  <div class="input-field col s12">
+                    <input type="text" id="year_application_check" class="validate" data-length="4" pattern="[0-9]{4}">
+                    <label for="year_application_check">Год заявки</label>
+                  </div>
+
+                  <div class="centre-preload col s12" v-if="load_items">
+                    <div class="preloader-wrapper small active">
+                      <div class="spinner-layer spinner-blue-only">
+                        <div class="circle-clipper left">
+                          <div class="circle"></div>
+                        </div><div class="gap-patch">
+                          <div class="circle"></div>
+                        </div><div class="circle-clipper right">
+                          <div class="circle"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <div class="coll-hight collection" v-if="!load_items">
+                    <a v-for="item in items" href="#" class="collection-item waves-effect">{{item.message}}</a>
+                    <a href="#" class="collection-item waves-effect" v-if="check_add"><i class="material-icons left">vertical_align_bottom</i>Загрузить следующие</a>
+                  </div>
+
+                </div>
+              </div>
+
+              <div class="section col s12" v-if="seen_del">
+                <h5 class="coll s12">Удалить заявку</h5>
+                <div class="col s12 l2"><a v-on:click="hiden_v" class="waves-effect wave-light btn blue darken-4">Скрыть</a></div>
+                <div class="col s12 l10">
+                  <div class="input-field col s12">
+                    <input type="text" id="year_application_del" class="validate" data-length="4" pattern="[0-9]{4}">
+                    <label for="year_application_del">Год заявки</label>
+                  </div>
+
+
+
+                  <div class="coll-hight collection">
+                    <a href="#" class="collection-item waves-effect">Завка 1</a>
+                    <a href="#" class="collection-item waves-effect">Завка 2</a>
+                    <a href="#" class="collection-item waves-effect">Завка 4</a>
+                    <a href="#" class="collection-item waves-effect">Завка 5</a>
+                    <a href="#" class="collection-item waves-effect">Завка 6</a>
+                    <a href="#" class="collection-item waves-effect">Завка 7</a>
+                  </div>
+                </div>
+              </div>
+            </div >
+          </div>
+        </div>
+
+        <!--Сметы ЦФО-->
+        <div class="card col s12" id="cfo">
+          <h4>Сметы ЦФО</h4>
+          <div class="row">
+            <div class="section col s12">
+              <a href="#new_estimate_cfo" class="waves-effect wave-light btn blue darken-4">Новая смета</a>
+              <a href="#" v-on:click="check_v" class="waves-effect wave-light btn blue darken-4">Выбрать смету</a>
+              <a href="#" v-on:click="del_v" class="waves-effect wave-light btn blue darken-4">Удалить смету</a>
+            </div>
+            <div>
+              <div class="section col s12" v-if="seen_check">
+                <h5 class="col s12">Выбрать смету</h5>
+                <div class="col s12 l2"><a v-on:click="hiden_v" class="waves-effect wave-light btn blue darken-4">Скрыть</a></div>
+                <div class="col s12 l10">
+                  <div class="input-field col s12">
+                    <input type="text" id="year_cfo_check" class="validate" data-length="4" pattern="[0-9]{4}">
+                    <label for="year_cfo_check">Год сметы</label>
+                  </div>
+
+                  <div class="preloader-wrapper big active" v-if="load_items">
+                    <div class="spinner-layer spinner-blue-only">
+                      <div class="circle-clipper left">
+                        <div class="circle"></div>
+                      </div><div class="gap-patch">
+                        <div class="circle"></div>
+                      </div><div class="circle-clipper right">
+                        <div class="circle"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="coll-hight collection" v-if="!load_items">
+                    <a v-for="item in items" href="#" class="collection-item waves-effect">{{item.message}}</a>
+
+                    <a href="#" class="collection-item waves-effect">Смета 7</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="section col s12" v-if="seen_del">
+                <h5 class="col s12">Удалить смету</h5>
+                <div class="col s12 l2"><a v-on:click="hiden_v" class="waves-effect wave-light btn blue darken-4">Скрыть</a></div>
+                <div class="col s12 l10">
+                  <div class="input-field col s12">
+                    <input type="text" id="year_cfo_del" class="validate" data-length="4" pattern="[0-9]{4}">
+                    <label for="year_cfo_del">Год сметы</label>
+                  </div>
+                  <div class="col s12">
+
+                  </div>
+                  <div class="coll-hight collection">
+                    <a href="#" class="collection-item waves-effect">Смета 1</a>
+                    <a href="#" class="collection-item waves-effect">Смета 2</a>
+                    <a href="#" class="collection-item waves-effect">Смета 4</a>
+                    <a href="#" class="collection-item waves-effect">Смета 5</a>
+                    <a href="#" class="collection-item waves-effect">Смета 6</a>
+                    <a href="#" class="collection-item waves-effect">Смета 7</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--Сметы предприятия-->
+        <div class="card col s12" id="company">
+          <h4>Сметы предприятия</h4>
+          <div class="row">
+            <div class="section col s12">
+              <a href="#new_estimate_company" class="waves-effect wave-light btn blue darken-4">Новая смета</a>
+              <a href="#" v-on:click="check_v" class="waves-effect wave-light btn blue darken-4">Выбрать смету</a>
+              <a href="#" v-on:click="del_v" class="waves-effect wave-light btn blue darken-4">Удалить смету</a>
+            </div>
+            <div>
+              <div class="section col s12" v-if="seen_check">
+                <h5 class="col s12">Выбрать смету</h5>
+                <div class="col s12 l2"><a v-on:click="hiden_v" class="waves-effect wave-light btn blue darken-4">Скрыть</a></div>
+                <div class="col s12 l10">
+                  <div class="input-field col s12">
+                    <input type="text" id="year_company_check" class="validate" data-length="4" pattern="[0-9]{4}">
+                    <label for="year_company_check">Год сметы</label>
+                  </div>
+
+                  <div class="coll-hight collection">
+                    <a href="#" class="collection-item waves-effect" v-for="item in items">{{item.message}}</a>
+
+                  </div>
+                </div>
+              </div>
+
+              <div class="section col s12" v-if="seen_del">
+                <h5 class="col s12">Удалить смету</h5>
+                <div class="col s12 l2"><a v-on:click="hiden_v" class="waves-effect wave-light btn blue darken-4">Скрыть</a></div>
+                <div class="col s12 l10">
+                  <div class="input-field col s12">
+                    <input type="text" id="year_company_del" class="validate" data-length="4" pattern="[0-9]{4}">
+                    <label for="year_company_check">Год сметы</label>
+                  </div>
+
+                  <div class="coll-hight collection">
+                    <a href="#" class="collection-item waves-effect">Смета 1</a>
+                    <a href="#" class="collection-item waves-effect">Смета 2</a>
+                    <a href="#" class="collection-item waves-effect">Смета 4</a>
+                    <a href="#" class="collection-item waves-effect">Смета 5</a>
+                    <a href="#" class="collection-item waves-effect">Смета 6</a>
+                    <a href="#" class="collection-item waves-effect">Смета 7</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--Окно новая заявка-->
+    <div id="new_application" class="modal">
+      <div class="modal-content">
+        <div class="row">
+          <h5 class="cel s12 center-align ">Новая заявка</h5>
+        </div>
+        <div class="row">
+          <form class="col s12 m12 l8 offset-l2">
+            <div class="row">
+              <div class="input-field col s12">
+                <input type="text" id="name_application" class="validate" data-length="50" pattern="[A-Za-zА-Яа-яЁё0-9\s-()]{1,50}">
+                <label for="name_application">Название заявки</label>
+              </div>
+              <div class="input-field col s12">
+                <input type="text" id="year_application" class="validate" data-length="4" pattern="[0-9]{4}">
+                <label for="year_application">Год заявки</label>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a href="#" class="modal-action modal-close waves-effect waves-red btn-flat">Отмена</a>
+        <a href="#" class="modal-action waves-effect waves-green btn-flat">Создать</a>
+      </div>
+    </div>
+
+    <!--Окно новая смета ЦФО-->
+    <div id="new_estimate_cfo" class="modal">
+      <div class="modal-content">
+        <div class="row">
+          <h5 class="cel s12 center-align ">Новая смета ЦФО</h5>
+        </div>
+        <div class="row">
+          <form class="col s12 m12 l8 offset-l2">
+            <div class="row">
+              <div class="input-field col s12">
+                <input type="text" id="name_estimate_cfo" class="validate" data-length="50" pattern="[A-Za-zА-Яа-яЁё0-9\s-()]{1,50}">
+                <label for="name_estimate_cfo">Название сметы</label>
+              </div>
+              <div class="input-field col s12">
+                <input type="text" id="year_estimate_cfo" class="validate" data-length="4" pattern="[0-9]{4}">
+                <label for="year_estimate_cfo">Год сметы</label>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a href="#" class="modal-action modal-close waves-effect waves-red btn-flat">Отмена</a>
+        <a href="#" class="modal-action waves-effect waves-green btn-flat">Создать</a>
+      </div>
+    </div>
+
+    <!--Окно новая смета предприятия-->
+    <div id="new_estimate_company" class="modal">
+      <div class="modal-content">
+        <div class="row">
+          <h5 class="cel s12 center-align ">Новая смета предприятия</h5>
+        </div>
+        <div class="row">
+          <form class="col s12 m12 l8 offset-l2">
+            <div class="row">
+              <div class="input-field col s12">
+                <input type="text" id="name_estimate_company" class="validate" data-length="50" pattern="[A-Za-zА-Яа-яЁё0-9\s-()]{1,50}">
+                <label for="name_estimate_company">Название сметы</label>
+              </div>
+              <div class="input-field col s12">
+                <input type="text" id="year_estimate_company" class="validate" data-length="4" pattern="[0-9]{4}">
+                <label for="year_estimate_company">Год сметы</label>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a href="#" class="modal-action modal-close waves-effect waves-red btn-flat">Отмена</a>
+        <a href="#" class="modal-action waves-effect waves-green btn-flat">Создать</a>
+      </div>
+    </div>
+
+
+    <!--Боковое меню -->
+    <ul id="slide-out" class="side-nav">
+      <li><div class="userView">
+        <img class="circle" src="img/user.png">
+        <span class="name">{{name}}</span>
+        <span class="email">{{department}}</span>
+      </div></li>
+      <li><div class="divider"></div></li>
+      <li><a class="subheader">Меню</a></li>
+      <li><a href="/" class="waves-effect">На главную</a></li>
+      <!--<li><a href="#" class="waves-effect">Центр финансовой ответственности</a></li>
+      <li><a href="#" class="waves-effect">ПЭД</a></li>-->
+      <li><div class="divider"></div></li>
+      <li><a href="/user/logout" class="waves-effect">Сменить пользователя</a></li>
+    </ul>
+
+
+    <script type="text/javascript" src="js/index.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function() {
+        $('.modal').modal();
+        $('input#name_load, input#year_load, input#year_load_check').characterCounter();
+        $('select').material_select();
+        $(".button-collapse").sideNav();
+        $(".open-side-nav").sideNav();
+        side_nav.onredys();
+      });
+    </script>
+
+  </body>
+</html>
