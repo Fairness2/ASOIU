@@ -51,7 +51,7 @@ function init() {
 	db.Sequelize = Sequelize;
 
 	db.sync = function () {
-		return sequelize.sync({ force: true });
+		return sequelize.sync({ force: false });
 	};
 
 	return db;

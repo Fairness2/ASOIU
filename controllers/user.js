@@ -33,9 +33,10 @@ exports.register = (req, res) => {
 		})
 		.catch(Sequelize.UniqueConstraintError, err => {
 			res.status(200).json({
-				errors: {
-					username: 'Такое имя пользователя уже занято'
-				}
+				errors: [{
+					path: 'username',
+					message: 'Такое имя пользователя уже занято'
+				}]
 			});
 		})
 		.catch(Sequelize.ValidationError, err => {
@@ -53,17 +54,16 @@ exports.register = (req, res) => {
 
 exports.login = (req, res) => {
 	if (req.session.user) {
-		res.status(400).json({
+		res.status(200).json({
 			errors: ['Вход уже выполнен']
 		});
 
 		return;
 	}
-	console.log(req.body);
+	//console.log(req.body);
+
 	User.findOne({ username: req.body.username })
 		.then(user => {
-			const err = new Error('Неверное имя пользователя или пароль');
-
 			if (user) {
 				return user
 					.verifyPassword(req.body.password)
@@ -74,11 +74,22 @@ exports.login = (req, res) => {
 							res.status(200).json({
 								data: 'Вход выполнен успешно'
 							});
-						} else
-							throw err;
+							
+							return true;
+						}
+						
+						return false;
 					});
-			} else
-				throw err;
+			}
+			
+			return false;
+		})
+		.then(ok => { // обработчик неудачного логина
+			if (!ok) {
+				res.status(200).json({
+					errors: ['Неверное имя пользователя или пароль']
+				});
+			}
 		})
 		.catch(internalErrorHandler(req, res));
 };

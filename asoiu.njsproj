@@ -31,6 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="app.js" />
+    <Compile Include="controllers\employee.js" />
     <Compile Include="controllers\user.js" />
     <Compile Include="lib\auth.js" />
     <Compile Include="models\department.js" />
