@@ -46,32 +46,22 @@
               <a href="#" v-on:click="del_v" class="waves-effect wave-light btn blue darken-4">Удалить заявку</a>
             </div>
             <div>
-              <div class="section col s12" v-if="seen_check">
+              <div class="section col s12" v-show="seen_check">
                 <h5 class="col s12">Выбрать заявку</h5>
                 <div class="col s12 l2"><a v-on:click="hiden_v" class="waves-effect wave-light btn blue darken-4">Скрыть</a></div>
 
-                <div class="centre-preload col s12" v-if="load_check">
-                  <div class="preloader-wrapper big active" >
-                    <div class="spinner-layer spinner-blue-only">
-                      <div class="circle-clipper left">
-                        <div class="circle"></div>
-                      </div><div class="gap-patch">
-                        <div class="circle"></div>
-                      </div><div class="circle-clipper right">
-                        <div class="circle"></div>
-                      </div>
+                <div class="col s12 l10">
+                  <div class="col s12">
+                    <div class="input-field col s12 m5">
+                      <input type="text" id="year_application_check" class="validate" data-length="4" pattern="[0-9]{4}">
+                      <label for="year_application_check">Год заявки</label>
                     </div>
-                  </div>
-                </div>
-
-                <div class="col s12 l10" v-if="!load_check">
-                  <div class="input-field col s12">
-                    <input type="text" id="year_application_check" class="validate" data-length="4" pattern="[0-9]{4}">
-                    <label for="year_application_check">Год заявки</label>
+                    <a v-on:click="find_year_check" class="waves-effect waves-light btn blue darken-4">Искать по году</a>
                   </div>
 
-                  <div class="centre-preload col s12" v-if="load_items">
-                    <div class="preloader-wrapper small active">
+
+                  <div class="centre-preload col s12" v-show="load_items_check">
+                    <div class="preloader-wrapper active">
                       <div class="spinner-layer spinner-blue-only">
                         <div class="circle-clipper left">
                           <div class="circle"></div>
@@ -84,16 +74,34 @@
                     </div>
                   </div>
 
+                  <div class="coll-hight collection" v-show="!load_items_check">
+                    <a class="collection-item" v-show="not_year">Введите год для получения заявок</a>
+                    <a v-for="item in items" href="#" class="collection-item waves-effec">{{item.message}}</a>
 
-                  <div class="coll-hight collection" v-if="!load_items">
-                    <a v-for="item in items" href="#" class="collection-item waves-effect">{{item.message}}</a>
-                    <a href="#" class="collection-item waves-effect" v-if="check_add"><i class="material-icons left">vertical_align_bottom</i>Загрузить следующие</a>
+                    <a class="collection-item blue darken-4" v-show="check_add_check">
+                      <div class="preloader-wrapper small active">
+                        <div class="spinner-layer spinner-green-only">
+                          <div class="circle-clipper left">
+                            <div class="circle"></div>
+                          </div><div class="gap-patch">
+                            <div class="circle"></div>
+                          </div><div class="circle-clipper right">
+                            <div class="circle"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </a>
+
+                    <a href="#" class="collection-item waves-effect blue darken-4 white-text" v-show="!check_add_check" v-on:click="add_items_check">
+                      <i class="material-icons left white-text">vertical_align_bottom</i>Загрузить следующие
+                    </a>
                   </div>
 
                 </div>
               </div>
 
-              <div class="section col s12" v-if="seen_del">
+
+              <div class="section col s12" v-show="seen_del">
                 <h5 class="coll s12">Удалить заявку</h5>
                 <div class="col s12 l2"><a v-on:click="hiden_v" class="waves-effect wave-light btn blue darken-4">Скрыть</a></div>
                 <div class="col s12 l10">

@@ -56,7 +56,7 @@ app.use(function (err, req, res, next) {
 	res.status(err.status || 500);
 });
 
-db.sync()
+/*db.sync()
 	.then(() => {
 		app.listen(config.server.port, config.server.host, function () {
 			console.log('Server listening on %s:%d', config.server.host, config.server.port);
@@ -64,4 +64,8 @@ db.sync()
 	})
 	.catch(e => {
 		console.log('Database syncing error: ' + e);
-	});
+	});*/
+
+app.listen(config.server.port, config.server.host, function () {
+	console.log('Server listening on %s:%d', config.server.host, config.server.port);
+});

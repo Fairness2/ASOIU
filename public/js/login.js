@@ -24,8 +24,8 @@ var loginin = new Vue({
           beforeSend: function (data) {
             loginin.isload = true;
           },
-          dataType: "json",
-          jsonp: false,
+          /*dataType: "json",
+          jsonp: false,*/
           timeout: 30000,
           error: function (data) {
             loginin.isload = false;
@@ -43,7 +43,8 @@ var loginin = new Vue({
           },
           success:function (res) {
             loginin.isload = false;
-            loginin.message = res;
+            loginin.message = 'Всё типтоп';
+            location.replace("/");
           }
         });
       }

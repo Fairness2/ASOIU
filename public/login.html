@@ -21,7 +21,7 @@
         <div class="col s12 m6 offset-m3" id="login-div">
           <h3 class="center-align col s12">Добро пожаловать</h3>
 
-          <div v-if="!isload">
+          <div v-show="!isload">
             <span class="center-align col s12 red-text">{{message}}</span>
             <form class="col s12">
               <div class="input-field col s12 l8 offset-l2">
@@ -36,7 +36,7 @@
             <a v-on:click="login_in" class="waves-effect waves-light blue darken-4 btn-large col s12 m4 offset-m4">Вход</a>
           </div>
 
-          <div class="col s12 centre-preload" v-if="isload">
+          <div class="col s12 centre-preload" v-show="isload">
             <div class="preloader-wrapper big active">
               <div class="spinner-layer spinner-blue-only">
                 <div class="circle-clipper left">
