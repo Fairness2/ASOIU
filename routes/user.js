@@ -11,16 +11,10 @@ module.exports = function (root) {
 	root.use('/user', router);
 
 	router.use('/logout', auth.authenticate)
-		.use('/info', auth.authenticate);
-
-	/*router.get('/', function (req, res) {
-		//var page = require(__rootdir + '/view/test.html')
-		//res.send(require(__rootdir + '/view/login.html'));
-		res.send('Bled');
-	});*/
+		  .use('/info', auth.authenticate);
 
 	router.post('/register', user.register)
-		.post('/login', user.login)
-		.post('/logout', user.logout)
-		.get('/info', user.info);
+		  .post('/login', user.login)
+		  .post('/logout', user.logout)
+		  .get('/info', user.info);
 };

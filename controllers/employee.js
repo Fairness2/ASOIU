@@ -39,9 +39,9 @@ exports.create = function (req, res) {
 		sex: req.body.sex,
 		birthDate: req.body.birthDate
 		/* подразделения? */
-	}).then(empl => {
+	}).then(emp => {
 		res.status(200).json({
-			data: empl.id // можно полагать, что empl всегда не null
+			data: emp.id // можно полагать, что empl всегда не null
 		});
 	}).catch(models.Sequelize.ValidationError, e => {
 		res.status(200).json({
@@ -88,4 +88,20 @@ exports.update = function (req, res) {
 	// обновить подразделения?
 }
 
-exports.list = function (req, res) { }
+exports.list = function (req, res) {
+	let filter = {
+		fullName: { $gt: req.query.after || '' }
+	};
+	
+	models.Employee.findAll({
+		where: filter,
+		order: [
+			['fullName', 'asc']
+		],
+		limit: req.query.limit || 10
+	}).then(emps => {
+		res.status(200).json({
+			data: emps.map(x => x.toJSON())
+		});
+	});
+}

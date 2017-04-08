@@ -49,6 +49,14 @@ exports.register = (req, res) => {
 
 			res.status(200).json(response);
 		})
+		.catch(Sequelize.ForeignKeyConstraintError, err => {
+			res.status(400).json({
+				errors: [{
+					path: err.original.constraint.match(/^\w+_(\w+)_fkey$/)[1],
+					message: 'Ошибка внешнего ключа'
+				}]
+			});
+		})
 		.catch(internalErrorHandler(req, res));
 };
 
