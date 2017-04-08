@@ -21,7 +21,8 @@ module.exports = function (sq, DataTypes) {
 						args: /^\s+$/,
 						msg: 'Название подразделения не долно состоять из одних пробелов'
 					}
-				}
+				},
+				unique: true
 			},
 			shortName: {
 				type: DataTypes.STRING(50),

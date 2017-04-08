@@ -1,6 +1,8 @@
 ﻿'use strict';
 
 const models = require(__rootdir + '/models');
+const error = require(__libdir + '/error.js');
+const _ = require('lodash');
 
 exports.create = function (req, res) {
 	const errors = [];
@@ -43,15 +45,8 @@ exports.create = function (req, res) {
 		res.status(200).json({
 			data: emp.id // можно полагать, что empl всегда не null
 		});
-	}).catch(models.Sequelize.ValidationError, e => {
-		res.status(200).json({
-			errors: e.errors.map(item => ({
-				path: item.path,
-				message: item.message
-			}))
-		});
-	});
-}
+	}).catch(models.Sequelize.ValidationError, error.handleValidation(req, res));
+};
 
 exports.update = function (req, res) {
 	if (!req.body.id) {
@@ -70,38 +65,96 @@ exports.update = function (req, res) {
 		sex: req.body.sex,
 		birthDate: req.body.birthDate
 	}, {
-		where: {
-			id: req.body.id
-		}
-	}).then((count, rows) => {
-		if (count) {
+			where: {
+				id: req.body.id
+			}
+		}).then((count, rows) => {
+			if (count) {
+				res.status(200).json({
+					data: 'ok'
+				});
+			} else {
+				res.status(200).json({
+					errors: ['Указанный сотрудник не был найден']
+				});
+			}
+		});
+
+	// обновить подразделения?
+};
+
+exports.list = function (req, res) {
+	let filter = {};
+	let order = [];
+	let invertResult = false;
+	let field = 'createdAt';
+
+	if (req.query.after) {
+		filter[field] = { $gt: req.query.after };
+		order.push((field, 'asc'));
+	} else if (req.query.before) {
+		// В запросе в базу делаем обратную сортировку,
+		// клиенту отдаём в возрастающем порядке
+		filter[field] = { $lt: req.query.before };
+		order.push(('createdAt', 'desc'));
+		invertResult = true;
+	}
+
+	models.Employee.findAll({
+		where: filter,
+		order: order,
+		limit: req.query.limit || 10
+	}).then(emps => {
+		let arr = emps.map(x => x.toJSON());
+		if (invertResult) arr.reverse();
+
+		res.status(200).json({
+			data: arr
+		});
+	});
+};
+
+exports.departments = function (req, res) {
+	models.Employee.findById(req.params.id, {
+		include: [{ model: models.Department, as: 'departments' }]
+	}).then(emp => {
+		if (emp) {
 			res.status(200).json({
-				data: 'ok'
+				data: emp.departments
 			});
 		} else {
 			res.status(200).json({
-				errors: ['Указанный сотрудник не был найден']
+				errors: ['Сотрудник не найден']
 			});
 		}
-	});
-
-	// обновить подразделения?
+	}).catch(error.handleInternal(req, res));
 }
 
-exports.list = function (req, res) {
-	let filter = {
-		fullName: { $gt: req.query.after || '' }
-	};
-	
-	models.Employee.findAll({
-		where: filter,
-		order: [
-			['fullName', 'asc']
-		],
-		limit: req.query.limit || 10
-	}).then(emps => {
-		res.status(200).json({
-			data: emps.map(x => x.toJSON())
-		});
-	});
+exports.setDepartments = function (req, res) {
+	let ids = _.uniq(req.body.departmentIds);
+
+	Promise.all(
+		models.Employee.findById(req.body.id),
+		models.Department.findAll({
+			where: { id: { $in: ids } }
+		}))
+		.then(values => {
+			let emp = values[0];
+			let deps = values[1];
+
+			if (emp /*&& deps.length==ids.length*/) {
+				emp.setDepartments(deps);
+				return emp.save();
+			}
+		}).then(emp => {
+			if (emp) {
+				res.status(200).json({
+					data: emp.departments.length
+				});
+			} else {
+				res.status(200).json({
+					errors: ['Сотрудник не был найден']
+				});
+			}
+		}).catch(error.handleInternal(req, res));
 }

@@ -34,7 +34,13 @@ module.exports = function (sq, DataTypes) {
 			}
 		}, {
 			freezeTableName: true,
-			timestamps: false,
+			timestamps: true,
+			indexes: [
+				{
+					name: 'Employee_createdAt',
+					fields: ['createdAt']
+				}
+			],
 			classMethods: {
 				associate: models => {
 					models.Employee.hasOne(models.User, { as: 'user', foreignKey: 'employeeId' });

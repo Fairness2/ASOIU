@@ -13,17 +13,17 @@ module.exports = function (sq, DataTypes) {
 			name: {
 				type: DataTypes.STRING(40),
 				allowNull: false,
-				unique: {
+				unique: true /*{
 					args: true,
 					msg: 'Разрешение с таким названием уже существует'
-				}
+				}*/
 			}
 		}, {
 			freezeTableName: true,
 			timestamps: false,
 			classMethods: {
 				associate: models => {
-					models.Permission.belongsToMany(models.Role, { through: 'RolePermission', /*as: 'users', */foreignKey: 'permissionId' });
+					models.Permission.belongsToMany(models.Role, { through: 'RolePermission', as: 'roles', foreignKey: 'permissionId' });
 				}
 			},
 			instanceMethods: {
