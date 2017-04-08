@@ -2,6 +2,7 @@
 
 // Корневой каталог
 global.__rootdir = __dirname;
+global.__libdir = __dirname + '/lib';
 
 const config = require('./config.json'),
 	express = require('express'),
@@ -32,13 +33,14 @@ const sessionConfig = {
 const app = express();
 
 // Обработчики
-app.use(express.static('public'));
 app.use(morgan('dev', { immediate: true }));
 app.use(bodyParser.urlencoded({ 'extended': 'true' }));			// application/x-www-form-urlencoded
 app.use(bodyParser.json());										// application/json
 app.use(bodyParser.json({ type: 'application/vnd.api+json' }));	// application/vnd.api+json as json
 app.use(session(sessionConfig));
 app.use(methodOverride());
+
+app.use(express.static('public'));
 
 // Маршруты
 routes(app);

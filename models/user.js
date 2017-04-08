@@ -21,10 +21,10 @@ module.exports = function (sq, DataTypes) {
 						msg: 'Недопустимое имя пользователя'
 					}
 				},
-				unique: {
+				unique: true /*{ // Индексы и уникальные ограничения не поддерживают особые сообщения
 					args: true,
 					msg: 'Имя пользователя занято'
-				}
+				}*/
 			},
 			password: {
 				type: DataTypes.CHAR(60),
@@ -39,11 +39,9 @@ module.exports = function (sq, DataTypes) {
 			timestamps: false,
 			indexes: [
 				{
+					name: 'User_employeeId', // секвелайз переводит имя в змеиный_стиль, что очень усложняет определение поля
 					fields: ['employeeId'],
-					unique: {
-						args: true,
-						msg: 'Сотрудник уже зарегистрирован как пользователь'
-					}
+					unique: true
 				},
 			],
 			classMethods: {

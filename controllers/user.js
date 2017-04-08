@@ -2,20 +2,9 @@
 
 //const passport = require('passport');
 const models = require(__rootdir + '/models');
+const error = require(__libdir + '/error.js');
 const Sequelize = models.Sequelize;
 const User = models.User;
-
-function internalErrorHandler(req, res) {
-	return function (err) {
-		res.status(500).json({
-			errors: {
-				internal: 'Internal server error'
-			}
-		});
-
-		console.log(err);
-	};
-}
 
 exports.register = (req, res) => {
 	let user = User.build({
@@ -31,33 +20,15 @@ exports.register = (req, res) => {
 				data: 'ok' //todo: придумать что-то получше
 			});
 		})
-		.catch(Sequelize.UniqueConstraintError, err => {
-			res.status(200).json({
-				errors: [{
-					path: 'username',
-					message: 'Такое имя пользователя уже занято'
-				}]
-			});
-		})
-		.catch(Sequelize.ValidationError, err => {
-			let response = {
-				errors: err.errors.map(item => ({
-					path: item.path,
-					message: item.message
-				}))
-			};
-
-			res.status(200).json(response);
-		})
-		.catch(Sequelize.ForeignKeyConstraintError, err => {
-			res.status(400).json({
-				errors: [{
-					path: err.original.constraint.match(/^\w+_(\w+)_fkey$/)[1],
-					message: 'Ошибка внешнего ключа'
-				}]
-			});
-		})
-		.catch(internalErrorHandler(req, res));
+		.catch(Sequelize.UniqueConstraintError, error.handleUnique(req, res, {
+			employeeId: 'Сотрудник уже зарегистрирован как пользователь',
+			username: 'Имя пользователя занято'
+		}))
+		.catch(Sequelize.ForeignKeyConstraintError, error.handleForeignKey(req, res, {
+			employeeId: 'Указанный сотрудник не найден'
+		}))
+		.catch(Sequelize.ValidationError, error.handleValidation(req, res))
+		.catch(error.handleInternal(req, res));
 };
 
 exports.login = (req, res) => {
@@ -100,7 +71,7 @@ exports.login = (req, res) => {
 				});
 			}
 		})
-		.catch(internalErrorHandler(req, res));
+		.catch(error.handleInternal(req, res));
 };
 
 // Средний слой должен проверить наличие сессии
@@ -122,5 +93,5 @@ exports.info = (req, res) => {
 				});
 			} else throw new Error('Пользователь из сессии не найден');
 		})
-		.catch(internalErrorHandler(req, res));
+		.catch(error.handleInternal(req, res));
 };

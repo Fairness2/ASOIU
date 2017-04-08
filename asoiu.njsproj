@@ -34,6 +34,7 @@
     <Compile Include="controllers\employee.js" />
     <Compile Include="controllers\user.js" />
     <Compile Include="lib\auth.js" />
+    <Compile Include="lib\error.js" />
     <Compile Include="models\department.js" />
     <Compile Include="models\period-type.js" />
     <Compile Include="models\period.js" />
