@@ -42,10 +42,11 @@ exports.create = function (req, res) {
 		birthDate: req.body.birthDate
 		/* подразделения? */
 	}).then(emp => {
-		res.status(200).json({
-			data: emp.id // можно полагать, что empl всегда не null
-		});
-	}).catch(models.Sequelize.ValidationError, error.handleValidation(req, res));
+	res.status(200).json({
+		data: emp.id // можно полагать, что empl всегда не null
+	});
+	}).catch(models.Sequelize.ValidationError, error.handleValidation(req, res))
+	.catch(error.handleInternal(req, res));
 };
 
 exports.update = function (req, res) {
@@ -65,10 +66,10 @@ exports.update = function (req, res) {
 		sex: req.body.sex,
 		birthDate: req.body.birthDate
 	}, {
-			where: {
-				id: req.body.id
-			}
-		}).then((count, rows) => {
+		where: {
+			id: req.body.id
+		}
+	})	.then((count, rows) => {
 			if (count) {
 				res.status(200).json({
 					data: 'ok'
@@ -78,7 +79,8 @@ exports.update = function (req, res) {
 					errors: ['Указанный сотрудник не был найден']
 				});
 			}
-		});
+		})
+		.catch(error.handleInternal(req, res));
 
 	// обновить подразделения?
 };
@@ -96,7 +98,7 @@ exports.list = function (req, res) {
 		// В запросе в базу делаем обратную сортировку,
 		// клиенту отдаём в возрастающем порядке
 		filter[field] = { $lt: req.query.before };
-		order.push(('createdAt', 'desc'));
+		order.push((field, 'desc'));
 		invertResult = true;
 	}
 
@@ -111,7 +113,7 @@ exports.list = function (req, res) {
 		res.status(200).json({
 			data: arr
 		});
-	});
+	}).catch(error.handleInternal(req, res));
 };
 
 exports.departments = function (req, res) {
@@ -133,28 +135,32 @@ exports.departments = function (req, res) {
 exports.setDepartments = function (req, res) {
 	let ids = _.uniq(req.body.departmentIds);
 
-	Promise.all(
+	Promise.all([
 		models.Employee.findById(req.body.id),
 		models.Department.findAll({
 			where: { id: { $in: ids } }
-		}))
+		})])
 		.then(values => {
 			let emp = values[0];
 			let deps = values[1];
 
-			if (emp /*&& deps.length==ids.length*/) {
+			if (emp && deps.length===ids.length) {
 				emp.setDepartments(deps);
-				return emp.save();
+
+				return emp.save()
+					.then(() => {
+						res.status(200).json({
+							data: 'ok'
+						});
+					});
 			}
-		}).then(emp => {
-			if (emp) {
-				res.status(200).json({
-					data: emp.departments.length
-				});
-			} else {
-				res.status(200).json({
-					errors: ['Сотрудник не был найден']
-				});
-			}
+
+			let errors = [];
+			if (!emp) errors.push('Сотрудник не найден');
+			if (deps.length < ids.length) errors.push('Указанных подразделений не существует');
+
+			res.status(200).json({
+				errors: errors
+			});
 		}).catch(error.handleInternal(req, res));
 }

@@ -19,10 +19,7 @@ module.exports = function (sq, DataTypes) {
 						msg: 'Недопустимое имя роли'
 					}
 				},
-				unique: {
-					args: true,
-					msg: 'Роль с таким названием уже существует'
-				}
+				unique: true
 			}
 		}, {
 			freezeTableName: true,

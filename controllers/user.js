@@ -3,6 +3,7 @@
 //const passport = require('passport');
 const models = require(__rootdir + '/models');
 const error = require(__libdir + '/error.js');
+const _ = require('lodash');
 const Sequelize = models.Sequelize;
 const User = models.User;
 
@@ -39,9 +40,9 @@ exports.login = (req, res) => {
 
 		return;
 	}
-	
+
 	console.log(req.body.username);
-	
+
 	User.findOne({ username: req.body.username })
 		.then(user => {
 			if (user) {
@@ -54,14 +55,14 @@ exports.login = (req, res) => {
 							res.status(200).json({
 								data: 'Вход выполнен успешно'
 							});
-							
+
 							return true;
 						}
-						
+
 						return false;
 					});
 			}
-			
+
 			return false;
 		})
 		.then(ok => { // обработчик неудачного логина
@@ -95,3 +96,37 @@ exports.info = (req, res) => {
 		})
 		.catch(error.handleInternal(req, res));
 };
+
+exports.setRoles = (req, res) => {
+	const ids = _.uniq(req.body.roleIds);
+
+	Promise.all([
+		User.findById(req.body.id),
+		models.Role.findMany({
+			where: { $in: ids }
+		})])
+		.then(vals => {
+			let user = vals[0];
+			let roles = vals[1];
+
+			if (user && roles.length === ids.length) {
+				user.setRoles(roles);
+
+				return user.save()
+					.then(() => {
+						res.status(200).json({
+							data: 'ok'
+						});
+					});
+			}
+
+			let errors = [];
+			if (!user) errors.push('Пользователь не найден');
+			if (roles.length < ids.length) errors.push('Указанных ролей не существует');
+
+			res.status(200).json({
+				errors: errors
+			});
+		})
+		.catch(error.handleInternal(req, res));
+}
