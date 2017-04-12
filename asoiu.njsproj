@@ -62,6 +62,7 @@
     <Compile Include="public\js\materialize.js" />
     <Compile Include="public\js\materialize.min.js" />
     <Compile Include="public\js\vue.js" />
+    <Compile Include="routes\employee.js" />
     <Compile Include="routes\index.js" />
     <Compile Include="routes\user.js" />
     <Content Include="config.json" />

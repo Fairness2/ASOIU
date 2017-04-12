@@ -29,8 +29,8 @@ module.exports = function (sq, DataTypes) {
 			timestamps: false,
 			classMethods: {
 				associate: models => {
-					models.Role.belongsToMany(models.User, { through: 'UserRole', /*as: 'users', */foreignKey: 'roleId' });
-					models.Role.belongsToMany(models.Permission, { through: 'RolePermission', /*as: 'users', */foreignKey: 'roleId' });
+					models.Role.belongsToMany(models.User, { through: 'UserRole', as: 'users', foreignKey: 'roleId' });
+					models.Role.belongsToMany(models.Permission, { through: 'RolePermission', as: 'permissions', foreignKey: 'roleId' });
 				}
 			},
 			instanceMethods: {

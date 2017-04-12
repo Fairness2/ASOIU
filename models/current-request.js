@@ -11,6 +11,11 @@ module.exports = function (sq, DataTypes) {
 				defaultValue: Sequelize.UUIDV4,
 				primaryKey: true
 			},
+			number: {
+				type: DataTypes.INTEGER,
+				autoIncrement: true,
+				allowNull: false
+			},
 			requestId: {
 				type: DataTypes.UUID,
 				allowNull: false
@@ -36,7 +41,8 @@ module.exports = function (sq, DataTypes) {
 			timestamps: false,
 			indexes: [
 				{ fields: ['requestId'] },
-				{ fields: ['periodId'] }
+				{ fields: ['periodId'] },
+				{ fields: ['number'], /*name: 'CurrentRequest_number',*/ unique: true }
 			],
 			classMethods: {
 				associate: models => {

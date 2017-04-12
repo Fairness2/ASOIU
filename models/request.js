@@ -11,6 +11,11 @@ module.exports = function (sq, DataTypes) {
 				defaultValue: Sequelize.UUIDV4,
 				primaryKey: true
 			},
+			number: {
+				type: DataTypes.INTEGER,
+				autoIncrement: true,
+				allowNull: false
+			},
 			requesterId: {
 				type: DataTypes.UUID,
 				allowNull: false
@@ -31,7 +36,8 @@ module.exports = function (sq, DataTypes) {
 			freezeTableName: true,
 			timestamps: true,
 			indexes: [
-				{ fields: ['requesterId'] }
+				{ fields: ['requesterId'] },
+				{ fields: ['number'], /*name: 'Request_number',*/ unique: true }
 			],
 			classMethods: {
 				associate: models => {

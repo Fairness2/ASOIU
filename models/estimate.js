@@ -11,6 +11,11 @@ module.exports = function (sq, DataTypes) {
 				defaultValue: Sequelize.UUIDV4,
 				primaryKey: true
 			},
+			number: {
+				type: DataTypes.INTEGER,
+				autoIncrement: true,
+				allowNull: false
+			},
 			frcId: {
 				type: DataTypes.UUID
 			},
@@ -26,7 +31,8 @@ module.exports = function (sq, DataTypes) {
 			freezeTableName: true,
 			timestamps: true,
 			indexes: [
-				{ fields: ['frcId'] }
+				{ fields: ['frcId'] },
+				{ fields: ['number'], /*name: 'Estimate_number',*/ unique: true }
 			],
 			classMethods: {
 				associate: models => {
