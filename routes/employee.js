@@ -15,4 +15,8 @@ module.exports = function (root) {
 		.post(employee.create)
 		.put(employee.update)
 		.get(employee.list);
+
+	router.route('/departments')
+		.put(employee.setDepartments)
+		.get(employee.departments);
 };

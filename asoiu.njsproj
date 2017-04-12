@@ -32,6 +32,7 @@
   <ItemGroup>
     <Compile Include="app.js" />
     <Compile Include="controllers\department.js" />
+    <Compile Include="controllers\permission.js" />
     <Compile Include="controllers\role.js" />
     <Compile Include="controllers\employee.js" />
     <Compile Include="controllers\user.js" />
@@ -63,6 +64,9 @@
     <Compile Include="public\js\materialize.js" />
     <Compile Include="public\js\materialize.min.js" />
     <Compile Include="public\js\vue.js" />
+    <Compile Include="routes\role.js" />
+    <Compile Include="routes\permission.js" />
+    <Compile Include="routes\department.js" />
     <Compile Include="routes\employee.js" />
     <Compile Include="routes\index.js" />
     <Compile Include="routes\user.js" />

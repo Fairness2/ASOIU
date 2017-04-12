@@ -97,6 +97,22 @@ exports.info = (req, res) => {
 		.catch(error.handleInternal(req, res));
 };
 
+exports.roles = function (req, res) {
+	models.User.findById(req.params.id, {
+		include: [{ model: models.Role, as: 'roles' }]
+	}).then(user => {
+		if (user) {
+			res.status(200).json({
+				data: user.roles
+			});
+		} else {
+			res.status(200).json({
+				errors: ['Пользователь не найден']
+			});
+		}
+	}).catch(error.handleInternal(req, res));
+}
+
 exports.setRoles = (req, res) => {
 	const ids = _.uniq(req.body.roleIds);
 

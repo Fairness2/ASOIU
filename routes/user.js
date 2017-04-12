@@ -11,10 +11,15 @@ module.exports = function (root) {
 	root.use('/user', router);
 
 	router.use('/logout', auth.authenticate)
-		  .use('/info', auth.authenticate);
+		.use('/info', auth.authenticate)
+		.use('/roles', auth.authenticate);
 
 	router.post('/register', user.register)
 		  .post('/login', user.login)
 		  .post('/logout', user.logout)
-		  .get('/info', user.info);
+		.get('/info', user.info);
+
+	router.route('/roles')
+		.get(user.roles)
+		.put(user.setRoles);
 };
