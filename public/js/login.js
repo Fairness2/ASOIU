@@ -6,8 +6,8 @@ var loginin = new Vue({
   },
   methods:{
     login_in: function () {
-      var login = encodeURIComponent($('#login').val());
-      var password = encodeURIComponent($('#password').val());
+      var login = $('#login').val();//encodeURIComponent($('#login').val());
+      var password = $('#password').val();//encodeURIComponent($('#password').val());
       var regexp = /^[A-Za-z0-9_-]{6,20}$/;
       if (regexp.test(login) && regexp.test(password)) {
         /*var xhr = new XMLHttpRequest();

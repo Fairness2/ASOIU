@@ -42,8 +42,7 @@
           <div class="row">
             <div class="section col s12">
               <a href="#new_application" class="waves-effect wave-light btn blue darken-4">Новая заявка<i class="material-icons left">add</i></a>
-              <a href="#" v-on:click="check_v" class="waves-effect wave-light btn blue darken-4">Выбрать заявку</a>
-              <a href="#" v-on:click="del_v" class="waves-effect wave-light btn blue darken-4">Удалить заявку</a>
+              <a v-on:click="check_v" class="waves-effect wave-light btn blue darken-4">Посмотреть заявку</a>
             </div>
             <div>
               <div class="section col s12" v-show="seen_check">
@@ -51,13 +50,6 @@
                 <div class="col s12 l2"><a v-on:click="hiden_v" class="waves-effect wave-light btn blue darken-4">Скрыть</a></div>
 
                 <div class="col s12 l10">
-                  <div class="col s12">
-                    <div class="input-field col s12 m5">
-                      <input type="text" id="year_application_check" class="validate" data-length="4" pattern="[0-9]{4}">
-                      <label for="year_application_check">Год заявки</label>
-                    </div>
-                    <a v-on:click="find_year_check" class="waves-effect waves-light btn blue darken-4">Искать по году</a>
-                  </div>
 
 
                   <div class="centre-preload col s12" v-show="load_items_check">
@@ -75,10 +67,10 @@
                   </div>
 
                   <div class="coll-hight collection" v-show="!load_items_check">
-                    <a class="collection-item" v-show="not_year">Введите год для получения заявок</a>
-                    <a v-for="item in items" href="#" class="collection-item waves-effec">{{item.message}}</a>
+                    <a v-for="item in items" href="#" class="collection-item waves-effect black-text" v-on:click="check(item.id)">{{item.message}}</a>
+                    <a class="collection-item red-text">{{message}}</a>
 
-                    <a class="collection-item blue darken-4" v-show="check_add_check">
+                    <a class="collection-item blue lighten-5" v-show="add_check">
                       <div class="preloader-wrapper small active">
                         <div class="spinner-layer spinner-green-only">
                           <div class="circle-clipper left">
@@ -92,34 +84,11 @@
                       </div>
                     </a>
 
-                    <a href="#" class="collection-item waves-effect blue darken-4 white-text" v-show="!check_add_check" v-on:click="add_items_check">
-                      <i class="material-icons left white-text">vertical_align_bottom</i>Загрузить следующие
+                    <a class="collection-item waves-effect blue lighten-5 black-text" v-show="!add_check" v-on:click="add_items_check">
+                      <i class="material-icons left black-text">vertical_align_bottom</i>Загрузить следующие
                     </a>
                   </div>
 
-                </div>
-              </div>
-
-
-              <div class="section col s12" v-show="seen_del">
-                <h5 class="coll s12">Удалить заявку</h5>
-                <div class="col s12 l2"><a v-on:click="hiden_v" class="waves-effect wave-light btn blue darken-4">Скрыть</a></div>
-                <div class="col s12 l10">
-                  <div class="input-field col s12">
-                    <input type="text" id="year_application_del" class="validate" data-length="4" pattern="[0-9]{4}">
-                    <label for="year_application_del">Год заявки</label>
-                  </div>
-
-
-
-                  <div class="coll-hight collection">
-                    <a href="#" class="collection-item waves-effect">Завка 1</a>
-                    <a href="#" class="collection-item waves-effect">Завка 2</a>
-                    <a href="#" class="collection-item waves-effect">Завка 4</a>
-                    <a href="#" class="collection-item waves-effect">Завка 5</a>
-                    <a href="#" class="collection-item waves-effect">Завка 6</a>
-                    <a href="#" class="collection-item waves-effect">Завка 7</a>
-                  </div>
                 </div>
               </div>
             </div >
@@ -131,21 +100,17 @@
           <h4>Сметы ЦФО</h4>
           <div class="row">
             <div class="section col s12">
-              <a href="#new_estimate_cfo" class="waves-effect wave-light btn blue darken-4">Новая смета</a>
-              <a href="#" v-on:click="check_v" class="waves-effect wave-light btn blue darken-4">Выбрать смету</a>
-              <a href="#" v-on:click="del_v" class="waves-effect wave-light btn blue darken-4">Удалить смету</a>
+              <a href="#new_estimate_cfo" class="waves-effect wave-light btn blue darken-4">Новая смета <i class="material-icons left">add</i></a>
+              <a v-on:click="check_v" class="waves-effect wave-light btn blue darken-4">Выбрать смету</a>
+              <a v-on:click="del_v" class="waves-effect wave-light btn blue darken-4">Удалить смету</a>
             </div>
             <div>
               <div class="section col s12" v-if="seen_check">
                 <h5 class="col s12">Выбрать смету</h5>
                 <div class="col s12 l2"><a v-on:click="hiden_v" class="waves-effect wave-light btn blue darken-4">Скрыть</a></div>
                 <div class="col s12 l10">
-                  <div class="input-field col s12">
-                    <input type="text" id="year_cfo_check" class="validate" data-length="4" pattern="[0-9]{4}">
-                    <label for="year_cfo_check">Год сметы</label>
-                  </div>
 
-                  <div class="preloader-wrapper big active" v-if="load_items">
+                  <div class="preloader-wrapper big active" v-if="load_items_check">
                     <div class="spinner-layer spinner-blue-only">
                       <div class="circle-clipper left">
                         <div class="circle"></div>
@@ -157,10 +122,27 @@
                     </div>
                   </div>
 
-                  <div class="coll-hight collection" v-if="!load_items">
-                    <a v-for="item in items" href="#" class="collection-item waves-effect">{{item.message}}</a>
+                  <div class="coll-hight collection" v-if="!load_items_check">
+                    <a v-for="item in items_check" href="#" class="collection-item waves-effect black-text" v-on:click="check(item.id)">{{item.message}}</a>
+                    <a class="collection-item red-text">{{message_check}}</a>
 
-                    <a href="#" class="collection-item waves-effect">Смета 7</a>
+                    <a class="collection-item blue lighten-5" v-show="add_check">
+                      <div class="preloader-wrapper small active">
+                        <div class="spinner-layer spinner-green-only">
+                          <div class="circle-clipper left">
+                            <div class="circle"></div>
+                          </div><div class="gap-patch">
+                            <div class="circle"></div>
+                          </div><div class="circle-clipper right">
+                            <div class="circle"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </a>
+
+                    <a class="collection-item waves-effect blue lighten-5 black-text" v-show="!add_check" v-on:click="add_items_check">
+                      <i class="material-icons left black-text">vertical_align_bottom</i>Загрузить следующие
+                    </a>
                   </div>
                 </div>
               </div>
@@ -169,20 +151,40 @@
                 <h5 class="col s12">Удалить смету</h5>
                 <div class="col s12 l2"><a v-on:click="hiden_v" class="waves-effect wave-light btn blue darken-4">Скрыть</a></div>
                 <div class="col s12 l10">
-                  <div class="input-field col s12">
-                    <input type="text" id="year_cfo_del" class="validate" data-length="4" pattern="[0-9]{4}">
-                    <label for="year_cfo_del">Год сметы</label>
-                  </div>
-                  <div class="col s12">
 
+                  <div class="preloader-wrapper big active" v-if="load_items_del">
+                    <div class="spinner-layer spinner-blue-only">
+                      <div class="circle-clipper left">
+                        <div class="circle"></div>
+                      </div><div class="gap-patch">
+                        <div class="circle"></div>
+                      </div><div class="circle-clipper right">
+                        <div class="circle"></div>
+                      </div>
+                    </div>
                   </div>
-                  <div class="coll-hight collection">
-                    <a href="#" class="collection-item waves-effect">Смета 1</a>
-                    <a href="#" class="collection-item waves-effect">Смета 2</a>
-                    <a href="#" class="collection-item waves-effect">Смета 4</a>
-                    <a href="#" class="collection-item waves-effect">Смета 5</a>
-                    <a href="#" class="collection-item waves-effect">Смета 6</a>
-                    <a href="#" class="collection-item waves-effect">Смета 7</a>
+
+                  <div class="coll-hight collection" v-if="!load_items_del">
+                    <a v-for="item in items_del" href="#" class="collection-item waves-effect black-text" v-on:click="del(item.id)">{{item.message}}</a>
+                    <a class="collection-item red-text">{{message_del}}</a>
+
+                    <a class="collection-item blue lighten-5" v-show="add_del">
+                      <div class="preloader-wrapper small active">
+                        <div class="spinner-layer spinner-green-only">
+                          <div class="circle-clipper left">
+                            <div class="circle"></div>
+                          </div><div class="gap-patch">
+                            <div class="circle"></div>
+                          </div><div class="circle-clipper right">
+                            <div class="circle"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </a>
+
+                    <a class="collection-item waves-effect blue lighten-5 black-text" v-show="!add_del" v-on:click="add_items_del">
+                      <i class="material-icons left black-text">vertical_align_bottom</i>Загрузить следующие
+                    </a>
                   </div>
                 </div>
               </div>
@@ -195,23 +197,49 @@
           <h4>Сметы предприятия</h4>
           <div class="row">
             <div class="section col s12">
-              <a href="#new_estimate_company" class="waves-effect wave-light btn blue darken-4">Новая смета</a>
-              <a href="#" v-on:click="check_v" class="waves-effect wave-light btn blue darken-4">Выбрать смету</a>
-              <a href="#" v-on:click="del_v" class="waves-effect wave-light btn blue darken-4">Удалить смету</a>
+              <a href="#new_estimate_company" class="waves-effect wave-light btn blue darken-4">Новая смета <i class="material-icons left">add</i></a>
+              <a v-on:click="check_v" class="waves-effect wave-light btn blue darken-4">Выбрать смету</a>
+              <a v-on:click="del_v" class="waves-effect wave-light btn blue darken-4">Удалить смету</a>
             </div>
             <div>
               <div class="section col s12" v-if="seen_check">
                 <h5 class="col s12">Выбрать смету</h5>
                 <div class="col s12 l2"><a v-on:click="hiden_v" class="waves-effect wave-light btn blue darken-4">Скрыть</a></div>
                 <div class="col s12 l10">
-                  <div class="input-field col s12">
-                    <input type="text" id="year_company_check" class="validate" data-length="4" pattern="[0-9]{4}">
-                    <label for="year_company_check">Год сметы</label>
+
+                  <div class="preloader-wrapper big active" v-if="load_items_check">
+                    <div class="spinner-layer spinner-blue-only">
+                      <div class="circle-clipper left">
+                        <div class="circle"></div>
+                      </div><div class="gap-patch">
+                        <div class="circle"></div>
+                      </div><div class="circle-clipper right">
+                        <div class="circle"></div>
+                      </div>
+                    </div>
                   </div>
 
-                  <div class="coll-hight collection">
-                    <a href="#" class="collection-item waves-effect" v-for="item in items">{{item.message}}</a>
+                  <div class="coll-hight collection" v-if="!load_items_check">
+                    <a v-for="item in items_check" href="#" class="collection-item waves-effect black-text" v-on:click="check(item.id)">{{item.message}}</a>
+                    <a class="collection-item red-text">{{message_check}}</a>
 
+                    <a class="collection-item blue lighten-5" v-show="add_check">
+                      <div class="preloader-wrapper small active">
+                        <div class="spinner-layer spinner-green-only">
+                          <div class="circle-clipper left">
+                            <div class="circle"></div>
+                          </div><div class="gap-patch">
+                            <div class="circle"></div>
+                          </div><div class="circle-clipper right">
+                            <div class="circle"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </a>
+
+                    <a class="collection-item waves-effect blue lighten-5 black-text" v-show="!add_check" v-on:click="add_items_check">
+                      <i class="material-icons left black-text">vertical_align_bottom</i>Загрузить следующие
+                    </a>
                   </div>
                 </div>
               </div>
@@ -220,18 +248,40 @@
                 <h5 class="col s12">Удалить смету</h5>
                 <div class="col s12 l2"><a v-on:click="hiden_v" class="waves-effect wave-light btn blue darken-4">Скрыть</a></div>
                 <div class="col s12 l10">
-                  <div class="input-field col s12">
-                    <input type="text" id="year_company_del" class="validate" data-length="4" pattern="[0-9]{4}">
-                    <label for="year_company_check">Год сметы</label>
+
+                  <div class="preloader-wrapper big active" v-if="load_items_del">
+                    <div class="spinner-layer spinner-blue-only">
+                      <div class="circle-clipper left">
+                        <div class="circle"></div>
+                      </div><div class="gap-patch">
+                        <div class="circle"></div>
+                      </div><div class="circle-clipper right">
+                        <div class="circle"></div>
+                      </div>
+                    </div>
                   </div>
 
-                  <div class="coll-hight collection">
-                    <a href="#" class="collection-item waves-effect">Смета 1</a>
-                    <a href="#" class="collection-item waves-effect">Смета 2</a>
-                    <a href="#" class="collection-item waves-effect">Смета 4</a>
-                    <a href="#" class="collection-item waves-effect">Смета 5</a>
-                    <a href="#" class="collection-item waves-effect">Смета 6</a>
-                    <a href="#" class="collection-item waves-effect">Смета 7</a>
+                  <div class="coll-hight collection" v-if="!load_items_del">
+                    <a v-for="item in items_del" href="#" class="collection-item waves-effect black-text" v-on:click="del(item.id)">{{item.message}}</a>
+                    <a class="collection-item red-text">{{message_del}}</a>
+
+                    <a class="collection-item blue lighten-5" v-show="add_del">
+                      <div class="preloader-wrapper small active">
+                        <div class="spinner-layer spinner-green-only">
+                          <div class="circle-clipper left">
+                            <div class="circle"></div>
+                          </div><div class="gap-patch">
+                            <div class="circle"></div>
+                          </div><div class="circle-clipper right">
+                            <div class="circle"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </a>
+
+                    <a class="collection-item waves-effect blue lighten-5 black-text" v-show="!add_del" v-on:click="add_items_del">
+                      <i class="material-icons left black-text">vertical_align_bottom</i>Загрузить следующие
+                    </a>
                   </div>
                 </div>
               </div>
@@ -248,23 +298,39 @@
           <h5 class="cel s12 center-align ">Новая заявка</h5>
         </div>
         <div class="row">
-          <form class="col s12 m12 l8 offset-l2">
-            <div class="row">
-              <div class="input-field col s12">
-                <input type="text" id="name_application" class="validate" data-length="50" pattern="[A-Za-zА-Яа-яЁё0-9\s-()]{1,50}">
-                <label for="name_application">Название заявки</label>
+
+          <div v-show="!isload">
+            <form class="col s12 m12 l8 offset-l2">
+              <div class="row">
+                <div class="input-field col s12">
+                  <input type="text" id="name_application" class="validate" data-length="50" pattern="[A-Za-zА-Яа-яЁё0-9\s-()]{1,50}">
+                  <label for="name_application">Название заявки</label>
+                </div>
+
               </div>
-              <div class="input-field col s12">
-                <input type="text" id="year_application" class="validate" data-length="4" pattern="[0-9]{4}">
-                <label for="year_application">Год заявки</label>
+            </form>
+            <span class="col s12 m12 l8 offset-l2 red-text center-align">{{message}}</span>
+          </div>
+
+          <div class="col s12 centre-preload" v-show="isload">
+            <div class="preloader-wrapper big active">
+              <div class="spinner-layer spinner-blue-only">
+                <div class="circle-clipper left">
+                  <div class="circle"></div>
+                </div><div class="gap-patch">
+                  <div class="circle"></div>
+                </div><div class="circle-clipper right">
+                  <div class="circle"></div>
+                </div>
               </div>
             </div>
-          </form>
+          </div>
+
         </div>
       </div>
       <div class="modal-footer">
-        <a href="#" class="modal-action modal-close waves-effect waves-red btn-flat">Отмена</a>
-        <a href="#" class="modal-action waves-effect waves-green btn-flat">Создать</a>
+        <a class="modal-action modal-close waves-effect waves-red btn-flat">Отмена</a>
+        <a class="modal-action waves-effect waves-green btn-flat" v-on:click="new_el">Создать</a>
       </div>
     </div>
 
@@ -277,21 +343,37 @@
         <div class="row">
           <form class="col s12 m12 l8 offset-l2">
             <div class="row">
-              <div class="input-field col s12">
-                <input type="text" id="name_estimate_cfo" class="validate" data-length="50" pattern="[A-Za-zА-Яа-яЁё0-9\s-()]{1,50}">
-                <label for="name_estimate_cfo">Название сметы</label>
+
+              <div v-show="!isload">
+                <div class="input-field col s12">
+                  <input type="text" id="name_estimate_cfo" class="validate" data-length="50" pattern="[A-Za-zА-Яа-яЁё0-9\s-()]{1,50}">
+                  <label for="name_estimate_cfo">Название сметы</label>
+                </div>
+                <span class="col s12 m12 l8 offset-l2 red-text center-align">{{message}}</span>
               </div>
-              <div class="input-field col s12">
-                <input type="text" id="year_estimate_cfo" class="validate" data-length="4" pattern="[0-9]{4}">
-                <label for="year_estimate_cfo">Год сметы</label>
+
+              <div class="col s12 centre-preload" v-show="isload">
+                <div class="preloader-wrapper big active">
+                  <div class="spinner-layer spinner-blue-only">
+                    <div class="circle-clipper left">
+                      <div class="circle"></div>
+                    </div><div class="gap-patch">
+                      <div class="circle"></div>
+                    </div><div class="circle-clipper right">
+                      <div class="circle"></div>
+                    </div>
+                  </div>
+                </div>
               </div>
+
             </div>
           </form>
         </div>
       </div>
+
       <div class="modal-footer">
         <a href="#" class="modal-action modal-close waves-effect waves-red btn-flat">Отмена</a>
-        <a href="#" class="modal-action waves-effect waves-green btn-flat">Создать</a>
+        <a href="#" class="modal-action waves-effect waves-green btn-flat" v-on:click="new_el">Создать</a>
       </div>
     </div>
 
@@ -304,21 +386,104 @@
         <div class="row">
           <form class="col s12 m12 l8 offset-l2">
             <div class="row">
-              <div class="input-field col s12">
-                <input type="text" id="name_estimate_company" class="validate" data-length="50" pattern="[A-Za-zА-Яа-яЁё0-9\s-()]{1,50}">
-                <label for="name_estimate_company">Название сметы</label>
+
+              <div v-show="!isload">
+                <div class="input-field col s12">
+                  <input type="text" id="name_estimate_company" class="validate" data-length="50" pattern="[A-Za-zА-Яа-яЁё0-9\s-()]{1,50}">
+                  <label for="name_estimate_company">Название сметы</label>
+                </div>
+                <span class="col s12 m12 l8 offset-l2 red-text center-align">{{message}}</span>
               </div>
-              <div class="input-field col s12">
-                <input type="text" id="year_estimate_company" class="validate" data-length="4" pattern="[0-9]{4}">
-                <label for="year_estimate_company">Год сметы</label>
+
+              <div class="col s12 centre-preload" v-show="isload">
+                <div class="preloader-wrapper big active">
+                  <div class="spinner-layer spinner-blue-only">
+                    <div class="circle-clipper left">
+                      <div class="circle"></div>
+                    </div><div class="gap-patch">
+                      <div class="circle"></div>
+                    </div><div class="circle-clipper right">
+                      <div class="circle"></div>
+                    </div>
+                  </div>
+                </div>
               </div>
+
             </div>
           </form>
         </div>
       </div>
       <div class="modal-footer">
         <a href="#" class="modal-action modal-close waves-effect waves-red btn-flat">Отмена</a>
-        <a href="#" class="modal-action waves-effect waves-green btn-flat">Создать</a>
+        <a href="#" class="modal-action waves-effect waves-green btn-flat" v-on:click="new_el">Создать</a>
+      </div>
+    </div>
+
+    <!--Окно удалить смету цфо-->
+    <div id="del_estimate_cfo" class="modal">
+      <div class="modal-content">
+        <div class="row">
+          <h5 class="cel s12 center-align ">Удалить?</h5>
+        </div>
+        <div class="row">
+          <form class="col s12 m12 l8 offset-l2">
+            <div class="row">
+
+              <div class="col s12 centre-preload" v-show="isload">
+                <div class="preloader-wrapper big active">
+                  <div class="spinner-layer spinner-blue-only">
+                    <div class="circle-clipper left">
+                      <div class="circle"></div>
+                    </div><div class="gap-patch">
+                      <div class="circle"></div>
+                    </div><div class="circle-clipper right">
+                      <div class="circle"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a href="#" class="modal-action waves-effect waves-red btn-flat" v-on:click="del_el">Удалить</a>
+        <a href="#" class="modal-action modal-close waves-effect waves-green btn-flat">Отмена</a>
+      </div>
+    </div>
+
+    <!--Окно удалить смету предприятия-->
+    <div id="del_estimate_com" class="modal">
+      <div class="modal-content">
+        <div class="row">
+          <h5 class="cel s12 center-align ">Удалить?</h5>
+        </div>
+        <div class="row">
+          <form class="col s12 m12 l8 offset-l2">
+            <div class="row">
+
+              <div class="col s12 centre-preload" v-show="isload">
+                <div class="preloader-wrapper big active">
+                  <div class="spinner-layer spinner-blue-only">
+                    <div class="circle-clipper left">
+                      <div class="circle"></div>
+                    </div><div class="gap-patch">
+                      <div class="circle"></div>
+                    </div><div class="circle-clipper right">
+                      <div class="circle"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a href="#" class="modal-action waves-effect waves-red btn-flat" v-on:click="del_el">Удалить</a>
+        <a href="#" class="modal-action modal-close waves-effect waves-green btn-flat">Отмена</a>
       </div>
     </div>
 
