@@ -114,18 +114,18 @@
                   <tbody>
                     <tr v-for="item in article.items">
                       <td><span>{{item.name}}</span></td>
-                      <td><input type="number" min="1" max="999" class="validate" v-on:input="values(item.january, article.id, item.id, 'january')" v-bind:value="item.january"></td>
-                      <td><input type="number" min="1" max="999" class="validate" v-on:input="values(item.february, article.id, item.id, 'february')" v-bind:value="item.february"></td>
-                      <td><input type="number" min="1" max="999" class="validate" v-on:input="values(item.march, article.id, item.id, 'march')" v-bind:value="item.march"></td>
-                      <td><input type="number" min="1" max="999" class="validate" v-on:input="values(item.april, article.id, item.id, 'april')" v-bind:value="item.april"></td>
-                      <td><input type="number" min="1" max="999" class="validate" v-on:input="values(item.may, article.id, item.id, 'may')" v-bind:value="item.may"></td>
-                      <td><input type="number" min="1" max="999" class="validate" v-on:input="values(item.june, article.id, item.id, 'june')" v-bind:value="item.june"></td>
-                      <td><input type="number" min="1" max="999" class="validate" v-on:input="values(item.july, article.id, item.id, 'july')" v-bind:value="item.july"></td>
-                      <td><input type="number" min="1" max="999" class="validate" v-on:input="values(item.august, article.id, item.id, 'august')" v-bind:value="item.august"></td>
-                      <td><input type="number" min="1" max="999" class="validate" v-on:input="values(item.september, article.id, item.id, 'september')" v-bind:value="item.september"></td>
-                      <td><input type="number" min="1" max="999" class="validate" v-on:input="values(item.october, article.id, item.id, 'october')" v-bind:value="item.october"></td>
-                      <td><input type="number" min="1" max="999" class="validate" v-on:input="values(item.november, article.id, item.id, 'november')" v-bind:value="item.november"></td>
-                      <td><input type="number" min="1" max="999" class="validate" v-on:input="values(item.december, article.id, item.id, 'december')" v-bind:value="item.december"></td>
+                      <td><input type="number" min="1" max="999" class="validate" v-on:change="values(item.january, article.id, item.id, 'january')" v-bind:value="item.january"></td>
+                      <td><input type="number" min="1" max="999" class="validate" v-on:change="values(item.february, article.id, item.id, 'february')" v-bind:value="item.february"></td>
+                      <td><input type="number" min="1" max="999" class="validate" v-on:change="values(item.march, article.id, item.id, 'march')" v-bind:value="item.march"></td>
+                      <td><input type="number" min="1" max="999" class="validate" v-on:change="values(item.april, article.id, item.id, 'april')" v-bind:value="item.april"></td>
+                      <td><input type="number" min="1" max="999" class="validate" v-on:change="values(item.may, article.id, item.id, 'may')" v-bind:value="item.may"></td>
+                      <td><input type="number" min="1" max="999" class="validate" v-on:change="values(item.june, article.id, item.id, 'june')" v-bind:value="item.june"></td>
+                      <td><input type="number" min="1" max="999" class="validate" v-on:change="values(item.july, article.id, item.id, 'july')" v-bind:value="item.july"></td>
+                      <td><input type="number" min="1" max="999" class="validate" v-on:change="values(item.august, article.id, item.id, 'august')" v-bind:value="item.august"></td>
+                      <td><input type="number" min="1" max="999" class="validate" v-on:change="values(item.september, article.id, item.id, 'september')" v-bind:value="item.september"></td>
+                      <td><input type="number" min="1" max="999" class="validate" v-on:change="values(item.october, article.id, item.id, 'october')" v-bind:value="item.october"></td>
+                      <td><input type="number" min="1" max="999" class="validate" v-on:change="values(item.november, article.id, item.id, 'november')" v-bind:value="item.november"></td>
+                      <td><input type="number" min="1" max="999" class="validate" v-on:changes="values(item.december, article.id, item.id, 'december')" v-bind:value="item.december"></td>
                     </tr>
                   </tbody>
                 </table>
