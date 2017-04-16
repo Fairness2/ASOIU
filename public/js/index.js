@@ -22,15 +22,15 @@ var application = new Vue({
       this.add_check = false;
       this.seen_check = true;
       $.ajax({
-        url:'api/request?previous=' + 0,
+        url:'api/request_list?previous=' + 0,
         type:'GET',
         //data: {'year': year},
         /*dataType: "json",
         jsonp: false,*/
         timeout: 30000,
         error: function (data) {
-          application.load_items_check = false;
           application.message = 'Ошибка';
+          application.load_items_check = false;
           //JSON.parse(data)
         },
         /*statusCode:{
@@ -45,8 +45,8 @@ var application = new Vue({
         },*/
         success:function (res) {
           //Тут нужно добавить полученные элементы в массим данных
-          application.load_items_check = false;
           application.message = 'Всё типтоп';
+          application.load_items_check = false;
         }
       });
     },
@@ -58,7 +58,7 @@ var application = new Vue({
       if (lenghtit == 0)
         num = this.items[lenghtit].num;
       $.ajax({
-        url:'api/request?previous=' + num,
+        url:'api/request_list?previous=' + num,
         type:'GET',
         //data: {'year': year},
         /*dataType: "json",
@@ -90,7 +90,7 @@ var application = new Vue({
     check: function (id) {
         //Тут нужно направить на страницу с элементом
         alert(id)
-        location.replace("/request?id=" + id);
+        location.replace("/request.html?id=" + id);
     },
   }
 });
@@ -131,7 +131,7 @@ var cfo = new Vue({
       this.load_items_del = false;
       this.add_del = false
       $.ajax({
-        url:'api/estimate?previous=' + 0,
+        url:'api/estimate_list?previous=' + 0,
         type:'GET',
         //data: {'year': year},
         /*dataType: "json",
@@ -167,7 +167,7 @@ var cfo = new Vue({
       if (lenghtit == 0)
         num = this.items_check[lenghtit].num;
       $.ajax({
-        url:'api/estimate?previous=' + num,
+        url:'api/estimate_list?previous=' + num,
         type:'GET',
         //data: {'year': year},
         /*dataType: "json",
@@ -199,7 +199,7 @@ var cfo = new Vue({
     check: function (id) {
         //Тут нужно направить на страницу с элементом
         alert(id)
-        location.replace("/estimate?id=" + id);
+        location.replace("/estimate.html?id=" + id);
     },
 
     del_v: function () {
@@ -210,7 +210,7 @@ var cfo = new Vue({
       this.load_items_del = true;
       this.add_del = false
       $.ajax({
-        url:'api/estimate?previous=' + 0,
+        url:'api/estimate_list?previous=' + 0,
         type:'GET',
         //data: {'year': year},
         /*dataType: "json",
@@ -246,7 +246,7 @@ var cfo = new Vue({
       if (lenghtit == 0)
         num = this.items_del[lenghtit].num;
       $.ajax({
-        url:'api/estimate?previous=' + num,
+        url:'api/estimate_list?previous=' + num,
         type:'GET',
         //data: {'year': year},
         /*dataType: "json",
@@ -320,7 +320,7 @@ var company = new Vue({
       this.load_items_del = false;
       this.add_del = false
       $.ajax({
-        url:'api/estimate_company?previous=' + 0,
+        url:'api/estimate_company_list?previous=' + 0,
         type:'GET',
         //data: {'year': year},
         /*dataType: "json",
@@ -356,7 +356,7 @@ var company = new Vue({
       if (lenghtit == 0)
         num = this.items_check[lenghtit].num;
       $.ajax({
-        url:'api/estimate_company?previous=' + num,
+        url:'api/estimate_company_list?previous=' + num,
         type:'GET',
         //data: {'year': year},
         /*dataType: "json",
@@ -388,7 +388,7 @@ var company = new Vue({
     check: function (id) {
         //Тут нужно направить на страницу с элементом
         alert(id)
-        location.replace("/estimate_company?id=" + id);
+        location.replace("/estimate_company.html?id=" + id);
     },
 
     del_v: function () {
@@ -399,7 +399,7 @@ var company = new Vue({
       this.load_items_del = true;
       this.add_del = false
       $.ajax({
-        url:'api/estimate_company?previous=' + 0,
+        url:'api/estimate_company_list?previous=' + 0,
         type:'GET',
         //data: {'year': year},
         /*dataType: "json",
@@ -435,7 +435,7 @@ var company = new Vue({
       if (lenghtit == 0)
         num = this.items_del[lenghtit].num;
       $.ajax({
-        url:'api/estimate_company?previous=' + num,
+        url:'api/estimate_company_list?previous=' + num,
         type:'GET',
         //data: {'year': year},
         /*dataType: "json",
@@ -501,35 +501,10 @@ var win_new_app = new Vue ({
       var name = $('#name_application').val();
       var regexp = /^[а-яa-z0-9_-]{6,20}$/i;
       if (regexp.test(name)) {
-        $.ajax({
-          url:'api/request',
-          type:'PUT',
-          data: {'name': name},
-          beforeSend: function (data) {
-            win_new_app.isload = true;
-          },
-          /*dataType: "json",
-          jsonp: false,*/
-          timeout: 30000,
-          error: function (data) {
-            win_new_app.isload = false;
-            win_new_app.message = 'Ошибка';
-          },
-          /*statusCode:{
-            400: function () {
-              loginin.isload = false;
-              loginin.message = 'Вход уже выполнен';
-            },
-            500: function functionName() {
-              loginin.isload = false;
-              loginin.message = 'Ошибка входа';
-            }
-          },*/
-          success:function (res) {
-            win_new_app.isload = false;
-            win_new_app.message = 'Всё типтоп';
-          }
-        });
+        location.replace("/request.html?name=" + name);
+      }
+      else {
+        this.message = 'Не правильно введено название';
       }
     }
   }
@@ -547,35 +522,10 @@ var win_new_est_cfo = new Vue ({
       var name = $('#name_estimate_cfo').val();
       var regexp = /^[а-яa-z0-9_-]{6,20}$/i;
       if (regexp.test(name)) {
-        $.ajax({
-          url:'api/estimate',
-          type:'PUT',
-          data: {'name': name},
-          beforeSend: function (data) {
-            win_new_est_cfo.isload = true;
-          },
-          /*dataType: "json",
-          jsonp: false,*/
-          timeout: 30000,
-          error: function (data) {
-            win_new_est_cfo.isload = false;
-            win_new_est_cfo.message = 'Ошибка';
-          },
-          /*statusCode:{
-            400: function () {
-              loginin.isload = false;
-              loginin.message = 'Вход уже выполнен';
-            },
-            500: function functionName() {
-              loginin.isload = false;
-              loginin.message = 'Ошибка входа';
-            }
-          },*/
-          success:function (res) {
-            win_new_est_cfo.isload = false;
-            win_new_est_cfo.message = 'Всё типтоп';
-          }
-        });
+        location.replace("/estimate.html?name=" + name);
+      }
+      else {
+        this.message = 'Не правильно введено название';
       }
     }
   }
@@ -593,35 +543,10 @@ var win_new_est_com = new Vue ({
       var name = $('#name_estimate_company').val();
       var regexp = /^[а-яa-z0-9_-]{6,20}$/i;
       if (regexp.test(name)) {
-        $.ajax({
-          url:'api/estimate_company',
-          type:'PUT',
-          data: {'name': name},
-          beforeSend: function (data) {
-            win_new_est_com.isload = true;
-          },
-          /*dataType: "json",
-          jsonp: false,*/
-          timeout: 30000,
-          error: function (data) {
-            win_new_est_com.isload = false;
-            win_new_est_com.message = 'Ошибка';
-          },
-          /*statusCode:{
-            400: function () {
-              loginin.isload = false;
-              loginin.message = 'Вход уже выполнен';
-            },
-            500: function functionName() {
-              loginin.isload = false;
-              loginin.message = 'Ошибка входа';
-            }
-          },*/
-          success:function (res) {
-            win_new_est_com.isload = false;
-            win_new_est_com.message = 'Всё типтоп';
-          }
-        });
+        location.replace("/estimate_company.html?name=" + name);
+      }
+      else {
+        this.message = 'Не правильно введено название';
       }
     }
   }

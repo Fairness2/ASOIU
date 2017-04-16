@@ -165,7 +165,7 @@
                   </div>
 
                   <div class="coll-hight collection" v-if="!load_items_del">
-                    <a v-for="item in items_del" href="#" class="collection-item waves-effect black-text" v-on:click="del(item.id)">{{item.message}}</a>
+                    <a v-for="item in items_del" class="collection-item waves-effect black-text" v-on:click="del(item.id)">{{item.message}}</a>
                     <a class="collection-item red-text">{{message_del}}</a>
 
                     <a class="collection-item blue lighten-5" v-show="add_del">
