@@ -21,10 +21,10 @@
       <div class="navbar-fixed">
         <nav class="nav-extended blue darken-4">
           <div class="nav-wrapper">
-            <a href="#" class="brand-logo right hide-on-med-and-down">ООО "WoodPC"</a>
-            <a href="#" data-activates="slide-out" class="button-collapse waves-effect waves-light"><i class="material-icons">menu</i></a>
+            <a href="/" class="brand-logo right hide-on-med-and-down">ООО "WoodPC"</a>
+            <a data-activates="slide-out" class="button-collapse waves-effect waves-light"><i class="material-icons">menu</i></a>
             <ul class="left">
-              <li><a href="#" data-activates="slide-out" class="open-side-nav hide-on-med-and-down"><i class="material-icons left">menu</i>Меню</a></li>
+              <li><a data-activates="slide-out" class="open-side-nav hide-on-med-and-down"><i class="material-icons left">menu</i>Меню</a></li>
             </ul>
           </div>
         </nav>
@@ -53,17 +53,16 @@
         <div v-if="loadtrue">
 
           <div class="row">
-            <h3 class="left col s12">Смета ЦФО</h3>
+            <h3 class="left col s12">Смета предприятия</h3>
             <div class="section col s12" v-if="tobe">
               <a class="waves-effect waves-light btn blue darken-4" v-on:click="save_app">Сохранить</a>
-              <a class="waves-effect waves-light btn blue darken-4" v-on:click="send_app">Отправить в ПЭД</a>
+              <a class="waves-effect waves-light btn blue darken-4" v-on:click="send_app">Утвердить</a>
               <a class="waves-effect waves-light btn red darken-4" v-on:click="del_app">Удалить</a>
             </div>
             <div class="card col s12">
                 <blockquote>
                   <p>Смета: {{name_estimate}}</p>
                   <p>Год: {{year}}</p>
-                  <p>ЦФО: {{cfo}}</p>
                   <p>Создал(а): {{name_maker}}</p>
                   <p>Дата создания: {{creation_date}}</p>
                   <p>Изменил(а): {{name_changer}}</p>
@@ -72,17 +71,13 @@
             </div>
 
             <div class="card col s12 blue-text text-darken-4">
-              <span class="col s4 center-align">
+              <span class="col s6 center-align">
                 <input name="chois" type="radio" id="full_table" v-on:click="show_section(1)"/>
                 <label for="full_table">Совдная таблица</label>
               </span>
-              <span class="col s4 center-align">
+              <span class="col s6 center-align">
                 <input name="chois" type="radio" id="request" v-on:click="show_section(2)"/>
-                <label for="request">Заявки</label>
-              </span>
-              <span class="col s4 center-align">
-                <input name="chois" type="radio" id="costs" v-on:click="show_section(3)"/>
-                <label for="costs">Добавочные расходы</label>
+                <label for="request">Сметы ЦФО</label>
               </span>
              </div>
 
@@ -140,72 +135,30 @@
               </div>
 
 
-             <div class="col s12" v-show="request">
+             <div class="col s12" v-show="estimate">
                <table class="striped table-tab">
                  <thead>
                    <tr>
                      <th class="col s1"></th>
                      <th class="col s6 center-align"><span>Название</span></th>
-                     <th class="col s5 center-align"><span>Подразделение</span></th>
+                     <th class="col s5 center-align"><span>ЦФО</span></th>
                    </tr>
                  </thead>
                  <tbody>
                    <tr>
-                     <td class="col s12 red-text center-align" v-if="error_request"><span>{{message_request}}</span></td>
+                     <td class="col s12 red-text center-align" v-if="error_estimate"><span>{{message_estimate}}</span></td>
                    </tr>
-                   <tr v-for="item in requests">
+                   <tr v-for="item in estimates">
                      <td class="col s1">
-                       <input type="checkbox" v-bind:id="item.id" v-model:checked="item.ischeck" v-on:click="check_request(item.id)"/>
+                       <input type="checkbox" v-bind:id="item.id" v-model:checked="item.ischeck" v-on:click="check_estimate(item.id)"/>
                        <label v-bind:for="item.id"></label>
                      </td>
                      <td class="col s6 center-align">
-                       <a v-bind:href="'/request?id=' + item.id" class="waves-effect">{{item.name}}</a>
+                       <a v-bind:href="'/estimate?id=' + item.id" class="waves-effect">{{item.name}}</a>
                      </td>
                      <td class="col s5 center-align">
-                       <span class="">{{item.department}}</span>
+                       <span class="">{{item.cfo}}</span>
                      </td>
-                   </tr>
-                 </tbody>
-               </table>
-             </div>
-
-             <div class="col s12" v-show="costs">
-               <table class="striped table-tab">
-                 <thead>
-                   <tr>
-                     <th class="col s2"><span>Дополнительные расходы</span></th>
-                     <th><span>Январь</span></th>
-                     <th><span>Февраль</span></th>
-                     <th><span>Март</span></th>
-                     <th><span>Апрель</span></th>
-                     <th><span>Май</span></th>
-                     <th><span>Июнь</span></th>
-                     <th><span>Июль</span></th>
-                     <th><span>Август</span></th>
-                     <th><span>Сентябрь</span></th>
-                     <th><span>Октябрь</span></th>
-                     <th><span>Нябрь</span></th>
-                     <th><span>Декабрь</span></th>
-                   </tr>
-                 </thead>
-                 <tbody>
-                   <tr>
-                     <td class="col s12 red-text center-align" v-if="error_additional"><span>{{message_additional}}</span></td>
-                   </tr>
-                   <tr v-for="item in additional_articles">
-                     <td><span>{{item.name}}</span></td>
-                     <td><input type="number" class="validate" v-model:value="item.january"></td>
-                     <td><input type="number" class="validate" v-model:value="item.february"></td>
-                     <td><input type="number" class="validate" v-model:value="item.march"></td>
-                     <td><input type="number" class="validate" v-model:value="item.april"></td>
-                     <td><input type="number" class="validate" v-model:value="item.may"></td>
-                     <td><input type="number" class="validate" v-model:value="item.june"></td>
-                     <td><input type="number" class="validate" v-model:value="item.july"></td>
-                     <td><input type="number" class="validate" v-model:value="item.august"></td>
-                     <td><input type="number" class="validate" v-model:value="item.september"></td>
-                     <td><input type="number" class="validate" v-model:value="item.october"></td>
-                     <td><input type="number" class="validate" v-model:value="item.november"></td>
-                     <td><input type="number" class="validate" v-model:value="item.december"></td>
                    </tr>
                  </tbody>
                </table>
@@ -239,15 +192,15 @@
         </div>
       </div>
 
-      <!--Окно отправить смету-->
+      <!--Окно утвердить смету-->
       <div id="send_application" class="modal">
         <div class="modal-content">
           <div class="row">
-            <h5 class="cel s12 center-align ">Отправить данную смету?</h5>
+            <h5 class="cel s12 center-align ">Утвердить данную смету?</h5>
           </div>
           <div class="row">
             <div class="col s12 m12 l8 offset-l2">
-              <p class="red-text">Внимание! Перед отправкой следует сохранить смету. После отправки редактировать смету больше нельзя</p>
+              <p class="red-text">Внимание! Перед утверждением следует сохранить смету. После утверждения редактировать смету больше нельзя</p>
               <p>Название: {{name}}</p>
               <p>Год: {{year}}</p>
               <p class="center-align green-text">{{message_success}}</p>
@@ -317,7 +270,7 @@
       </ul>
 
 
-      <script type="text/javascript" src="js/estimate.js"></script>
+      <script type="text/javascript" src="js/estimate_company.js"></script>
       <script type="text/javascript">
         $(document).ready(function() {
           $('.modal').modal();

@@ -32,22 +32,19 @@ var body_con = new Vue({
     loaderror: false, //если страница загрузилась не удачно
     tobe: true, //показать кнопки
     table: false, //Показать сводную таблицу
-    request: false, //показать заявки
-    costs: false, //показать дополнительные расходы
-    error_request: false, //ошибка с загрузкой заявок
-    error_additional: false, //ошибка с загрузкой доп расходов
+    estimate: false, //показать сметы цфо
+    error_estimate: false, //ошибка с загрузкой смет цфо
     error_article: false, //ошибка с загрузкой статей расходов
     message_error: '', //сообщени о ошибке загрузки страницы
     name_estimate: '', //название сметы
     year: '', //год сметы
-    cfo: '', //цфо
     name_maker: '', //создатель
     creation_date: '', //дата создание
     name_changer: '', //изменитель
     change_date: '', //дата изменения
-    message_request: '', //сообщени о заявок
-    message_article: '', //Сообщение статей расходов
+    message_estimate: '', //сообщени о заявок
     message_additional: '', //Сообщение доп расходов
+    message_article: '', //Сообщение статей расходов
     articles: [ //статьи расходов
       {id: '10', name:'Мебель', table_show: false, items:[
           {name: 'Биван', id: '66', //товарные позиции
@@ -95,37 +92,9 @@ var body_con = new Vue({
         ]
       }
     ],
-    requests: [ //список заявок
-      {id:24432, name:'Вася', department: 'Васильев остров', ischeck: false, num: '10'},
-      {id:3464573, name:'Гена', department: 'Генадьевск', ischeck: true, num: '10'}
-    ],
-    additional_articles: [ //дополнительные расходы
-      {name: 'Интернетики', id: '666',
-      january: '2000', //Тоже наверное цена
-      february: '2000',
-      march: '2000',
-      april: '2000',
-      may: '2000',
-      june: '2000',
-      july: '2000',
-      august: '2000',
-      september: '2000',
-      october: '2000',
-      november: '2000',
-      december: '2000'},
-      {name: 'Вода', id: '13',
-      january: '2000',
-      february: '2000',
-      march: '2000',
-      april: '2000',
-      may: '2000',
-      june: '2000',
-      july: '2000',
-      august: '2000',
-      september: '2000',
-      october: '2000',
-      november: '2000',
-      december: '2000'}
+    estimates: [ //список смет цфо
+      {id:24432, name:'Вася', cfo: 'Васильев остров', ischeck: false, num: '10'},
+      {id:3464573, name:'Гена', cfo: 'Генадьевск', ischeck: true, num: '10'}
     ]
   },
 
@@ -141,7 +110,7 @@ var body_con = new Vue({
         $.ajax({
           /*Тут нужно список заявок, с пометкой, какие включены, сведения о
           дополнительных расходах, и сведения о смете*/
-          url:'api/estimate?id=' + getval['id'],
+          url:'api/estimate_company?id=' + getval['id'],
           type:'GET',
           timeout: 30000,
           error: function (data) {
@@ -181,9 +150,22 @@ var body_con = new Vue({
         this.name_estimate = getval['name'];
 
         this.name_maker = side_nav.name;
-        this.name_changer = side_nav.name;
-        this.cfo = side_nav.department; //Пока так
+        this.name_changer = side_nav.name; //Пока так
 
+        $.ajax({
+          /*список всех заявок*/
+          url:'api/estimate_list',
+          type:'GET',
+          timeout: 30000,
+          error: function (data) {
+            body_con.error_estimate = true;
+            body_con.message_estimate = 'Пожалучйста перезагрузите страницу';
+          },
+          success:function (res) {
+            //Тут нужно обработать список смет цфо
+
+          }
+        });
         $.ajax({
           /*список дополнительных расходов*/
           url:'api/article',
@@ -195,36 +177,6 @@ var body_con = new Vue({
           },
           success:function (res) {
             //Тут нужно обработать список статей расходов
-
-          }
-        });
-
-        $.ajax({
-          /*список дополнительных расходов*/
-          url:'api/additional_articles',
-          type:'GET',
-          timeout: 30000,
-          error: function (data) {
-            body_con.error_additional = true;
-            body_con.message_additional = 'Пожалуйста перезагрузите страницу';
-          },
-          success:function (res) {
-            //Тут нужно обработать список дополнительных расходов
-
-          }
-        });
-
-        $.ajax({
-          /*список всех заявок*/
-          url:'api/request_list',
-          type:'GET',
-          timeout: 30000,
-          error: function (data) {
-            body_con.error_request = true;
-            body_con.message_request = 'Пожалучйста перезагрузите страницу';
-          },
-          success:function (res) {
-            //Тут нужно обработать список дополнительных расходов
 
           }
         });
@@ -255,29 +207,22 @@ var body_con = new Vue({
       }
     },
 
-    //Показать секцию таблица, заявки или допюрасходы
+    //Показать секцию таблица или сметы цфо
     show_section: function (section) {
       if (section == 1) {
         this.table = true;
-        this.request = false;
-        this.costs = false;
+        this.estimate = false;
       }
       else if (section == 2) {
         this.table = false;
-        this.request = true;
-        this.costs = false;
-      }
-      else if (section == 3) {
-        this.table = false;
-        this.request = false;
-        this.costs = true;
+        this.estimate = true;
       }
     },
 
     //Добавить или удалить данные заявки из сметы
-    check_request: function (id) {
+    check_estimate: function (id) {
       $.ajax({
-        url:'api/request?id=' + id,
+        url:'api/estimate?id=' + id,
         type:'GET',
         timeout: 30000,
         error: function (data) {
@@ -286,9 +231,9 @@ var body_con = new Vue({
         success:function (res) {
           //Тут нужно получить данные заявки и обработать
           var flag = false;
-          for (var i = 0; i < body_con.requests.length; i++) {
-            if (body_con.requests[i].id == id) {
-              flag = body_con.requests[i].ischeck;
+          for (var i = 0; i < body_con.estimates.length; i++) {
+            if (body_con.estimates[i].id == id) {
+              flag = body_con.estimates[i].ischeck;
               break;
             }
           }
@@ -343,27 +288,25 @@ var save_application = new Vue({
   },
   methods: {
     save: function () {
-      var requests = [];
+      var estimates = [];
 
-      for (var i = 0; i < body_con.requests.length; i++) {
-        if (body_con.requests[i].ischeck) {
-          requests.push(body_con.requests[i].id);
+      for (var i = 0; i < body_con.estimates.length; i++) {
+        if (body_con.estimates[i].ischeck) {
+          estimates.push(body_con.estimates[i].id);
         }
       }
 
       $.ajax({
-        url:'api/estimate',
+        url:'api/estimate_company',
         type:'PUT',
         data: {
           'name': body_con.name_estimate,
           'year': body_con.year,
-          'cfo': body_con.cfo,
           'name_maker': body_con.name_maker,
           'creation_date': body_con.creation_date,
           'name_changer': body_con.name_changer,
           'change_date': body_con.change_date,
-          'additional_articles': body_con.additional_articles,
-          'requests': requests},
+          'estimates': estimates},
         timeout: 30000,
         error: function (data) {
           save_application.message_success = '';
@@ -390,12 +333,11 @@ var send_application = new Vue({
   methods: {
     send: function () {
       $.ajax({
-        url:'api/estimate_send',
+        url:'api/estimate_company_send',
         type:'PUT',
         data: {
           'name': body_con.name_estimate,
           'year': body_con.year,
-          'cfo': body_con.cfo,
           'name_maker': body_con.name_maker,
           'creation_date': body_con.creation_date,
           'name_changer': body_con.name_changer,
@@ -428,12 +370,11 @@ var del_application = new Vue({
   methods: {
     deleted: function () {
       $.ajax({
-        url:'api/estimate',
+        url:'api/estimate_company',
         type:'DELETE',
         data: {
           'name': body_con.name_estimate,
           'year': body_con.year,
-          'cfo': body_con.cfo,
           'name_maker': body_con.name_maker,
           'creation_date': body_con.creation_date,
           'name_changer': body_con.name_changer,
