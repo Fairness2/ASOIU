@@ -21,10 +21,10 @@
       <div class="navbar-fixed">
         <nav class="nav-extended blue darken-4">
           <div class="nav-wrapper">
-            <a href="#" class="brand-logo right hide-on-med-and-down">ООО "WoodPC"</a>
-            <a href="#" data-activates="slide-out" class="button-collapse waves-effect waves-light"><i class="material-icons">menu</i></a>
+            <a href="/" class="brand-logo right hide-on-med-and-down">ООО "WoodPC"</a>
+            <a data-activates="slide-out" class="button-collapse waves-effect waves-light"><i class="material-icons">menu</i></a>
             <ul class="left">
-              <li><a href="#" data-activates="slide-out" class="open-side-nav hide-on-med-and-down"><i class="material-icons left">menu</i>Меню</a></li>
+              <li><a data-activates="slide-out" class="open-side-nav hide-on-med-and-down"><i class="material-icons left">menu</i>Меню</a></li>
             </ul>
           </div>
         </nav>
@@ -62,37 +62,21 @@
                 </blockquote>
             </div>
             <div class="section col s12">
-              <a href="#send_application" class="waves-effect waves-light btn blue darken-4" v-if="tobe">Сохранить</a>
+              <a class="waves-effect waves-light btn blue darken-4" v-if="tobe" v-on:click="save">Сохранить</a>
             </div>
             <div class="card col s12 black-text">
-              <form>
-                <p v-for="item in articles">
-                  <input name="articles" type="radio" v-bind:id="item.id" v-on:click="show(item.id)"/>
-                  <label v-bind:for="item.id">{{item.name}}</label>
-                </p>
-              </form>
-
+              <p class="red-text" v-if="error_art">{{message_art}}</p>
+              <p v-for="item in articles">
+                <input name="articles" type="radio" v-bind:id="item.id" v-on:click="show(item.id)"/>
+                <label v-bind:for="item.id">{{item.name}}</label>
+              </p>
             </div>
 
 
             <!--Таблицы с товарыми позициями-->
             <div class="col s12">
 
-              <div class="col s12 centre-preload" v-if="load_table">
-                <div class="preloader-wrapper big active">
-                  <div class="spinner-layer spinner-blue-only">
-                    <div class="circle-clipper left">
-                      <div class="circle"></div>
-                    </div><div class="gap-patch">
-                      <div class="circle"></div>
-                    </div><div class="circle-clipper right">
-                      <div class="circle"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div v-for="article in articles" v-if="article.table_show">
+              <div v-for="article in articles" v-show="article.table_show">
                 <table class="striped table-tab">
                   <thead>
                     <tr>
@@ -114,18 +98,18 @@
                   <tbody>
                     <tr v-for="item in article.items">
                       <td><span>{{item.name}}</span></td>
-                      <td><input type="number" min="1" max="999" class="validate" v-on:change="values(item.january, article.id, item.id, 'january')" v-bind:value="item.january"></td>
-                      <td><input type="number" min="1" max="999" class="validate" v-on:change="values(item.february, article.id, item.id, 'february')" v-bind:value="item.february"></td>
-                      <td><input type="number" min="1" max="999" class="validate" v-on:change="values(item.march, article.id, item.id, 'march')" v-bind:value="item.march"></td>
-                      <td><input type="number" min="1" max="999" class="validate" v-on:change="values(item.april, article.id, item.id, 'april')" v-bind:value="item.april"></td>
-                      <td><input type="number" min="1" max="999" class="validate" v-on:change="values(item.may, article.id, item.id, 'may')" v-bind:value="item.may"></td>
-                      <td><input type="number" min="1" max="999" class="validate" v-on:change="values(item.june, article.id, item.id, 'june')" v-bind:value="item.june"></td>
-                      <td><input type="number" min="1" max="999" class="validate" v-on:change="values(item.july, article.id, item.id, 'july')" v-bind:value="item.july"></td>
-                      <td><input type="number" min="1" max="999" class="validate" v-on:change="values(item.august, article.id, item.id, 'august')" v-bind:value="item.august"></td>
-                      <td><input type="number" min="1" max="999" class="validate" v-on:change="values(item.september, article.id, item.id, 'september')" v-bind:value="item.september"></td>
-                      <td><input type="number" min="1" max="999" class="validate" v-on:change="values(item.october, article.id, item.id, 'october')" v-bind:value="item.october"></td>
-                      <td><input type="number" min="1" max="999" class="validate" v-on:change="values(item.november, article.id, item.id, 'november')" v-bind:value="item.november"></td>
-                      <td><input type="number" min="1" max="999" class="validate" v-on:changes="values(item.december, article.id, item.id, 'december')" v-bind:value="item.december"></td>
+                      <td><input type="number" min="1" max="999" class="validate" v-model:value="item.january"></td>
+                      <td><input type="number" min="1" max="999" class="validate" v-model:value="item.february"></td>
+                      <td><input type="number" min="1" max="999" class="validate" v-model:value="item.march"></td>
+                      <td><input type="number" min="1" max="999" class="validate" v-model:value="item.april"></td>
+                      <td><input type="number" min="1" max="999" class="validate" v-model:value="item.may"></td>
+                      <td><input type="number" min="1" max="999" class="validate" v-model:value="item.june"></td>
+                      <td><input type="number" min="1" max="999" class="validate" v-model:value="item.july"></td>
+                      <td><input type="number" min="1" max="999" class="validate" v-model:value="item.august"></td>
+                      <td><input type="number" min="1" max="999" class="validate" v-model:value="item.september"></td>
+                      <td><input type="number" min="1" max="999" class="validate" v-model:value="item.october"></td>
+                      <td><input type="number" min="1" max="999" class="validate" v-model:value="item.november"></td>
+                      <td><input type="number" min="1" max="999" class="validate" v-model:value="item.december"></td>
                     </tr>
                   </tbody>
                 </table>
@@ -145,14 +129,18 @@
           </div>
           <div class="row">
             <div class="col s12 m12 l8 offset-l2">
-              <p>Название: Такое-то</p>
-              <p>Год: 2k17</p>
+              <p class="red-text">Внимание! После сохранения редактировать заявку нельзя</p>
+
+              <p>Название: {{name}}</p>
+              <p>Год: {{year}}</p>
+              <p class="center-align green-text">{{message_success}}</p>
+              <p class="center-align red-text">{{message_error}}</p>
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <a href="#" class="modal-action modal-close waves-effect waves-red btn-flat">Отмена</a>
-          <a href="#" class="modal-action waves-effect waves-green btn-flat">Отправить</a>
+          <a class="modal-action modal-close waves-effect waves-red btn-flat">Отмена</a>
+          <a class="modal-action waves-effect waves-green btn-flat" v-on:click="save">Отправить</a>
         </div>
       </div>
 

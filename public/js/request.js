@@ -27,20 +27,19 @@ var side_nav = new Vue({
 var body_con = new Vue({
   el:'#body_con',
   data:{
-    isload: true,
-    loadtrue: false,
-    loaderror: false,
-    tobe: true,
-    load_table: false,
-    table_show: false,
-    message_error: 'Вот такие пироги',
-    name_request: '',
-    year: '',
-    department: '',
-    name_maker: '',
-    articles: [
+    isload: true,//если страница загружается
+    loadtrue: false,//усли страница загрузилось удачно
+    loaderror: false,//если страница загрузилась не удачно
+    tobe: true,//показать кнопки
+    error_art: false, //Сообщение о ошибке статей
+    message_error: '', //Сообщение при ошибке загрузки
+    name_request: '', //название заявки
+    year: '', //год заявки
+    department: '', //отдел
+    name_maker: '', //создатель
+    articles: [ //статьи расходов
       {id: '10', name:'Мебель', table_show: false, items:[
-          {name: 'Биван', id: '66',
+          {name: 'Биван', id: '66', //товарные позиции
           january: '2',
           february: '2',
           march: '2',
@@ -88,6 +87,7 @@ var body_con = new Vue({
   },
 
   methods:{
+    //загрузка страницы
     time_to_load: function () {
       this.isload = true;
       this.loadtrue = false;
@@ -97,29 +97,16 @@ var body_con = new Vue({
       this.tobe = false;
       if (getval['id']) {
         $.ajax({
+          //загрузка уже существующей заявки
           url:'api/request?id=' + getval['id'],
           type:'GET',
-          //data: {'year': year},
-          /*dataType: "json",
-          jsonp: false,*/
           timeout: 30000,
           error: function (data) {
             body_con.isload = false;
             body_con.loadtrue = false;
             body_con.loaderror = true;
             body_con.message_error = 'Ошибка';
-            //JSON.parse(data)
           },
-          /*statusCode:{
-            400: function () {
-              loginin.isload = false;
-              loginin.message = 'Вход уже выполнен';
-            },
-            500: function functionName() {
-              loginin.isload = false;
-              loginin.message = 'Ошибка входа';
-            }
-          },*/
           success:function (res) {
             //Тут нужно получить данные заявки и обработать
             body_con.isload = false;
@@ -131,10 +118,25 @@ var body_con = new Vue({
       else if (getval['name'] && regexp.test(getval['name'])) {
 
         var date = new Date();
-        this.year = date.getFullYear() + 1;
+        this.year = date.getUTCFullYear() + 1;
         this.name_request = getval['name'];
         this.name_maker = side_nav.name;
         this.department = side_nav.department;
+
+        $.ajax({
+          /*список всех статей и их товарный позиций*/
+          url:'api/articles',
+          type:'GET',
+          timeout: 30000,
+          error: function (data) {
+            body_con.error_art = true;
+            body_con.message_art = 'Пожалуйста перезагрузите страницу';
+          },
+          success:function (res) {
+            //Тут нужно обработать список дополнительных расходов
+
+          }
+        });
 
         this.isload = false;
         this.loadtrue = true;
@@ -145,10 +147,11 @@ var body_con = new Vue({
         this.isload = false;
         this.loadtrue = false;
         this.loaderror = true;
-        this.message_error = 'Ошибка!' + getval['name'];
+        this.message_error = 'Ошибка!';
       }
     },
 
+    //Показать таблицу с товарными позициями по статье
     show: function (id) {
       for (var i = 0; i < this.articles.length; i++)
       {
@@ -160,8 +163,44 @@ var body_con = new Vue({
       }
     },
 
-    values: function (value, aid, id, month) {
-      alert(value + " " + aid + " " + id + " " + month);
+    save: function () {
+      send_application.name = this.name_estimate;
+      send_application.year = this.year;
+      $('#send_application').modal('open');
+    }
+
+  }
+});
+
+//Окно созранения сметы
+var send_application = new Vue({
+  el: '#send_application',
+  data:{
+    name: '',
+    year: '',
+    message_success: '',
+    message_error: ''
+  },
+  methods: {
+    save: function () {
+      $.ajax({
+        url:'api/request',
+        type:'PUT',
+        data: {
+          'name': body_con.name_request,
+          'year': body_con.year,
+          'articles': body_con.articles
+        },
+        timeout: 30000,
+        error: function (data) {
+          send_application.message_success = '';
+          send_application.message_error = 'Сохранение не удалось';
+        },
+        success:function (res) {
+          send_application.message_success = 'Сохранение прошло успешно';
+          send_application.message_error = '';
+        }
+      });
     }
   }
 });

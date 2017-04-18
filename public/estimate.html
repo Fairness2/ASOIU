@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+  <html>
+    <head>
+      <meta charset="utf-8">
+      <title>WoodPC</title>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+      <!--Import Google Icon Font-->
+      <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+      <!--Import materialize.css-->
+      <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+      <!--Let browser know website is optimized for mobile-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+      <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+      <script type="text/javascript" src="js/materialize.min.js"></script>
+      <link type="text/css" rel="stylesheet" href="css/style.css"  media="screen,projection"/>
+      <script src="js/vue.js"></script>
+    </head>
+
+    <body>
+      <!--Верхнее меню-->
+      <div class="navbar-fixed">
+        <nav class="nav-extended blue darken-4">
+          <div class="nav-wrapper">
+            <a href="#" class="brand-logo right hide-on-med-and-down">ООО "WoodPC"</a>
+            <a href="#" data-activates="slide-out" class="button-collapse waves-effect waves-light"><i class="material-icons">menu</i></a>
+            <ul class="left">
+              <li><a href="#" data-activates="slide-out" class="open-side-nav hide-on-med-and-down"><i class="material-icons left">menu</i>Меню</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+
+      <div class="container" id="body_con">
+
+        <div class="col s12 centre-preload" v-if="isload">
+          <div class="preloader-wrapper big active">
+            <div class="spinner-layer spinner-blue-only">
+              <div class="circle-clipper left">
+                <div class="circle"></div>
+              </div><div class="gap-patch">
+                <div class="circle"></div>
+              </div><div class="circle-clipper right">
+                <div class="circle"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row" v-if="loaderror">
+            <h4 class="center-align col s12 red-text">{{message_error}}</h4>
+        </div>
+
+        <div v-if="loadtrue">
+
+          <div class="row">
+            <h3 class="left col s12">Смета ЦФО</h3>
+            <div class="section col s12" v-if="tobe">
+              <a class="waves-effect waves-light btn blue darken-4" v-on:click="save_app">Сохранить</a>
+              <a class="waves-effect waves-light btn blue darken-4" v-on:click="send_app">Отправить в ПЭД</a>
+              <a class="waves-effect waves-light btn red darken-4" v-on:click="del_app">Удалить</a>
+            </div>
+            <div class="card col s12">
+                <blockquote>
+                  <p>Смета: {{name_estimate}}</p>
+                  <p>Год: {{year}}</p>
+                  <p>ЦФО: {{cfo}}</p>
+                  <p>Создал(а): {{name_maker}}</p>
+                  <p>Дата создания: {{creation_date}}</p>
+                  <p>Изменил(а): {{name_changer}}</p>
+                  <p>Дата изменения: {{change_date}}</p>
+                </blockquote>
+            </div>
+
+            <div class="card col s12 blue-text text-darken-4">
+              <span class="col s4 center-align">
+                <input name="chois" type="radio" id="full_table" v-on:click="show_section(1)"/>
+                <label for="full_table">Совдная таблица</label>
+              </span>
+              <span class="col s4 center-align">
+                <input name="chois" type="radio" id="request" v-on:click="show_section(2)"/>
+                <label for="request">Заявки</label>
+              </span>
+              <span class="col s4 center-align">
+                <input name="chois" type="radio" id="costs" v-on:click="show_section(3)"/>
+                <label for="costs">Добавочные расходы</label>
+              </span>
+             </div>
+
+             <div class="col s12" v-if="table">
+               <div class="card col s12 black-text">
+                 <p v-for="item in articles">
+                   <input name="articles" type="radio" v-bind:id="item.id" v-on:click="show(item.id)"/>
+                   <label v-bind:for="item.id">{{item.name}}</label>
+                 </p>
+               </div>
+
+               <!--список с товарыми позициями-->
+               <div class="col s12">
+
+                 <div v-for="article in articles" v-show="article.table_show">
+                   <table class="striped table-tab">
+                     <thead>
+                       <tr>
+                         <th class="col s2"><span>Расходы по статье</span></th>
+                         <th><span>Январь</span></th>
+                         <th><span>Февраль</span></th>
+                         <th><span>Март</span></th>
+                         <th><span>Апрель</span></th>
+                         <th><span>Май</span></th>
+                         <th><span>Июнь</span></th>
+                         <th><span>Июль</span></th>
+                         <th><span>Август</span></th>
+                         <th><span>Сентябрь</span></th>
+                         <th><span>Октябрь</span></th>
+                         <th><span>Нябрь</span></th>
+                         <th><span>Декабрь</span></th>
+                       </tr>
+                     </thead>
+                     <tbody>
+                       <tr v-for="item in article.items">
+                         <td>{{item.name}}</td>
+                         <td>{{item.january}}</td>
+                         <td>{{item.february}}</td>
+                         <td>{{item.march}}</td>
+                         <td>{{item.april}}</td>
+                         <td>{{item.may}}</td>
+                         <td>{{item.june}}</td>
+                         <td>{{item.july}}</td>
+                         <td>{{item.august}}</td>
+                         <td>{{item.september}}</td>
+                         <td>{{item.october}}</td>
+                         <td>{{item.november}}</td>
+                         <td>{{item.december}}</td>
+                       </tr>
+                     </tbody>
+                   </table>
+                 </div>
+               </div>
+              </div>
+
+
+             <div class="col s12" v-show="request">
+               <table class="striped table-tab">
+                 <thead>
+                   <tr>
+                     <th class="col s1"></th>
+                     <th class="col s6 center-align"><span>Название</span></th>
+                     <th class="col s5 center-align"><span>Подразделение</span></th>
+                   </tr>
+                 </thead>
+                 <tbody>
+                   <tr>
+                     <td class="col s12 red-text center-align" v-if="error_request"><span>{{message_request}}</span></td>
+                   </tr>
+                   <tr v-for="item in requests">
+                     <td class="col s1">
+                       <input type="checkbox" v-bind:id="item.id" v-model:checked="item.ischeck" v-on:click="check_request(item.id)"/>
+                       <label v-bind:for="item.id"></label>
+                     </td>
+                     <td class="col s6 center-align">
+                       <a v-bind:href="'/request?id=' + item.id" class="waves-effect">{{item.name}}</a>
+                     </td>
+                     <td class="col s5 center-align">
+                       <span class="">{{item.department}}</span>
+                     </td>
+                   </tr>
+                 </tbody>
+               </table>
+             </div>
+
+             <div class="col s12" v-show="costs">
+               <table class="striped table-tab">
+                 <thead>
+                   <tr>
+                     <th class="col s2"><span>Дополнительные расходы</span></th>
+                     <th><span>Январь</span></th>
+                     <th><span>Февраль</span></th>
+                     <th><span>Март</span></th>
+                     <th><span>Апрель</span></th>
+                     <th><span>Май</span></th>
+                     <th><span>Июнь</span></th>
+                     <th><span>Июль</span></th>
+                     <th><span>Август</span></th>
+                     <th><span>Сентябрь</span></th>
+                     <th><span>Октябрь</span></th>
+                     <th><span>Нябрь</span></th>
+                     <th><span>Декабрь</span></th>
+                   </tr>
+                 </thead>
+                 <tbody>
+                   <tr>
+                     <td class="col s12 red-text center-align" v-if="error_additional"><span>{{message_additional}}</span></td>
+                   </tr>
+                   <tr v-for="item in additional_articles">
+                     <td><span>{{item.name}}</span></td>
+                     <td><input type="number" class="validate" v-model:value="item.january"></td>
+                     <td><input type="number" class="validate" v-model:value="item.february"></td>
+                     <td><input type="number" class="validate" v-model:value="item.march"></td>
+                     <td><input type="number" class="validate" v-model:value="item.april"></td>
+                     <td><input type="number" class="validate" v-model:value="item.may"></td>
+                     <td><input type="number" class="validate" v-model:value="item.june"></td>
+                     <td><input type="number" class="validate" v-model:value="item.july"></td>
+                     <td><input type="number" class="validate" v-model:value="item.august"></td>
+                     <td><input type="number" class="validate" v-model:value="item.september"></td>
+                     <td><input type="number" class="validate" v-model:value="item.october"></td>
+                     <td><input type="number" class="validate" v-model:value="item.november"></td>
+                     <td><input type="number" class="validate" v-model:value="item.december"></td>
+                   </tr>
+                 </tbody>
+               </table>
+             </div>
+
+          </div>
+
+        </div>
+
+
+      </div>
+
+      <!--Окно сохранить смету-->
+      <div id="save_application" class="modal">
+        <div class="modal-content">
+          <div class="row">
+            <h5 class="cel s12 center-align ">Сохранить данную смету?</h5>
+          </div>
+          <div class="row">
+            <div class="col s12 m12 l8 offset-l2">
+              <p>Название: {{name}}</p>
+              <p>Год: {{year}}</p>
+              <p class="center-align green-text">{{message_success}}</p>
+              <p class="center-align red-text">{{message_error}}</p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="modal-action modal-close waves-effect waves-red btn-flat">Отмена</a>
+          <a href="#" class="modal-action waves-effect waves-green btn-flat" v-on:click="save">Сохранить</a>
+        </div>
+      </div>
+
+      <!--Окно отправить смету-->
+      <div id="send_application" class="modal">
+        <div class="modal-content">
+          <div class="row">
+            <h5 class="cel s12 center-align ">Отправить данную смету?</h5>
+          </div>
+          <div class="row">
+            <div class="col s12 m12 l8 offset-l2">
+              <p class="red-text">Внимание! Перед отправкой следует сохранить смету. После отправки редактировать смету больше нельзя</p>
+              <p>Название: {{name}}</p>
+              <p>Год: {{year}}</p>
+              <p class="center-align green-text">{{message_success}}</p>
+              <p class="center-align red-text">{{message_error}}</p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="modal-action modal-close waves-effect waves-red btn-flat">Отмена</a>
+          <a href="#" class="modal-action waves-effect waves-green btn-flat" v-on:click="send">Отправить</a>
+        </div>
+      </div>
+
+      <!--Окно удалить смету-->
+      <div id="del_application" class="modal">
+        <div class="modal-content">
+          <div class="row">
+            <h5 class="cel s12 center-align ">Удалить данную смету?</h5>
+          </div>
+          <div class="row">
+            <div class="col s12 m12 l8 offset-l2">
+              <p>Название: {{name}}</p>
+              <p>Год: {{year}}</p>
+              <p class="center-align green-text">{{message_success}}</p>
+              <p class="center-align red-text">{{message_error}}</p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="modal-action modal-close waves-effect waves-green btn-flat">Отмена</a>
+          <a href="#" class="modal-action waves-effect waves-red btn-flat" v-on:click="deleted">Удалить</a>
+        </div>
+      </div>
+
+      <!--Окно Ошибки-->
+      <div id="errors" class="modal">
+        <div class="modal-content">
+          <div class="row">
+            <h5 class="cel s12 center-align ">Ошибка</h5>
+          </div>
+          <div class="row">
+            <div class="col s12 m12 l8 offset-l2">
+              {{error_text}}
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="modal-action modal-close waves-effect waves-green btn-flat">Ок</a>
+        </div>
+      </div>
+
+
+      <!--Боковое меню -->
+      <ul id="slide-out" class="side-nav">
+        <li><div class="userView">
+          <img class="circle" src="img/user.png">
+          <span class="name">{{name}}</span>
+          <span class="email">{{department}}</span>
+        </div></li>
+        <li><div class="divider"></div></li>
+        <li><a class="subheader">Меню</a></li>
+        <li><a href="/" class="waves-effect">На главную</a></li>
+        <!--<li><a href="#" class="waves-effect">Центр финансовой ответственности</a></li>
+        <li><a href="#" class="waves-effect">ПЭД</a></li>-->
+        <li><div class="divider"></div></li>
+        <li><a href="/user/logout" class="waves-effect">Сменить пользователя</a></li>
+      </ul>
+
+
+      <script type="text/javascript" src="js/estimate.js"></script>
+      <script type="text/javascript">
+        $(document).ready(function() {
+          $('.modal').modal();
+          $('input#name_load, input#year_load, input#year_load_check').characterCounter();
+          $('select').material_select();
+          $(".button-collapse").sideNav();
+          $(".open-side-nav").sideNav();
+
+          side_nav.onredys();
+          body_con.time_to_load()
+        });
+      </script>
+    </body>
+  </html>

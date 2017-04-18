@@ -24,25 +24,11 @@ var application = new Vue({
       $.ajax({
         url:'api/request_list?previous=' + 0,
         type:'GET',
-        //data: {'year': year},
-        /*dataType: "json",
-        jsonp: false,*/
         timeout: 30000,
         error: function (data) {
           application.message = 'Ошибка';
           application.load_items_check = false;
-          //JSON.parse(data)
         },
-        /*statusCode:{
-          400: function () {
-            loginin.isload = false;
-            loginin.message = 'Вход уже выполнен';
-          },
-          500: function functionName() {
-            loginin.isload = false;
-            loginin.message = 'Ошибка входа';
-          }
-        },*/
         success:function (res) {
           //Тут нужно добавить полученные элементы в массим данных
           application.message = 'Всё типтоп';
@@ -60,25 +46,11 @@ var application = new Vue({
       $.ajax({
         url:'api/request_list?previous=' + num,
         type:'GET',
-        //data: {'year': year},
-        /*dataType: "json",
-        jsonp: false,*/
         timeout: 30000,
         error: function (data) {
           application.add_check = false;
           application.message = 'Ошибка';
-          //JSON.parse(data)
         },
-        /*statusCode:{
-          400: function () {
-            loginin.isload = false;
-            loginin.message = 'Вход уже выполнен';
-          },
-          500: function functionName() {
-            loginin.isload = false;
-            loginin.message = 'Ошибка входа';
-          }
-        },*/
         success:function (res) {
           //Тут нужно добавить полученные элементы в массим данных
           application.add_check = false;
@@ -133,25 +105,11 @@ var cfo = new Vue({
       $.ajax({
         url:'api/estimate_list?previous=' + 0,
         type:'GET',
-        //data: {'year': year},
-        /*dataType: "json",
-        jsonp: false,*/
         timeout: 30000,
         error: function (data) {
           cfo.load_items_check = false;
           cfo.message_check = 'Ошибка';
-          //JSON.parse(data)
         },
-        /*statusCode:{
-          400: function () {
-            loginin.isload = false;
-            loginin.message = 'Вход уже выполнен';
-          },
-          500: function functionName() {
-            loginin.isload = false;
-            loginin.message = 'Ошибка входа';
-          }
-        },*/
         success:function (res) {
           //Тут нужно добавить полученные элементы в массим данных
           cfo.load_items_check = false;
@@ -169,25 +127,11 @@ var cfo = new Vue({
       $.ajax({
         url:'api/estimate_list?previous=' + num,
         type:'GET',
-        //data: {'year': year},
-        /*dataType: "json",
-        jsonp: false,*/
         timeout: 30000,
         error: function (data) {
           cfo.add_check = false;
           cfo.message_check = 'Ошибка';
-          //JSON.parse(data)
         },
-        /*statusCode:{
-          400: function () {
-            loginin.isload = false;
-            loginin.message = 'Вход уже выполнен';
-          },
-          500: function functionName() {
-            loginin.isload = false;
-            loginin.message = 'Ошибка входа';
-          }
-        },*/
         success:function (res) {
           //Тут нужно добавить полученные элементы в массим данных
           cfo.add_check = false;
@@ -212,25 +156,11 @@ var cfo = new Vue({
       $.ajax({
         url:'api/estimate_list?previous=' + 0,
         type:'GET',
-        //data: {'year': year},
-        /*dataType: "json",
-        jsonp: false,*/
         timeout: 30000,
         error: function (data) {
           cfo.load_items_del = false;
           cfo.message_del = 'Ошибка';
-          //JSON.parse(data)
         },
-        /*statusCode:{
-          400: function () {
-            loginin.isload = false;
-            loginin.message = 'Вход уже выполнен';
-          },
-          500: function functionName() {
-            loginin.isload = false;
-            loginin.message = 'Ошибка входа';
-          }
-        },*/
         success:function (res) {
           //Тут нужно добавить полученные элементы в массим данных
           cfo.load_items_del = false;
@@ -248,25 +178,11 @@ var cfo = new Vue({
       $.ajax({
         url:'api/estimate_list?previous=' + num,
         type:'GET',
-        //data: {'year': year},
-        /*dataType: "json",
-        jsonp: false,*/
         timeout: 30000,
         error: function (data) {
           cfo.add_del = false;
           cfo.message_del = 'Ошибка';
-          //JSON.parse(data)
         },
-        /*statusCode:{
-          400: function () {
-            loginin.isload = false;
-            loginin.message = 'Вход уже выполнен';
-          },
-          500: function functionName() {
-            loginin.isload = false;
-            loginin.message = 'Ошибка входа';
-          }
-        },*/
         success:function (res) {
           //Тут нужно добавить полученные элементы в массим данных
           cfo.add_del = false;
@@ -322,25 +238,11 @@ var company = new Vue({
       $.ajax({
         url:'api/estimate_company_list?previous=' + 0,
         type:'GET',
-        //data: {'year': year},
-        /*dataType: "json",
-        jsonp: false,*/
         timeout: 30000,
         error: function (data) {
           company.load_items_check = false;
           company.message_check = 'Ошибка';
-          //JSON.parse(data)
         },
-        /*statusCode:{
-          400: function () {
-            loginin.isload = false;
-            loginin.message = 'Вход уже выполнен';
-          },
-          500: function functionName() {
-            loginin.isload = false;
-            loginin.message = 'Ошибка входа';
-          }
-        },*/
         success:function (res) {
           //Тут нужно добавить полученные элементы в массим данных
           company.load_items_check = false;
@@ -358,25 +260,12 @@ var company = new Vue({
       $.ajax({
         url:'api/estimate_company_list?previous=' + num,
         type:'GET',
-        //data: {'year': year},
-        /*dataType: "json",
-        jsonp: false,*/
         timeout: 30000,
         error: function (data) {
           company.add_check = false;
           company.message_check = 'Ошибка';
           //JSON.parse(data)
         },
-        /*statusCode:{
-          400: function () {
-            loginin.isload = false;
-            loginin.message = 'Вход уже выполнен';
-          },
-          500: function functionName() {
-            loginin.isload = false;
-            loginin.message = 'Ошибка входа';
-          }
-        },*/
         success:function (res) {
           //Тут нужно добавить полученные элементы в массим данных
           company.add_check = false;
@@ -401,25 +290,11 @@ var company = new Vue({
       $.ajax({
         url:'api/estimate_company_list?previous=' + 0,
         type:'GET',
-        //data: {'year': year},
-        /*dataType: "json",
-        jsonp: false,*/
         timeout: 30000,
         error: function (data) {
           company.load_items_del = false;
           company.message_del = 'Ошибка';
-          //JSON.parse(data)
         },
-        /*statusCode:{
-          400: function () {
-            loginin.isload = false;
-            loginin.message = 'Вход уже выполнен';
-          },
-          500: function functionName() {
-            loginin.isload = false;
-            loginin.message = 'Ошибка входа';
-          }
-        },*/
         success:function (res) {
           //Тут нужно добавить полученные элементы в массим данных
           company.load_items_del = false;
@@ -437,25 +312,11 @@ var company = new Vue({
       $.ajax({
         url:'api/estimate_company_list?previous=' + num,
         type:'GET',
-        //data: {'year': year},
-        /*dataType: "json",
-        jsonp: false,*/
         timeout: 30000,
         error: function (data) {
           company.add_del = false;
           company.message_del = 'Ошибка';
-          //JSON.parse(data)
         },
-        /*statusCode:{
-          400: function () {
-            loginin.isload = false;
-            loginin.message = 'Вход уже выполнен';
-          },
-          500: function functionName() {
-            loginin.isload = false;
-            loginin.message = 'Ошибка входа';
-          }
-        },*/
         success:function (res) {
           //Тут нужно добавить полученные элементы в массим данных
           company.add_del = false;
@@ -568,23 +429,11 @@ var win_del_est_cfo = new Vue ({
         beforeSend: function (data) {
           win_del_est_cfo.isload = true;
         },
-        /*dataType: "json",
-        jsonp: false,*/
         timeout: 30000,
         error: function (data) {
           win_del_est_cfo.isload = false;
           win_del_est_cfo.message = 'Ошибка';
         },
-        /*statusCode:{
-          400: function () {
-            loginin.isload = false;
-            loginin.message = 'Вход уже выполнен';
-          },
-          500: function functionName() {
-            loginin.isload = false;
-            loginin.message = 'Ошибка входа';
-          }
-        },*/
         success:function (res) {
           win_del_est_cfo.isload = false;
           win_del_est_cfo.message = 'Всё типтоп';
@@ -610,23 +459,11 @@ var win_del_est_com = new Vue ({
         beforeSend: function (data) {
           win_del_est_com.isload = true;
         },
-        /*dataType: "json",
-        jsonp: false,*/
         timeout: 30000,
         error: function (data) {
           win_del_est_com.isload = false;
           win_del_est_com.message = 'Ошибка';
         },
-        /*statusCode:{
-          400: function () {
-            loginin.isload = false;
-            loginin.message = 'Вход уже выполнен';
-          },
-          500: function functionName() {
-            loginin.isload = false;
-            loginin.message = 'Ошибка входа';
-          }
-        },*/
         success:function (res) {
           win_del_est_com.isload = false;
           win_del_est_com.message = 'Всё типтоп';

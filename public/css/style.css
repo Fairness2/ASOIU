@@ -11,3 +11,11 @@
   justify-content: center;
   height: 100vh;
 }
+.main-card {
+  display: flex;
+  border-radius: 0.2em;
+  margin-left: 1vw;
+  margin-right: 1vw;
+  margin-top: 1vh;
+  justify-content: center;
+}
