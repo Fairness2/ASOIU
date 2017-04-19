@@ -26,17 +26,6 @@ module.exports = function (sq, DataTypes) {
 						msg: 'Недопустимое название статьи'
 					}
 				}
-			},
-			price: {
-				type: DataTypes.DECIMAL(15, 2),
-				allowNull: false,
-				defaultValue: 0,
-				validate: {
-					min: {
-						args: 0,
-						msg: 'Цена не может быть отрицательной'
-					}
-				}
 			}
 		}, {
 			freezeTableName: true,
@@ -45,6 +34,12 @@ module.exports = function (sq, DataTypes) {
 				{ fields: ['parentId'] },
 				{ fields: ['frcId'] }
 			],
+			validate: {
+				notCyclic: function () {
+					if (this.id && this.id === this.parentId)
+						throw new Error('Статья не может быть родителем самой себя');
+				}
+			},
 			classMethods: {
 				associate: models => {
 					models.CostItem.belongsTo(models.CostItem, { as: 'parent', foreignKey: 'parentId' });

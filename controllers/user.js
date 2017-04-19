@@ -25,7 +25,7 @@ exports.register = (req, res) => {
 			employeeId: 'Сотрудник уже зарегистрирован как пользователь',
 			username: 'Имя пользователя занято'
 		}))
-		.catch(Sequelize.ForeignKeyConstraintError, error.handleForeignKey(req, res, {
+		.catch(Sequelize.ForeignKeyConstraintError, error.handleForeign(req, res, {
 			employeeId: 'Указанный сотрудник не найден'
 		}))
 		.catch(Sequelize.ValidationError, error.handleValidation(req, res))

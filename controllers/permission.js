@@ -1,8 +1,9 @@
 ﻿'use strict';
 
-const models = require(__rootdir + '/models');
-const error = require(__libdir + '/error.js');
 const _ = require('lodash');
+const page = require(__libdir + '/page.js');
+const error = require(__libdir + '/error.js');
+const models = require(__rootdir + '/models');
 
 exports.create = function (req, res) {
 	models.Permission.create({
@@ -50,34 +51,16 @@ exports.update = function (req, res) {
 			name: 'Разрешение уже существует'
 		})
 		.catch(error.handleInternal(req, res));
-
-	// обновить подразделения?
 };
 
 exports.list = function (req, res) {
-	let filter = {};
-	let order = [];
-	let invertResult = false;
-	let field = 'name';
+	let { options, invert } = page.get('name', req.query);
 
-	if (req.query.after) {
-		filter[field] = { $gt: req.query.after };
-		order.push((field, 'asc'));
-	} else if (req.query.before) {
-		// В запросе в базу делаем обратную сортировку,
-		// клиенту отдаём в возрастающем порядке
-		filter[field] = { $lt: req.query.before };
-		order.push((field, 'desc'));
-		invertResult = true;
-	}
-
-	models.Permission.findAll({
-		where: filter,
-		order: order,
-		limit: req.query.limit || 10
-	}).then(perms => {
+	models.Permission.findAll(
+		options
+	).then(perms => {
 		let arr = perms.map(x => x.toJSON());
-		if (invertResult) arr.reverse();
+		if (invert) arr.reverse();
 
 		res.status(200).json({
 			data: arr

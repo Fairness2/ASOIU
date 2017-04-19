@@ -31,6 +31,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="app.js" />
+    <Compile Include="controllers\current-request.js" />
+    <Compile Include="controllers\cost-item.js" />
     <Compile Include="controllers\department.js" />
     <Compile Include="controllers\permission.js" />
     <Compile Include="controllers\role.js" />
@@ -38,6 +40,7 @@
     <Compile Include="controllers\user.js" />
     <Compile Include="lib\auth.js" />
     <Compile Include="lib\error.js" />
+    <Compile Include="lib\page.js" />
     <Compile Include="models\department.js" />
     <Compile Include="models\period-type.js" />
     <Compile Include="models\period.js" />
