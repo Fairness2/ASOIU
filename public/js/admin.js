@@ -28,6 +28,7 @@ var menu_section = new Vue ({
         article_section.show = false;
         article.show = false;
         products_section.show = false;
+        departments_section.show = false;
       }else if (secton == 2) {
         users_section.show = false;
         user.show = false;
@@ -37,6 +38,7 @@ var menu_section = new Vue ({
         article_section.show = true;
         article.show = false;
         products_section.show = false;
+        departments_section.show = false;
       }else if (secton == 3) {
         users_section.show = false;
         user.show = false;
@@ -45,6 +47,8 @@ var menu_section = new Vue ({
         article_section.show = false;
         article.show = false;
         products_section.show = false;
+        departments_section.show = true;
+        departments_section.onloading();
       }else if (secton == 4) {
         users_section.show = false;
         user.show = false;
@@ -53,6 +57,7 @@ var menu_section = new Vue ({
         article_section.show = false;
         article.show = false;
         products_section.show = false;
+        departments_section.show = false;
       }
     }
   }
@@ -1093,17 +1098,181 @@ var product_del = new Vue({
           data: {'id': product_del.id},
           timeout: 30000,
           error: function (data) {
-            product_del.message_failure = 'Добавить товар не удалось';
+            product_del.message_failure = 'Удалить товар не удалось';
             product_del.message_success = '';
           },
           success:function (res) {
             product_del.message_failure = '';
-            product_del.message_success = 'Товар успешно добавлен';
+            product_del.message_success = 'Товар успешно удалён';
           }
         });
       }else {
-        product_del.message_failure = 'Заполните поля правильно';
+        product_del.message_failure = 'Опс';
         product_del.message_success = '';
+      }
+    }
+  }
+});
+
+var departments_section = new Vue({
+  el: '#departments_section',
+  data: {
+    show: false,
+    isload: true,
+    loaderror: false,
+    loadtrue: false,
+    message_error: '',
+    departments: [
+      {id:'10', fullname:'Дидидидави', shortname:'Д'},
+      {id:'101', fullname:'Авиваи', shortname:'А'},
+      {id:'102', fullname:'Блед', shortname:'Б'},
+    ]
+  },
+  methods: {
+    department_check: function (id, fullname, shortname) {
+      department.new_product = false;
+      department.id = id;
+      department.fullname = fullname;
+      department.shortname = shortname;
+      $('#department').modal('open');
+      $('#department_fullname').trigger('autoresize');
+    },
+
+    new_department: function () {
+      department.new_product = true;
+      department.id = '';
+      department.fullname = '';
+      department.shortname = '';
+      $('#department').modal('open');
+    },
+
+    del_department: function (id, fullname) {
+      department_del.id = id;
+      department_del.fullname = fullname;
+      $('#department_del').modal('open');
+    },
+
+    onloading: function () {
+      this.isload = true;
+      this.loaderror = false;
+      this.loadtrue = false;
+      $.ajax({
+        /*список отделов*/
+        url:'api/department',
+        type:'GET',
+        timeout: 30000,
+        error: function (data) {
+          departments_section.isload = false;
+          departments_section.loaderror = true;
+          departments_section.loadtrue = true; //не забыть поменять
+          departments_section.message_error = 'Пожалуйста перезагрузите страницу';
+        },
+        success:function (res) {
+          //Тут нужно обработать отделы
+          departments_section.isload = false;
+          departments_section.loaderror = false;
+          departments_section.loadtrue = true;
+
+        }
+      });
+    }
+  }
+});
+
+var department = new Vue({
+  el: '#department',
+  data: {
+    new_product: true,
+    fullname: '',
+    shortname: '',
+    id: '',
+    message_failure: '',
+    message_success: ''
+  },
+  methods: {
+    create_department: function () {
+      var regexpfull = /^[а-яё/w/d\- ]{1,200}$/i;
+      var regexpshort = /^[а-яё/w/d\- ]{1,50}$/i;
+
+      if (regexpfull.test(this.fullname) && regexpshort.test(this.shortname)) {
+        $.ajax({
+          /*Добавление отдела*/
+          url:'api/department/create',
+          type:'POST',
+          data: {'fullname': department.fullname, 'shortname': department.shortname},
+          timeout: 30000,
+          error: function (data) {
+            product.message_failure = 'Добавить отдел не удалось';
+            product.message_success = '';
+          },
+          success:function (res) {
+            product.message_failure = '';
+            product.message_success = 'Отдел успешно добавлен';
+          }
+        });
+      }else {
+        product.message_failure = 'Заполните поля правильно';
+        product.message_success = '';
+      }
+    },
+
+    update_department: function () {
+      var regexpfull = /^[а-яё/w/d\- ]{1,200}$/i;
+      var regexpshort = /^[а-яё/w/d\- ]{1,50}$/i;
+
+      if (regexpfull.test(this.fullname) && regexpshort.test(this.shortname) && this.id != '') {
+        $.ajax({
+          /*Изменение отдела*/
+          url:'api/department/update',
+          type:'POST',
+          data: {'fullname': department.fullname, 'shortname': department.shortname, 'id': product.id},
+          timeout: 30000,
+          error: function (data) {
+            product.message_failure = 'Изменить отдел не удалось';
+            product.message_success = '';
+          },
+          success:function (res) {
+            product.message_failure = '';
+            product.message_success = 'Отдел успешно изменён';
+          }
+        });
+      }else {
+        product.message_failure = 'Заполните поля правильно';
+        product.message_success = '';
+      }
+    }
+  }
+});
+
+var department_del = new Vue({
+  el: '#department_del',
+  data: {
+    id: '',
+    fullname: '',
+    message_failure: '',
+    message_success: ''
+  },
+  methods: {
+    del_department: function () {
+      if (this.id != '') {
+        $.ajax({
+          /*Удаление отдела*/
+          url:'api/department',
+          type:'DELETE',
+          data: {'id': department_del.id},
+          timeout: 30000,
+          error: function (data) {
+            department_del.message_failure = 'Удалить отдел не удалось';
+            department_del.message_success = '';
+          },
+          success:function (res) {
+            department_del.message_failure = '';
+            department_del.message_success = 'Отдел успешно удалён';
+          }
+        });
+      }else {
+        department_del.message_failure = 'Опс';
+        department_del.message_success = '';
       }
     }
   }
