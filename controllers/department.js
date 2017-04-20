@@ -48,7 +48,7 @@ exports.list = function (req, res) {
 
 	if (req.query.with === 'employee')
 		opts.options.include = assoc.deduceInclude(models.Department, 'employee');
-		
+
 	models.Department.findAll(
 		opts.options
 	).then(deps => {

@@ -100,6 +100,7 @@
               </div>
               <div class="col s6">
                 <div class="card col s12 black-text">
+                  <span class="col s12 center-align">Отделы</span>
                   <p class="red-text" v-if="error_dep">{{message_dep}}</p>
                   <p v-for="item in departments">
                     <input name="departments" type="radio" v-bind:id="item.id" v-on:click="show_department(item.id)"/>
@@ -171,7 +172,7 @@
             <table class="bordered highlight centered" v-if="loadtrue">
               <thead>
                 <tr>
-                  <th>Имя пользователя</th>
+                  <th>ФИО</th>
                   <th>Логин</th>
                   <th>Департамент</th>
                 </tr>
@@ -211,32 +212,154 @@
 
         </div>
 
-      </div>
 
+        <div id="employee" v-if="show" class="row">
 
-
-      <!--Окно отправить заявку-->
-      <div id="user_window" class="modal">
-        <div class="modal-content">
-          <div class="row">
-            <h5 class="cel s12 center-align ">Отправить данную заявку?</h5>
+          <div class="col s12 red lighten-5 z-depth-1 header_section">
+            <span class="col s12 right-align"><h5>Сотрудник</h5></span>
           </div>
-          <div class="row">
-            <div class="col s12 m12 l8 offset-l2">
-              <p class="red-text">Внимание! После сохранения редактировать заявку нельзя</p>
 
-              <p>Название: {{name}}</p>
-              <p>Год: {{year}}</p>
-              <p class="center-align green-text">{{message_success}}</p>
-              <p class="center-align red-text">{{message_error}}</p>
+          <div class="col s12 centre-preload" v-if="isload">
+            <div class="preloader-wrapper active">
+              <div class="spinner-layer spinner-blue-only">
+                <div class="circle-clipper left">
+                  <div class="circle"></div>
+                </div><div class="gap-patch">
+                  <div class="circle"></div>
+                </div><div class="circle-clipper right">
+                  <div class="circle"></div>
+                </div>
+              </div>
             </div>
           </div>
+
+          <div class="row" v-if="loaderror">
+              <p class="center-align col s12 red-text">{{message_error}}</p>
+          </div>
+
+          <div v-if="loadtrue">
+            <div class="z-depth-1 col s12">
+              <div class="col s6">
+
+                <div class="input-field col s12">
+                  <input id="FIO" type="text" class="validate" pattern="[А-Яа-я-\s]{2,50}" v-model:value="FIO">
+                  <label for="FIO">ФИО</label>
+                </div>
+                <div class="input-field col s12">
+                  <input id="birthday" type="date" class="datepicker" v-model:value="birthday">
+                  <label for="birthday">Дата рождения</label>
+                </div>
+                <span class="col s12">Пол</span>
+                <p class="input-field col s6">
+                  <input id="sex1" type="radio" name="sex" checked>
+                  <label for="sex1">Мужской</label>
+                </p>
+                <p class="input-field col s6">
+                  <input id="sex2" type="radio" name="sex">
+                  <label for="sex2">Женский</label>
+                </p>
+
+              </div>
+              <div class="col s6">
+
+                <div class="card col s12 black-text">
+                  <span class="col s12 center-align">Отделы</span>
+                  <p class="red-text" v-if="error_dep">{{message_dep}}</p>
+                  <p v-for="item in departments">
+                    <input name="departments" type="radio" v-bind:id="item.id" v-model:checked="item.check"/>
+                    <label v-bind:for="item.id">{{item.name}}</label>
+                  </p>
+                </div>
+
+              </div>
+              <span class="col s12 center-align red-text">{{message_failure}}</span>
+              <span class="col s12 center-align green-text">{{message_success}}</span>
+              <div class="col s12">
+                <div v-if="new_employee">
+                  <a class="waves-effect waves-light btn" v-on:click="create_employee"><i class="material-icons left">add</i>Создать</a>
+                </div>
+                <div v-if="!new_employee">
+                  <a class="waves-effect waves-light btn light-blue darken-3" v-on:click="change_employee"><i class="material-icons left">mode_edit</i>Изменить</a>
+                  <a class="waves-effect waves-light btn red accent-3" v-on:click="del_employee"><i class="material-icons">delete</i>Удалить</a>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
         </div>
-        <div class="modal-footer">
-          <a class="modal-action modal-close waves-effect waves-red btn-flat">Отмена</a>
-          <a class="modal-action waves-effect waves-green btn-flat" v-on:click="save">Отправить</a>
+
+
+        <div id="employees_section" v-if="show" class="row">
+
+          <div class="col s12 red lighten-5 z-depth-1 header_section">
+            <span class="col s1 center-align waves-effect head_icon" v-on:click="new_employee"><i class="material-icons small">add</i></span>
+            <span class="col s1 center-align waves-effect"><i class="material-icons small">search</i></span>
+            <span class="col s10 right-align"><h5>Сотрудники</h5></span>
+          </div>
+          <div class="z-depth-1">
+
+            <div class="col s12 centre-preload" v-if="isload">
+              <div class="preloader-wrapper active">
+                <div class="spinner-layer spinner-blue-only">
+                  <div class="circle-clipper left">
+                    <div class="circle"></div>
+                  </div><div class="gap-patch">
+                    <div class="circle"></div>
+                  </div><div class="circle-clipper right">
+                    <div class="circle"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row" v-if="loaderror">
+                <p class="center-align col s12 red-text">{{message_error}}</p>
+            </div>
+
+            <table class="bordered highlight centered" v-if="loadtrue">
+              <thead>
+                <tr>
+                  <th>ФИО</th>
+                  <th>Департамент</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="item in employees" v-on:click="employee_check(item.id)">
+                  <td>{{item.name}}</td>
+                  <td>{{item.department}}</td>
+                </tr>
+                <tr v-if="if_message" class="cyan lighten-5">
+                  <td colspan="2"><span class="center-align">{{message}}</span></td>
+                </tr>
+                <tr v-if="add_load" class="indigo lighten-5">
+                  <td class="centre-preload" colspan="2">
+                    <div class="preloader-wrapper small active">
+                      <div class="spinner-layer spinner-green-only">
+                        <div class="circle-clipper left">
+                          <div class="circle"></div>
+                        </div><div class="gap-patch">
+                          <div class="circle"></div>
+                        </div><div class="circle-clipper right">
+                          <div class="circle"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr v-if="!add_load" class="indigo lighten-5">
+                  <td colspan="3"><span class="center-align" v-on:click="add_employee">Загрузить следующие</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
         </div>
+
       </div>
+
+
+
 
       <!--Боковое меню -->
       <ul id="slide-out" class="side-nav">
@@ -263,6 +386,10 @@
           $('select').material_select();
           $(".button-collapse").sideNav();
           $(".open-side-nav").sideNav();
+          $('.datepicker').pickadate({
+           selectMonths: true, // Creates a dropdown to control month
+           selectYears: 15 // Creates a dropdown of 15 years to control year
+          });
           side_nav.onredys();
         });
       </script>

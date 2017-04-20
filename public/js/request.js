@@ -35,7 +35,6 @@ var body_con = new Vue({
     message_error: '', //Сообщение при ошибке загрузки
     name_request: '', //название заявки
     year: '', //год заявки
-    department: '', //отдел
     name_maker: '', //создатель
     articles: [ //статьи расходов
       {id: '10', name:'Мебель', table_show: false, items:[
@@ -121,7 +120,6 @@ var body_con = new Vue({
         this.year = date.getUTCFullYear() + 1;
         this.name_request = getval['name'];
         this.name_maker = side_nav.name;
-        this.department = side_nav.department;
 
         $.ajax({
           /*список всех статей и их товарный позиций*/
@@ -154,7 +152,7 @@ var body_con = new Vue({
     //Показать таблицу с товарными позициями по статье
     show: function (id) {
       for (var i = 0; i < this.articles.length; i++)
-      {        
+      {
         if(this.articles[i].id == id)
         {
           this.articles[i].table_show = true;

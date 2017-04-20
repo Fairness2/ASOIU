@@ -22,12 +22,19 @@ var menu_section = new Vue ({
         users_section.onloading();
         users_section.show = true;
         user.show = false;
+        employees_section.onloading();
+        employees_section.show = true;
+        employee.show = false;
       }else if (secton == 2) {
         users_section.show = false;
         user.show = false;
+        employees_section.show = false;
+        employee.show = false;
       }else if (secton == 3) {
         users_section.show = false;
         user.show = false;
+        employees_section.show = false;
+        employee.show = false;
       }
     }
   }
@@ -171,6 +178,7 @@ var user = new Vue({
 
     onloading: function (id) {
       this.isload = true;
+      this.id = id;
       this.isload_too = 0;
       this.message_failure = '';
       this.message_success = '';
@@ -325,21 +333,319 @@ var user = new Vue({
     },
 
     del_user: function () {
+      if (this.id != '') {
+        $.ajax({
+          /*Регистрация*/
+          url:'api/user',
+          type:'DELETE',
+          data: {'id': user.id},
+          timeout: 30000,
+          error: function (data) {
+            user.message_failure = 'Удалить пользователя не удалось';
+            user.message_success = '';
+          },
+          success:function (res) {
+            user.message_failure = '';
+            user.message_success = 'Пользоваетель успешно удалён';
+          }
+        });
+      }else {
+        user.message_failure = 'Что-то пошло не так';
+        user.message_success = '';
+      }
+    }
+  }
+});
+
+var employees_section = new Vue({
+  el: '#employees_section',
+  data: {
+    show: false,
+    isload: true,
+    loaderror: false,
+    loadtrue: false,
+    if_message: false,
+    add_load: false,
+    message_error: '',
+    message: 'Опачки',
+
+    employees: [
+      {id:'10', name:'Вася', department:'грузоперевозки', num:'25'},
+      {id:'11', name:'Аделаида', department:'Клиринг', num:'26'}
+    ]
+  },
+  methods: {
+    employee_check: function (id) {
+      employee.new_employee = false;
+      employee.id = id;
+      employee.onloading(id);
+      $('.datepicker').pickadate({
+       selectMonths: true, // Creates a dropdown to control month
+       selectYears: 15 // Creates a dropdown of 15 years to control year
+      });
+      employee.show = true;
+      $('.datepicker').pickadate({
+       selectMonths: true, // Creates a dropdown to control month
+       selectYears: 15 // Creates a dropdown of 15 years to control year
+      });
+    },
+
+    new_employee: function () {
+      employee.new_user = true;
+      employee.onloading_new();
+      employee.show = true;
+    },
+
+    onloading: function () {
+      this.isload = true;
+      this.loaderror = false;
+      this.loadtrue = false;
       $.ajax({
-        /*Регистрация*/
-        url:'api/user',
-        type:'DELETE',
-        data: {'id': user.id},
+        /*список пользователей*/
+        url:'api/employee?after=' + 0,
+        type:'GET',
         timeout: 30000,
         error: function (data) {
-          user.message_failure = 'Удалить пользователя не удалось';
-          user.message_success = '';
+          employees_section.isload = false;
+          employees_section.loaderror = true;
+          employees_section.loadtrue = true; //не забыть поменять
+          employees_section.message_error = 'Пожалуйста перезагрузите страницу';
         },
         success:function (res) {
-          user.message_failure = '';
-          user.message_success = 'Пользоваетель успешно удалён';
+          //Тут нужно обработать пользоваетелей
+          employees_section.isload = false;
+          employees_section.loaderror = false;
+          employees_section.loadtrue = true; //не забыть поменять
         }
       });
+    },
+
+    add_employee: function () {
+      this.add_load = true;
+      this.if_message = false;
+      var num = this.employees[this.employees.length - 1].num;
+      $.ajax({
+        /*список пользователей*/
+        url:'api/employee?after=' + num,
+        type:'GET',
+        timeout: 30000,
+        error: function (data) {
+          employees_section.add_load = false;
+          employees_section.if_message = true;
+          employees_section.message = 'Загрузить не получилось';
+        },
+        success:function (res) {
+          //Тут нужно обработать пользоваетелей
+          employees_section.add_load = false;
+        }
+      });
+    }
+  }
+});
+
+var employee = new Vue({
+  el: '#employee',
+  data: {
+    show: false,
+    isload: false,
+    loaderror: false,
+    loadtrue:false,
+    new_employee: false,
+    error_dep: false,
+    FIO: '',
+    id: '',
+    message_dep: '',
+    message_error: '',
+    message_failure: '',
+    message_success: '',
+    birthday: '',
+    sex: false,
+    isload_too: 0,
+    departments: [
+      {id:'5ad2349d-af4c-4736-8659-1c73852d999b', name: 'Реклама и Маркетиг', check: false},
+      {id:'63feeeed-bb04-4ab1-998e-f7852890cb95', name: 'Клиринг', check: false}
+    ]
+  },
+  methods: {
+    onloading_new: function () {
+      this.isload = true;
+      this.message_failure = '';
+      this.message_success = '';
+      $('.datepicker').pickadate({
+       selectMonths: true, // Creates a dropdown to control month
+       selectYears: 15 // Creates a dropdown of 15 years to control year
+      });
+      $.ajax({
+        /*список список отделов*/
+        url:'api/department',
+        type:'GET',
+        timeout: 30000,
+        error: function (data) {
+          employee.isload = false;
+          employee.loaderror = true;
+          employee.loadtrue = true;//не забыть изменить
+          employee.message_error = 'Загрузить не удалась';
+        },
+        success:function (res) {
+          //Тут нужно обработать отделы
+          employee.isload = false;
+          employee.loaderror = false;
+          employee.loadtrue = true;
+
+        }
+      });
+    },
+
+    onloading: function (id) {
+      this.isload = true;
+      this.id = id;
+      this.isload_too = 0;
+      this.message_failure = '';
+      this.message_success = '';
+      $.ajax({
+        /*список список сотрудников отделов*/
+        url:'api/department',
+        type:'GET',
+        timeout: 30000,
+        error: function (data) {
+          employee.isload_too = -1;
+          employee.isload = false;
+          employee.loaderror = true;
+          employee.loadtrue = true;//не забыть изменить
+          employee.message_error = 'Загрузить не удалась';
+        },
+        success:function (res) {
+          //Тут нужно обработать отделы
+          if (employee.isload_too == 2) {
+            employee.isload = false;
+            employee.loaderror = false;
+            employee.loadtrue = true;
+
+          }else {
+            employee.isload_too++;
+
+          }
+        }
+      });
+      $.ajax({
+        /*информация о сотруднике*/
+        url:'api/employee?id=' + id,
+        type:'GET',
+        timeout: 30000,
+        error: function (data) {
+          employee.isload_too = -1;
+          employee.isload = false;
+          employee.loaderror = true;
+          employee.loadtrue = true;//не забыть изменить
+          employee.message_error = 'Загрузить не удалась';
+        },
+        success:function (res) {
+          //Тут нужно обработать сотрудника
+          if (employee.isload_too == 2) {
+            employee.isload = false;
+            employee.loaderror = false;
+            employee.loadtrue = true;
+            alert(res);
+          }else {
+            employee.isload_too++;
+            alert(res);
+          }
+        }
+      });
+    },
+
+    create_employee: function () {
+      var regexp = /^[А-Яа-я-\s]{2,50}$/;
+      var sex = false;
+      if ($("#sex1").prop("checked")){
+        sex = true;
+      }
+      var department = '';
+      for (var i = 0; i < this.departments.length; i++) {
+        if (this.departments[i].check) {
+          department = this.departments[i].id;
+          break;
+        }
+      }
+      if (regexp.test(this.FIO) && this.birthday != '' && department != '') {
+        $.ajax({
+          /*Добавление сотрудника*/
+          url:'api/employee/create',
+          type:'POST',
+          data: {'fullName': employee.FIO, 'sex': sex, 'birthDate': employee.birthday},
+          timeout: 30000,
+          error: function (data) {
+            employee.message_failure = 'Создать сотрудника не удалось';
+            employee.message_success = '';
+          },
+          success:function (res) {
+            employee.message_failure = '';
+            employee.message_success = 'Сотрудник успешно создан';
+          }
+        });
+      }else {
+        employee.message_failure = 'Заполните поля правильно';
+        employee.message_success = '';
+      }
+    },
+
+    change_employee: function () {
+      var regexp = /^[А-Яа-я-\s]{2,50}$/;
+      var sex = false;
+      if ($("#sex1").prop("checked")){
+        sex = true;
+      }
+      var department = '';
+      for (var i = 0; i < this.departments.length; i++) {
+        if (this.departments[i].check) {
+          department = this.departments[i].id;
+          break;
+        }
+      }
+      if (regexp.test(this.FIO) && this.birthday != '' && department != '' && id != '') {
+        $.ajax({
+          /*Добавление сотрудника*/
+          url:'api/employee/update',
+          type:'POST',
+          data: {'fullName': employee.FIO, 'sex': sex, 'birthDate': employee.birthday, 'id': employee.id},
+          timeout: 30000,
+          error: function (data) {
+            employee.message_failure = 'Создать изменить не удалось';
+            employee.message_success = '';
+          },
+          success:function (res) {
+            employee.message_failure = '';
+            employee.message_success = 'Сотрудник успешно изменён';
+          }
+        });
+      }else {
+        employee.message_failure = 'Заполните поля правильно';
+        employee.message_success = '';
+      }
+    },
+
+    del_employee: function () {
+      if (this.id != '') {
+        $.ajax({
+          /*Удаление*/
+          url:'api/employee',
+          type:'DELETE',
+          data: {'id': employee.id},
+          timeout: 30000,
+          error: function (data) {
+            employee.message_failure = 'Удалить сотрудника не удалось';
+            employee.message_success = '';
+          },
+          success:function (res) {
+            employee.message_failure = '';
+            employee.message_success = 'Сотрудник успешно удалён';
+          }
+        });
+      }else {
+        employee.message_failure = 'Что-то пошло не так';
+        employee.message_success = '';
+      }
+
     }
   }
 });
