@@ -50,7 +50,7 @@ exports.login = (req, res) => {
 					.verifyPassword(req.body.password)
 					.then(ok => {
 						if (ok) {
-							req.session.user = { id: user.id };
+							req.session.user = user;
 
 							res.status(200).json({
 								data: 'Вход выполнен успешно'

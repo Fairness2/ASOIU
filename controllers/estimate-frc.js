@@ -1,0 +1,356 @@
+﻿'use strict';
+
+const _ = require('lodash');
+const moment = require('moment');
+const error = require(__libdir + '/error.js');
+const page = require(__libdir + '/page.js');
+const assoc = require(__libdir + '/assoc.js');
+const models = require(__rootdir + '/models');
+const Estimate = models.Estimate;
+
+exports.create = function (req, res) {
+	if (!error.require(res, req.body, {
+		year: 'Необходим год',
+		frcId: 'Необходим ЦФО',
+		requests: [x => _.isArray(x) && x.length, 'Необходимо включить хотя бы 1 заявку']
+	}) ||
+		!_.every(req.body.requests, x => {
+			if (_.isString(x)) return true;
+			res.status(400).json({
+				errors: [{
+					value: x,
+					message: 'Неверный формат идентификатора'
+				}]
+			});
+		})) return;
+
+	Promise.all([
+		models.Request.findAll({
+			where: {
+				id: { $in: req.body.requests },
+				year: req.body.year
+			},
+			include: assoc.deduceInclude(models.Request, {
+				items: {
+					product: {
+						costItem: true
+					}
+				}
+			})
+		}),
+		models.CostItem.findAll({
+			where: {
+				id: { $in: _.keys(req.body.items) },
+				frcId: req.body.frcId
+			}
+		})])
+		.then(([requests, costItems]) => {
+			if (!_.all(req.body.requests, i => {
+				if (_.some(requests, j => j.id === i))
+					return true;
+				else
+					res.status(200).json({
+						errors: [{
+							value: i,
+							message: 'Такой заявки на укзаанный год не существует'
+						}]
+					});
+			})) return;
+
+			if (_.isObject(req.body.items) &&
+				!_.all(_.keys(req.body.items), id => {
+					if (_.some(costItems, j => j.id === id))
+						return true;
+					else
+						res.status(200).json({
+							errors: [{
+								value: id,
+								message: 'Для данного ЦФО нет такой статьи'
+							}]
+						});
+				})) return;
+
+			let est = Estimate.build({
+				year: req.body.year,
+				frcId: req.body.frcId
+			});
+
+			let estimateItems = {};
+
+			// Распихиваем заявки по статьям
+			_.forEach(requests, request => {
+				_.forEach(request.items, item => {
+					if (item.product.costItem.frcId === est.frcId) {
+						// Создаём позицию сметы
+						if (!estimateItems[item.product.costItemId])
+							estimateItems[item.product.costItemId] = {};
+
+						let estItemValues = estimateItems[item.costItemId];
+
+						// Создаём значение позиции сметы
+						if (!estItemValues[item.periodId])
+							estItemValues[item.periodId] = 0;
+
+						estItemValues[item.periodId] += item.quantity * item.product.price;
+					}
+				}));
+
+			// Добавляем суммы не из заявок
+			if (_.isObject(req.body.items))
+				for (let costItemId, item in req.body.items)
+					for (let periodId, value in item) {
+						// Создаём позицию сметы
+						if (!estimateItems[costItemId])
+							estimateItems[costItemId] = {};
+
+						estItemValues = estimateItems[item.costItemId];
+
+						// Создаём значение позиции сметы
+						if (!estItemValues[periodId])
+							estItemValues[periodId] = 0;
+
+						estItemValues[periodId] += value;
+					}
+
+			// Преобразовываем нашу структуру в экземпляры моделей
+			est.setItems(_.map(estimateItems, (values, costItemId) =>
+				models.EstimateItem.build({
+					costItemId: costItemId,
+					values: _.map(values, (value, periodId) => ({
+						value: value,
+						periodId: periodId
+					}))
+				})));
+
+			return est.save();
+		})
+		.then(() => {
+			res.status(200).json({
+				data: est.id
+			});
+		})
+		.catch(models.Sequelize.ForeignKeyError, error.handleForeign(req, res, {
+			costItemId: 'Такой статьи не существует',
+			frcId: 'Такого ЦФО не существует',
+			periodId: 'Такого периода не существует'
+		}))
+		.catch(models.Sequelize.UniqueConstraintError, error.handleUnique(req, res, {
+			estimateId_costItemId: 'В смете уже есть такая статья'
+			// todo: первичный ключ?
+		}))
+		.catch(models.Sequelize.ValidationError, error.handleValidation(req, res))
+		.catch(error.handleInternal(req, res));
+};
+
+exports.update = function (req, res) {
+	if (!error.require(res, req.body, {
+		id: 'Необходимо указать обновляемую смету',
+		year: 'Необходим год',
+		frcId: 'Необходим ЦФО',
+		requests: [x => _.isArray(x) && x.length, 'Необходимо включить хотя бы 1 заявку']
+	}) ||
+		!_.every(req.body.requests, x => {
+			if (_.isString(x)) return true;
+			res.status(400).json({
+				errors: [{
+					value: x,
+					message: 'Неверный формат идентификатора'
+				}]
+			});
+		})) return;
+
+	Promise.all([
+		models.Request.findAll({
+			where: {
+				id: { $in: req.body.requests },
+				year: req.body.year
+			},
+			include: assoc.deduceInclude(models.Request, {
+				items: {
+					product: {
+						costItem: true
+					}
+				}
+			})
+		}),
+		models.CostItem.findAll({
+			where: {
+				id: { $in: _.keys(req.body.items) },
+				frcId: req.body.frcId
+			}
+		}),
+		models.Estimate.findById(req.body.id)
+	])
+		.then(([requests, costItems, est]) => {
+			if (!est) {
+				res.status(200).json({
+					errors: 'Указанной сметы не найдено'
+				});
+				return;
+			}
+
+			if (!_.all(req.body.requests, i => {
+				if (_.some(requests, j => j.id === i))
+					return true;
+				else
+					res.status(200).json({
+						errors: [{
+							value: i,
+							message: 'Такой заявки на укзаанный год не существует'
+						}]
+					});
+			})) return;
+
+			if (_.isObject(req.body.items) &&
+				!_.all(_.keys(req.body.items), id => {
+					if (_.some(costItems, j => j.id === id))
+						return true;
+					else
+						res.status(200).json({
+							errors: [{
+								value: id,
+								message: 'Для данного ЦФО нет такой статьи'
+							}]
+						});
+				})) return;
+
+			est.year = req.body.year;
+			est.frcId = req.body.frcId;
+			
+			let estimateItems = {};
+
+			// Распихиваем заявки по статьям
+			_.forEach(requests, request => {
+				_.forEach(request.items, item => {
+					if (item.product.costItem.frcId === est.frcId) {
+						// Создаём позицию сметы
+						if (!estimateItems[item.product.costItemId])
+							estimateItems[item.product.costItemId] = {};
+
+						let estItemValues = estimateItems[item.costItemId];
+
+						// Создаём значение позиции сметы
+						if (!estItemValues[item.periodId])
+							estItemValues[item.periodId] = 0;
+
+						estItemValues[item.periodId] += item.quantity * item.product.price;
+					}
+				}));
+
+			// Добавляем суммы не из заявок
+			if (_.isObject(req.body.items))
+				for (let costItemId, item in req.body.items)
+					for (let periodId, value in item) {
+						// Создаём позицию сметы
+						if (!estimateItems[costItemId])
+							estimateItems[costItemId] = {};
+
+						estItemValues = estimateItems[item.costItemId];
+
+						// Создаём значение позиции сметы
+						if (!estItemValues[periodId])
+							estItemValues[periodId] = 0;
+
+						estItemValues[periodId] += value;
+					}
+
+			// Преобразовываем нашу структуру в экземпляры моделей
+			est.setItems(_.map(estimateItems, (values, costItemId) =>
+				models.EstimateItem.build({
+					costItemId: costItemId,
+					values: _.map(values, (value, periodId) => ({
+						value: value,
+						periodId: periodId
+					}))
+				})));
+
+			return est.save();
+		})
+		.then(() => {
+			res.status(200).json({
+				data: est.id
+			});
+		})
+		.catch(models.Sequelize.ForeignKeyError, error.handleForeign(req, res, {
+			costItemId: 'Такой статьи не существует',
+			frcId: 'Такого ЦФО не существует',
+			periodId: 'Такого периода не существует'
+		}))
+		.catch(models.Sequelize.UniqueConstraintError, error.handleUnique(req, res, {
+			estimateId_costItemId: 'В смете уже есть такая статья'
+			// todo: первичный ключ?
+		}))
+		.catch(models.Sequelize.ValidationError, error.handleValidation(req, res))
+		.catch(error.handleInternal(req, res));
+};
+
+exports.approve = function (req, res) {
+	if (!error.require(res, req.body, {
+		id: 'Нужно указать смету'
+	})) return;
+
+	Estimate.update({
+		approvalDate: moment()
+	}, {
+		where: {
+			id: req.body.id,
+			approvalDate: { $eq: null }
+		}
+	}).then((count, rows) => {
+		if (count) {
+			req.status(200).json({
+				data: 'ok'
+			});
+		} else {
+			req.status(200).json({
+				errors: ['Не найдено']
+			});
+		}
+	})
+	.catch(error.handleInternal(req, res));
+};
+
+exports.list = function (req, res) {
+	let opts = page.get('number', req.query);
+
+	opts.where = opts.where || {};
+	opts.where.frcId = req.query.frcId || null;
+
+	Estimate.findAll(
+		opts.options
+	).then(insts => {
+		let arr = insts.map(x => x.toJSON());
+		if (opts.invert) arr.reverse();
+
+		res.status(200).json({
+			data: arr
+		});
+	});
+};
+
+exports.single = function (req, res) {
+	Estimate.findOne({
+		where: { id: req.body.id || '' },
+		include: assoc.deduceInclude(Request, {
+			items: {
+				costItem: true,
+				values: {
+					period: true
+				}
+			}
+		})
+	})
+		.then(estimate => {
+			if (!estimate) {
+				res.status(200).json({
+					errors: ['Не найдено']
+				});
+				return;
+			}
+
+			res.status(200).json({
+				data: estimate.toJSON()
+			});
+		})
+		.catch(error.handleInternal(req, res));
+}

@@ -22,10 +22,7 @@ module.exports = function (sq, DataTypes) {
 			indexes: [
 				{
 					fields: ['estimateId', 'costItemId'],
-					unique: {
-						args: true,
-						msg: 'В смете уже есть такая статья'
-					}
+					unique: true
 				}
 			],
 			classMethods: {

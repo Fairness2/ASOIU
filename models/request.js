@@ -30,6 +30,10 @@ module.exports = function (sq, DataTypes) {
 						if (value < moment().year())
 							throw new Error('Нельзя подать заявку на прошедший год');
 					}*/
+					min: {
+						args: 2000,
+						msg: 'Год должен быть не ранее 2000'
+					}
 				}
 			}
 		}, {
