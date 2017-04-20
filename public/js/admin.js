@@ -379,19 +379,11 @@ var employees_section = new Vue({
       employee.new_employee = false;
       employee.id = id;
       employee.onloading(id);
-      $('.datepicker').pickadate({
-       selectMonths: true, // Creates a dropdown to control month
-       selectYears: 15 // Creates a dropdown of 15 years to control year
-      });
       employee.show = true;
-      $('.datepicker').pickadate({
-       selectMonths: true, // Creates a dropdown to control month
-       selectYears: 15 // Creates a dropdown of 15 years to control year
-      });
     },
 
     new_employee: function () {
-      employee.new_user = true;
+      employee.new_employee = true;
       employee.onloading_new();
       employee.show = true;
     },
