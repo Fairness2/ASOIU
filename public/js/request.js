@@ -154,11 +154,12 @@ var body_con = new Vue({
     //Показать таблицу с товарными позициями по статье
     show: function (id) {
       for (var i = 0; i < this.articles.length; i++)
-      {
-        this.articles[i].table_show = false;
+      {        
         if(this.articles[i].id == id)
         {
           this.articles[i].table_show = true;
+        }else {
+          this.articles[i].table_show = false;
         }
       }
     },

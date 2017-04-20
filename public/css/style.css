@@ -19,3 +19,8 @@
   margin-top: 1vh;
   justify-content: center;
 }
+
+.header_section {
+  display: flex;
+  justify-content: center;
+}
