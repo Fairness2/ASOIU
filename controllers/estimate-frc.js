@@ -71,9 +71,10 @@ exports.create = function (req, res) {
 				})) return;
 
 			let est = Estimate.build({
+				name: req.body.name,
 				year: req.body.year,
 				frcId: req.body.frcId,
-				requests: requests;
+				requests: requests
 			});
 
 			let estimateItems = {};
@@ -94,12 +95,13 @@ exports.create = function (req, res) {
 
 						estItemValues[item.periodId] += item.quantity * item.product.price;
 					}
-				}));
+				})
+			});
 
 			// Добавляем суммы не из заявок
 			if (_.isObject(req.body.items))
-				for (let costItemId, item in req.body.items)
-					for (let periodId, value in item) {
+				_.forEach(req.body.items, (item, costItemId) =>
+					_.forEach(item, (value, periodId) => {
 						// Создаём позицию сметы
 						if (!estimateItems[costItemId])
 							estimateItems[costItemId] = {};
@@ -111,7 +113,7 @@ exports.create = function (req, res) {
 							estItemValues[periodId] = 0;
 
 						estItemValues[periodId] += value;
-					}
+					}));
 
 			// Преобразовываем нашу структуру в экземпляры моделей
 			est.setItems(_.map(estimateItems, (values, costItemId) =>
@@ -215,6 +217,7 @@ exports.update = function (req, res) {
 						});
 				})) return;
 
+			est.name = req.body.name;
 			est.year = req.body.year;
 			est.frcId = req.body.frcId;
 			est.setRequests(requests);
@@ -237,12 +240,13 @@ exports.update = function (req, res) {
 
 						estItemValues[item.periodId] += item.quantity * item.product.price;
 					}
-				}));
+				})
+			});
 
 			// Добавляем суммы не из заявок
 			if (_.isObject(req.body.items))
-				for (let costItemId, item in req.body.items)
-					for (let periodId, value in item) {
+				_.forEach(req.body.items, (item, costItemId) =>
+					_.forEach(item, (value, periodId) => {
 						// Создаём позицию сметы
 						if (!estimateItems[costItemId])
 							estimateItems[costItemId] = {};
@@ -254,7 +258,7 @@ exports.update = function (req, res) {
 							estItemValues[periodId] = 0;
 
 						estItemValues[periodId] += value;
-					}
+					}));
 
 			// Преобразовываем нашу структуру в экземпляры моделей
 			est.setItems(_.map(estimateItems, (values, costItemId) =>

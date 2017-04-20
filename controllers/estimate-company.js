@@ -78,6 +78,7 @@ exports.create = function (req, res) {
 			}
 
 			let est = Estimate.build({
+				name: req.body.name,
 				year: estimates[0].year,
 				frcId: null
 				// включать ссылки на заяки?
@@ -86,9 +87,9 @@ exports.create = function (req, res) {
 			let estimateItems = {};
 
 			// Добавляем суммы не из заявок
-			for (let estimate in estimates)
-				for (let item in estimate.items)
-					for (let value in item.values) {
+			_.forEach(estimates, estimate =>
+				_.forEach(estimate.items, item =>
+					_.forEach(item.values, value => {
 						// Создаём позицию сметы
 						if (!estimateItems[item.costItemId])
 							estimateItems[item.costItemId] = {};
@@ -100,7 +101,7 @@ exports.create = function (req, res) {
 							estItemValues[value.periodId] = 0;
 
 						estItemValues[value.periodId] += value.value;
-					}
+					})));
 
 			// Преобразовываем нашу структуру в экземпляры моделей
 			est.setItems(_.map(estimateItems, (values, costItemId) =>
@@ -166,7 +167,8 @@ exports.update = function (req, res) {
 				where: {
 					id: req.body.id,
 					frcId: null
-				})
+				}
+			})
 	])
 		.then(([estimates, est]) => {
 			if (!est) {
@@ -216,15 +218,16 @@ exports.update = function (req, res) {
 				return;
 			}
 
+			est.name = req.body.name;
 			est.year = estimates[0].year;
 			est.frcId = null;
 
 			let estimateItems = {};
 
 			// Добавляем суммы не из заявок
-			for (let estimate in estimates)
-				for (let item in estimate.items)
-					for (let value in item.values) {
+			_.forEach(estimates, estimate =>
+				_.forEach(estimate.items, item =>
+					_.forEach(item.values, value => {
 						// Создаём позицию сметы
 						if (!estimateItems[item.costItemId])
 							estimateItems[item.costItemId] = {};
@@ -236,7 +239,7 @@ exports.update = function (req, res) {
 							estItemValues[value.periodId] = 0;
 
 						estItemValues[value.periodId] += value.value;
-					}
+					})));
 
 			// Преобразовываем нашу структуру в экземпляры моделей
 			est.setItems(_.map(estimateItems, (values, costItemId) =>

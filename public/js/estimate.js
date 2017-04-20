@@ -141,7 +141,7 @@ var body_con = new Vue({
         $.ajax({
           /*Тут нужно список заявок, с пометкой, какие включены, сведения о
           дополнительных расходах, и сведения о смете*/
-          url:'api/estimate?id=' + getval['id'],
+          url:'api/estimate/' + getval['id'],
           type:'GET',
           timeout: 30000,
           error: function (data) {
@@ -186,7 +186,7 @@ var body_con = new Vue({
 
         $.ajax({
           /*список дополнительных расходов*/
-          url:'api/article',
+          url:'api/cost-item',
           type:'GET',
           timeout: 30000,
           error: function (data) {
@@ -198,25 +198,11 @@ var body_con = new Vue({
 
           }
         });
-
-        $.ajax({
-          /*список дополнительных расходов*/
-          url:'api/additional_articles',
-          type:'GET',
-          timeout: 30000,
-          error: function (data) {
-            body_con.error_additional = true;
-            body_con.message_additional = 'Пожалуйста перезагрузите страницу';
-          },
-          success:function (res) {
-            //Тут нужно обработать список дополнительных расходов
-
-          }
-        });
+		  
 
         $.ajax({
           /*список всех заявок*/
-          url:'api/request_list',
+          url:'api/request',
           type:'GET',
           timeout: 30000,
           error: function (data) {
@@ -277,7 +263,7 @@ var body_con = new Vue({
     //Добавить или удалить данные заявки из сметы
     check_request: function (id) {
       $.ajax({
-        url:'api/request?id=' + id,
+        url:'api/request/' + id,
         type:'GET',
         timeout: 30000,
         error: function (data) {
@@ -357,12 +343,12 @@ var save_application = new Vue({
         data: {
           'name': body_con.name_estimate,
           'year': body_con.year,
-          'cfo': body_con.cfo,
-          'name_maker': body_con.name_maker,
-          'creation_date': body_con.creation_date,
-          'name_changer': body_con.name_changer,
-          'change_date': body_con.change_date,
-          'additional_articles': body_con.additional_articles,
+          'frcId': body_con.cfo,
+          'requestorId': body_con.name_maker,
+          //'creation_date': body_con.creation_date,
+          //'name_changer': body_con.name_changer,
+          //'change_date': body_con.change_date,
+          //'additional_articles': body_con.additional_articles,
           'requests': requests},
         timeout: 30000,
         error: function (data) {
@@ -395,11 +381,11 @@ var send_application = new Vue({
         data: {
           'name': body_con.name_estimate,
           'year': body_con.year,
-          'cfo': body_con.cfo,
-          'name_maker': body_con.name_maker,
-          'creation_date': body_con.creation_date,
-          'name_changer': body_con.name_changer,
-          'change_date': body_con.change_date
+          'frcId': body_con.cfo,
+          'requestorId': body_con.name_maker,
+          //'creation_date': body_con.creation_date,
+          //'name_changer': body_con.name_changer,
+          //'change_date': body_con.change_date
           },
         timeout: 30000,
         error: function (data) {

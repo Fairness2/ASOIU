@@ -80,6 +80,7 @@
     <Compile Include="public\js\materialize.min.js" />
     <Compile Include="public\js\request.js" />
     <Compile Include="public\js\vue.js" />
+    <Compile Include="routes\request.js" />
     <Compile Include="routes\product.js" />
     <Compile Include="routes\period-type.js" />
     <Compile Include="routes\period.js" />

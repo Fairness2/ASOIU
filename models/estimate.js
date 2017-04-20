@@ -16,6 +16,16 @@ module.exports = function (sq, DataTypes) {
 				autoIncrement: true,
 				allowNull: false
 			},
+			name: {
+				type: DataTypes.STRING(50),
+				allowNull: false,
+				validate: {
+					is: {
+						args: /^[а-яё\w\d_\-:. ]{0,50}$/i,
+						msg: 'Недопустимое название'
+					}
+				}
+			},
 			frcId: {
 				type: DataTypes.UUID
 			},

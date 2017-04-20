@@ -23,6 +23,6 @@ module.exports = function (root) {
 
 	router.post('/approve', estimate.approve);
 
-	router.get('/', ctl.list);
-	router.get('/:id', ctl.single);
+	router.get('/:id', estimate.single);
+	router.get('/', estimate.list);
 };

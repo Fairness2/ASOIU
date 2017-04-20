@@ -9,15 +9,15 @@ const Request = models.Request;
 
 exports.create = function (req, res) {
 	if (!error.require(res, req.body, {
-			year: 'Необходим год',
-			items: [x => _.isArray(x) && x.length, 'Необходима хотя бы 1 позиция']
+		year: 'Необходим год',
+		items: [x => _.isArray(x) && x.length, 'Необходима хотя бы 1 позиция']
 	}) ||
-	!_.every(req.body.items, x => error.require(x, {
-		periodId: 'Необходим период',
-		productId: 'Необходимо указать товар',
-		quantity: 'Неоходимо количество'
-	}))) return;
-	
+		!_.every(req.body.items, x => error.require(x, {
+			periodId: 'Необходим период',
+			productId: 'Необходимо указать товар',
+			quantity: 'Неоходимо количество'
+		}))) return;
+
 	let rq = Request.build({
 		year: req.body.year,
 		requesterId: req.session.user.employeeId,
@@ -45,21 +45,21 @@ exports.update = function (req, res) {
 		year: 'Необходим год',
 		items: [x => _.isArray(x) && x.length, 'Необходима хотя бы 1 позиция']
 	}) ||
-	!_.every(req.body.items, x => error.require(x, {
-		periodId: 'Необходим период',
-		productId: 'Необходимо указать товар',
-		quantity: 'Неоходимо количество'
-	}))) return;
+		!_.every(req.body.items, x => error.require(x, {
+			periodId: 'Необходим период',
+			productId: 'Необходимо указать товар',
+			quantity: 'Неоходимо количество'
+		}))) return;
 
 	Promise.all([
-	Request.findOne({
+		Request.findOne({
 			where: {
 				id: req.body.id
 			}
 		}),
-	models.CurrentRequest.count({
-		where: { requestId: req.body.id }
-	})])
+		models.CurrentRequest.count({
+			where: { requestId: req.body.id }
+		})])
 		.then(([inst, currentCount]) => {
 			if (!inst) {
 				req.status(400).json({
@@ -127,15 +127,16 @@ exports.list = function (req, res) {
 };
 
 exports.single = function (req, res) {
-	Request.findOne({
-		where: { id: req.body.id || '' },
-		include: assoc.deduceInclude(Request, {
-			items: {
-				product: true,
-				period: true
-			}
+	Request
+		.findOne({
+			where: { id: req.params.id || '' },
+			include: assoc.deduceInclude(Request, {
+				items: {
+					product: true,
+					period: true
+				}
+			})
 		})
-	})
 		.then(request => {
 			if (!request) {
 				res.status(200).json({
