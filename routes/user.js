@@ -10,9 +10,11 @@ module.exports = function (root) {
 	// todo: Экспресс ведь не против, если я обработчики позже указываю?
 	root.use('/user', router);
 	
-	router.post('/register', user.register)
-		  .post('/login', user.login)
-		  .post('/logout', auth.check(), user.logout)
+	router
+		.post('/register', user.register)
+		.post('/update', auth.check('user.update'), user.update)
+		.post('/login', user.login)
+		.post('/logout', auth.check(), user.logout)
 		.get('/info/:id', auth.check('user.info'), user.info)
 		.get('/info', auth.check(), user.info)
 		.get('/', auth.check('user.list'), user.list);

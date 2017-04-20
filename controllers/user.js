@@ -15,13 +15,55 @@ exports.register = (req, res) => {
 		employeeId: req.body.employeeId
 	});
 
-	Promise.try(() => { User.validatePassword(req.body.password); })
+	Promise.try(() => User.validatePassword(req.body.password))
 		.then(user.setPassword.bind(user, req.body.password))
 		.then(user.save.bind(user))
 		.then(user => {
 			res.status(200).json({
 				data: 'ok' //todo: придумать что-то получше
 			});
+		})
+		.catch(Sequelize.UniqueConstraintError, error.handleUnique(req, res, {
+			employeeId: 'Сотрудник уже зарегистрирован как пользователь',
+			username: 'Имя пользователя занято'
+		}))
+		.catch(Sequelize.ForeignKeyConstraintError, error.handleForeign(req, res, {
+			employeeId: 'Указанный сотрудник не найден'
+		}))
+		.catch(Sequelize.ValidationError, error.handleValidation(req, res))
+		.catch(error.handleInternal(req, res));
+};
+
+exports.update = (req, res) => {
+	if (!error.require(res, req.body, {
+		id: 'Требуется укзаать пользователя'
+	})) return;
+
+	let user = User.build();
+
+	User.findById(req.body.id)
+		.then(user => {
+			if (!user) {
+				res.status(200).json({
+					errors: ['Пользователь не найден']
+				});
+				return;
+			}
+
+			user.set({
+				username: req.body.username,
+				employeeId: req.body.employeeId
+			});
+
+			return Promise
+				.try(() => User.validatePassword(req.body.password))
+				.then(user.setPassword.bind(user, req.body.password))
+				.then(user.save.bind(user))
+				.then(user => {
+					res.status(200).json({
+						data: 'ok' //todo: придумать что-то получше
+					});
+				});
 		})
 		.catch(Sequelize.UniqueConstraintError, error.handleUnique(req, res, {
 			employeeId: 'Сотрудник уже зарегистрирован как пользователь',
@@ -63,7 +105,7 @@ exports.login = (req, res) => {
 							res.status(200).json({
 								data: user.toJSON()
 							});
-							
+
 							return true;
 						}
 

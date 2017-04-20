@@ -11,7 +11,8 @@ exports.setup = function (req, res) {
 		'user',
 		'user.list',
 		'user.info',
-		'user.set-roles'
+		'user.set-roles',
+		'user.update'
 	], name => models.Permission.findOrCreate({
 		where: {name: name },
 		defaults: { name: name }
