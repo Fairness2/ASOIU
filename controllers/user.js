@@ -45,7 +45,10 @@ exports.login = (req, res) => {
 
 	console.log(req.body.username);
 
-	User.findOne({ where: { username: req.body.username } })
+	User.findOne({
+		where: { username: req.body.username },
+		include: assoc.deduceInclude(User, 'employee')
+	})
 		.then(user => {
 			if (user) {
 				return Promise.all([

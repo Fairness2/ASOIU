@@ -73,6 +73,7 @@
     <Compile Include="models\employee.js" />
     <Compile Include="models\log.js" />
     <Compile Include="models\user.js" />
+    <Compile Include="public\js\admin.js" />
     <Compile Include="public\js\estimate.js" />
     <Compile Include="public\js\estimate_company.js" />
     <Compile Include="public\js\index.js" />
@@ -98,6 +99,7 @@
     <Compile Include="routes\user.js" />
     <Content Include="config.json" />
     <Content Include="package.json" />
+    <Content Include="public\admin.html" />
     <Content Include="public\css\materialize.min.css" />
     <Content Include="public\css\style.css" />
     <Content Include="public\estimate.html" />

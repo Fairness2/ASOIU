@@ -62,7 +62,7 @@ var users_section = new Vue({
       this.loadtrue = false;
       $.ajax({
         /*список пользователей*/
-        url:'api/user_list?previous=' + 0,
+        url:'api/user?after=' + 0,
         type:'GET',
         timeout: 30000,
         error: function (data) {
@@ -86,7 +86,7 @@ var users_section = new Vue({
       var num = this.users[this.users.length - 1].num;
       $.ajax({
         /*список пользователей*/
-        url:'api/user_list?previous=' + num,
+        url:'api/user?after=' + num,
         type:'GET',
         timeout: 30000,
         error: function (data) {

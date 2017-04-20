@@ -3,6 +3,7 @@
 const _ = require('lodash');
 const error = require(__libdir + '/error.js');
 const page = require(__libdir + '/page.js');
+const assoc = require(__libdir + '/assoc.js');
 const models = require(__rootdir + '/models');
 const Department = models.Department;
 
@@ -43,7 +44,10 @@ exports.list = function (req, res) {
 	let opts = page.get('fullName', req.query);
 
 	opts.options.where.id = req.query.id;
-	
+
+	if (req.query.with === 'employee')
+		opts.options.include = assoc.deduceInclude(models.Department, 'employee');
+		
 	models.Department.findAll(
 		opts.options
 	).then(deps => {
