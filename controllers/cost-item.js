@@ -53,11 +53,12 @@ exports.list = function (req, res) {
 	let opts = page.get('id', req.query);
 
 	// добавляем свои фильтры
-	_.assign(opts.options, {
-		parentId: req.query.parentId,
-		id: req.query.id
-	});
+	if (req.query.parentId)
+		opts.options.parentId= req.query.parentId;
 
+	if (req.query.id)
+		opts.options.id = req.query.id;
+	
 	CostItem.findAll(
 		opts.options
 	).then(insts => {

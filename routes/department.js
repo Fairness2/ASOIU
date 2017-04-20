@@ -9,10 +9,8 @@ module.exports = function (root) {
 
 	root.use('/department', router);
 
-	//router.use(auth.authenticate);
-
 	router.route('/')
-		.post(department.create)
-		.put(department.update)
-		.get(department.list);
+		.post(auth.check('dep.create'), department.create)
+		.put(auth.check('dep.update'), department.update)
+		.get(auth.check('dep.list'), department.list);
 };

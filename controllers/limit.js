@@ -58,13 +58,18 @@ exports.list = function (req, res) {
 	//let {options, invert} = page.get('id', req.query);
 
 	let options = {
-		where: {
-			costItemId: req.body.costItemId,
-			periodId: req.body.periodId,
-			year: req.body.year
-		},
+		where: {},
 		order: [['year', 'asc'],['periodId','asc'],['costItemId','asc']]
 	};
+
+	if (req.query.costItemId)
+		options.where.costItemId = req.query.costItemId;
+
+	if (req.query.periodId)
+		options.where.periodId = req.query.periodId;
+
+	if (req.query.year)
+		options.where.year = req.query.year;
 
 	let invert = false;
 

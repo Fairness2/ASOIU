@@ -67,7 +67,8 @@ exports.create = function (req, res) {
 exports.list = function (req, res) {
 	let opts = page.get('id', req.query);
 
-	opts.id = req.query.id;
+	if (req.query.id)
+		opts.id = req.query.id;
 
 	models.Expense.findAll(
 		opts.options

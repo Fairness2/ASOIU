@@ -59,8 +59,11 @@ exports.update = function (req, res) {
 exports.list = function (req, res) {
 	let {options, invert} = page.get('id', req.query);
 
-	options.where.id = req.query.id;
-	options.where.costItemId = req.query.costItemId;
+	if (req.query.id)
+		options.where.id = req.query.id;
+
+	if (req.query.costItemId)
+		options.where.costItemId = req.query.costItemId;
 
 	Product
 		.findAll(options)

@@ -55,6 +55,8 @@ app.use(function (req, res, next) {
 // error handler
 // no stacktraces leaked to user unless in development environment
 app.use(function (err, req, res, next) {
+	console.log(err);
+
 	res.status(err.status || 500)
 		.send(err.status ? err.message : 'Internal server error');
 });

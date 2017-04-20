@@ -43,7 +43,8 @@ exports.update = function (req, res) {
 exports.list = function (req, res) {
 	let opts = page.get('fullName', req.query);
 
-	opts.options.where.id = req.query.id;
+	if (req.query.id)
+		opts.options.where.id = req.query.id;
 
 	if (req.query.with === 'employee')
 		opts.options.include = assoc.deduceInclude(models.Department, 'employee');

@@ -55,7 +55,8 @@ exports.update = function (req, res) {
 exports.list = function (req, res) {
 	let {options, invert} = page.get('id', req.query);
 
-	options.where.id = req.query.id;
+	if (req.query.id)
+		options.where.id = req.query.id;
 
 	models.FRC
 		.findAll(options)

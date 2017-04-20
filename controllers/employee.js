@@ -1,6 +1,7 @@
 ﻿'use strict';
 
 const models = require(__rootdir + '/models');
+const page = require(__libdir + '/page.js');
 const error = require(__libdir + '/error.js');
 const _ = require('lodash');
 
@@ -60,6 +61,9 @@ exports.update = function (req, res) {
 
 exports.list = function (req, res) {
 	let {options, invert} = page.get('cratedAt', req.query);
+
+	if (req.params.id || req.query.id)
+		options.where.id = req.params.id || req.query.id;
 
 	models.Employee
 		.findAll(options)

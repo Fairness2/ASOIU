@@ -61,7 +61,7 @@ module.exports = function (sq, DataTypes) {
 
 					if (errors.length) throw new Sequelize.ValidationError('Validation error', errors);
 				},
-				getPermissions: id => {
+				getPermissions: function (id) {
 					return this.
 						findOne({
 							where: { id: id },
@@ -78,7 +78,7 @@ module.exports = function (sq, DataTypes) {
 				},
 				associate: models => {
 					models.User.belongsTo(models.Employee, { as: 'employee', foreignKey: 'employeeId' });
-					models.User.belongsToMany(models.Role, { through: 'UserRole', /*as: 'roles', */foreignKey: 'userId' });
+					models.User.belongsToMany(models.Role, { through: 'UserRole', as: 'roles', foreignKey: 'userId' });
 					models.User.hasMany(models.Log, { as: 'log', foreignKey: 'userId' });
 				}
 			},
