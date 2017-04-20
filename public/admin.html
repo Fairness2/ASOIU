@@ -592,6 +592,51 @@
 
         </div>
 
+        <div id="cfos_section" v-if="show" class="row">
+
+          <div class="col s12 red lighten-5 z-depth-1 header_section">
+            <span class="col s1 center-align waves-effect head_icon" v-on:click="new_cfo"><i class="material-icons small">add</i></span>
+            <span class="col s1 center-align waves-effect"><i class="material-icons small">search</i></span>
+            <span class="col s10 right-align"><h5>ЦФО</h5></span>
+          </div>
+          <div class="z-depth-1">
+
+            <div class="col s12 centre-preload" v-if="isload">
+              <div class="preloader-wrapper active">
+                <div class="spinner-layer spinner-blue-only">
+                  <div class="circle-clipper left">
+                    <div class="circle"></div>
+                  </div><div class="gap-patch">
+                    <div class="circle"></div>
+                  </div><div class="circle-clipper right">
+                    <div class="circle"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row" v-if="loaderror">
+                <p class="center-align col s12 red-text">{{message_error}}</p>
+            </div>
+
+            <table class="bordered highlight centered" v-if="loadtrue">
+              <thead>
+                <tr>
+                  <th>Название</th>
+                  <th>Удалить</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="item in cfos">
+                  <td v-on:click="cfo_check(item.id, item.name)">{{item.name}}</td>
+                  <td><a class="waves-effect waves-light btn red accent-3" v-on:click="del_cfo(item.id, item.name)"><i class="material-icons">delete</i>Удалить</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
 
       </div>
 
@@ -701,6 +746,57 @@
         </div>
         <div class="modal-footer">
           <a class="modal-action waves-effect waves-red btn-flat" v-on:click="del_department">Удалить</a>
+          <a class="modal-action modal-close waves-effect waves-green btn-flat">Отмена</a>
+        </div>
+      </div>
+
+
+      <!--Окно создать изменить ЦФО-->
+      <div id="cfo" class="modal">
+        <div class="modal-content">
+          <div class="row">
+            <h5 class="cel s12 center-align ">ЦФО</h5>
+          </div>
+          <div class="row">
+            <div class="col s12 m12 l8 offset-l2">
+              <div class="input-field col s12">
+                <textarea id="cfo_name" type="textarea" class="validate materialize-textarea" pattern="[а-яА-ЯёЁ\w\d_\-:. ]{1,100}" v-model:value="name"></textarea>
+                <label for="cfo_name">Название</label>
+              </div>
+              <p class="center-align green-text">{{message_success}}</p>
+              <p class="center-align red-text">{{message_failure}}</p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div v-if="new_product">
+            <a class="modal-action waves-effect waves-green btn-flat" v-on:click="create_cfo">Добавить</a>
+          </div>
+          <div v-if="!new_product">
+            <a class="modal-action waves-effect waves-blue btn-flat" v-on:click="update_cfo">Изменить</a>
+          </div>
+          <a class="modal-action modal-close waves-effect waves-red btn-flat">Отмена</a>
+
+        </div>
+      </div>
+
+      <!--Окно удалить ЦФО-->
+      <div id="cfo_del" class="modal">
+        <div class="modal-content">
+          <div class="row">
+            <h5 class="cel s12 center-align ">Удаление ЦФО</h5>
+          </div>
+          <div class="row">
+            <div class="col s12 m12 l8 offset-l2">
+              <p>Вы уверены что хотите удалить ЦФО: {{name}}</p>
+
+              <p class="center-align green-text">{{message_success}}</p>
+              <p class="center-align red-text">{{message_failure}}</p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a class="modal-action waves-effect waves-red btn-flat" v-on:click="del_cfo">Удалить</a>
           <a class="modal-action modal-close waves-effect waves-green btn-flat">Отмена</a>
         </div>
       </div>

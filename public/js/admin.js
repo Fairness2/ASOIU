@@ -29,6 +29,7 @@ var menu_section = new Vue ({
         article.show = false;
         products_section.show = false;
         departments_section.show = false;
+        cfos_section.show = false;
       }else if (secton == 2) {
         users_section.show = false;
         user.show = false;
@@ -39,6 +40,7 @@ var menu_section = new Vue ({
         article.show = false;
         products_section.show = false;
         departments_section.show = false;
+        cfos_section.show = false;
       }else if (secton == 3) {
         users_section.show = false;
         user.show = false;
@@ -49,6 +51,8 @@ var menu_section = new Vue ({
         products_section.show = false;
         departments_section.show = true;
         departments_section.onloading();
+        cfos_section.show = true;
+        cfos_section.onloading();
       }else if (secton == 4) {
         users_section.show = false;
         user.show = false;
@@ -58,6 +62,7 @@ var menu_section = new Vue ({
         article.show = false;
         products_section.show = false;
         departments_section.show = false;
+        cfos_section.show = false;
       }
     }
   }
@@ -1144,6 +1149,7 @@ var departments_section = new Vue({
       department.fullname = '';
       department.shortname = '';
       $('#department').modal('open');
+      $('#department_fullname').trigger('autoresize');
     },
 
     del_department: function (id, fullname) {
@@ -1273,6 +1279,166 @@ var department_del = new Vue({
       }else {
         department_del.message_failure = 'Опс';
         department_del.message_success = '';
+      }
+    }
+  }
+});
+
+var cfos_section = new Vue({
+  el: '#cfos_section',
+  data: {
+    show: false,
+    isload: true,
+    loaderror: false,
+    loadtrue: false,
+    message_error: '',
+    cfos: [
+      {id:'10', name:'Дидидидави'},
+      {id:'101', name:'Авиваи'},
+      {id:'102', name:'Блед'},
+    ]
+  },
+  methods: {
+    cfo_check: function (id, name) {
+      cfo.new_product = false;
+      cfo.id = id;
+      cfo.name = name;
+      $('#cfo').modal('open');
+      $('#cfo_name').trigger('autoresize');
+    },
+
+    new_cfo: function () {
+      cfo.new_product = true;
+      cfo.id = '';
+      cfo.name = '';
+      $('#cfo').modal('open');
+      $('#cfo_name').trigger('autoresize');
+    },
+
+    del_cfo: function (id, name) {
+      cfo_del.id = id;
+      cfo_del.name = name;
+      $('#cfo_del').modal('open');
+    },
+
+    onloading: function () {
+      this.isload = true;
+      this.loaderror = false;
+      this.loadtrue = false;
+      $.ajax({
+        /*список отделов*/
+        url:'api/frc',
+        type:'GET',
+        timeout: 30000,
+        error: function (data) {
+          cfos_section.isload = false;
+          cfos_section.loaderror = true;
+          cfos_section.loadtrue = true; //не забыть поменять
+          cfos_section.message_error = 'Пожалуйста перезагрузите страницу';
+        },
+        success:function (res) {
+          //Тут нужно обработать отделы
+          cfos_section.isload = false;
+          cfos_section.loaderror = false;
+          cfos_section.loadtrue = true;
+
+        }
+      });
+    }
+  }
+});
+
+var cfo = new Vue({
+  el: '#cfo',
+  data: {
+    new_product: true,
+    name: '',
+    id: '',
+    message_failure: '',
+    message_success: ''
+  },
+  methods: {
+    create_cfo: function () {
+      var regexp = /^[а-яё\w\d_\-:. ]{4,100}$/i;
+
+      if (regexp.test(this.name)) {
+        $.ajax({
+          /*Добавление цфо*/
+          url:'api/frc/create',
+          type:'POST',
+          data: {'name': cfo.name},
+          timeout: 30000,
+          error: function (data) {
+            cfo.message_failure = 'Добавить ЦФО не удалось';
+            cfo.message_success = '';
+          },
+          success:function (res) {
+            cfo.message_failure = '';
+            cfo.message_success = 'ЦФО успешно добавлен';
+          }
+        });
+      }else {
+        cfo.message_failure = 'Заполните поля правильно';
+        cfo.message_success = '';
+      }
+    },
+
+    update_cfo: function () {
+      var regexp = /^[а-яё\w\d_\-:. ]{4,100}$/i;
+
+      if (regexp.test(this.name) && this.id != '') {
+        $.ajax({
+          /*Изменение ЦФО*/
+          url:'api/frc/update',
+          type:'POST',
+          data: {'name': cfo.name, 'id': cfo.id},
+          timeout: 30000,
+          error: function (data) {
+            cfo.message_failure = 'Изменить ЦФО не удалось';
+            cfo.message_success = '';
+          },
+          success:function (res) {
+            cfo.message_failure = '';
+            cfo.message_success = 'ЦФО успешно изменён';
+          }
+        });
+      }else {
+        cfo.message_failure = 'Заполните поля правильно';
+        cfo.message_success = '';
+      }
+    }
+  }
+});
+
+var cfo_del = new Vue({
+  el: '#cfo_del',
+  data: {
+    id: '',
+    name: '',
+    message_failure: '',
+    message_success: ''
+  },
+  methods: {
+    del_cfo: function () {
+      if (this.id != '') {
+        $.ajax({
+          /*Удаление отдела*/
+          url:'api/frc',
+          type:'DELETE',
+          data: {'id': cfo_del.id},
+          timeout: 30000,
+          error: function (data) {
+            cfo_del.message_failure = 'Удалить ЦФО не удалось';
+            cfo_del.message_success = '';
+          },
+          success:function (res) {
+            cfo_del.message_failure = '';
+            cfo_del.message_success = 'ЦФО успешно удалён';
+          }
+        });
+      }else {
+        cfo_del.message_failure = 'Опс';
+        cfo_del.message_success = '';
       }
     }
   }
