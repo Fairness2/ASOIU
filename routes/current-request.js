@@ -1,18 +1,20 @@
 ﻿'use strict';
 
 const express = require('express');
-const department = require(__rootdir + '/controllers/department.js');
+const ctl = require(__rootdir + '/controllers/current-request.js');
 const auth = require(__libdir + '/auth.js');
 
 module.exports = function (root) {
 	const router = express.Router();
 
-	root.use('/department', router);
+	root.use('/current-request', router);
 
 	//router.use(auth.authenticate);
 
 	router.route('/')
-		.post(department.create)
-		.put(department.update)
-		.get(department.list);
+		.post(ctl.create)
+		.put(ctl.update)
+		.get(ctl.list);
+
+	router.get('/:id', ctl.single);
 };

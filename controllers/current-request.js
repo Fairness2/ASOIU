@@ -181,7 +181,7 @@ exports.list = function (req, res) {
 
 exports.single = function (req, res) {
 	CurrentRequest.findOne({
-		where: { id: req.body.id || '' },
+		where: { id: req.params.id || '' },
 		include: [{
 			model: models.CurrentRequestItem,
 			as: 'items',

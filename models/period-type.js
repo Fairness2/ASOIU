@@ -23,7 +23,7 @@ module.exports = function (sq, DataTypes) {
 					}
 				}
 			},
-			number: {
+			length: {
 				type: DataTypes.INTEGER(2),
 				allowNull: false,
 				defaultValue: 0,

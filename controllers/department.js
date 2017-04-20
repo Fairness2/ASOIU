@@ -42,8 +42,8 @@ exports.update = function (req, res) {
 exports.list = function (req, res) {
 	let opts = page.get('fullName', req.query);
 
+	opts.options.where.id = req.query.id;
 	
-
 	models.Department.findAll(
 		opts.options
 	).then(deps => {

@@ -72,7 +72,8 @@ exports.create = function (req, res) {
 
 			let est = Estimate.build({
 				year: req.body.year,
-				frcId: req.body.frcId
+				frcId: req.body.frcId,
+				requests: requests;
 			});
 
 			let estimateItems = {};
@@ -216,6 +217,7 @@ exports.update = function (req, res) {
 
 			est.year = req.body.year;
 			est.frcId = req.body.frcId;
+			est.setRequests(requests);
 			
 			let estimateItems = {};
 
@@ -283,74 +285,3 @@ exports.update = function (req, res) {
 		.catch(models.Sequelize.ValidationError, error.handleValidation(req, res))
 		.catch(error.handleInternal(req, res));
 };
-
-exports.approve = function (req, res) {
-	if (!error.require(res, req.body, {
-		id: 'Нужно указать смету'
-	})) return;
-
-	Estimate.update({
-		approvalDate: moment()
-	}, {
-		where: {
-			id: req.body.id,
-			approvalDate: { $eq: null }
-		}
-	}).then((count, rows) => {
-		if (count) {
-			req.status(200).json({
-				data: 'ok'
-			});
-		} else {
-			req.status(200).json({
-				errors: ['Не найдено']
-			});
-		}
-	})
-	.catch(error.handleInternal(req, res));
-};
-
-exports.list = function (req, res) {
-	let opts = page.get('number', req.query);
-
-	opts.where = opts.where || {};
-	opts.where.frcId = req.query.frcId || null;
-
-	Estimate.findAll(
-		opts.options
-	).then(insts => {
-		let arr = insts.map(x => x.toJSON());
-		if (opts.invert) arr.reverse();
-
-		res.status(200).json({
-			data: arr
-		});
-	});
-};
-
-exports.single = function (req, res) {
-	Estimate.findOne({
-		where: { id: req.body.id || '' },
-		include: assoc.deduceInclude(Request, {
-			items: {
-				costItem: true,
-				values: {
-					period: true
-				}
-			}
-		})
-	})
-		.then(estimate => {
-			if (!estimate) {
-				res.status(200).json({
-					errors: ['Не найдено']
-				});
-				return;
-			}
-
-			res.status(200).json({
-				data: estimate.toJSON()
-			});
-		})
-		.catch(error.handleInternal(req, res));
-}

@@ -1,9 +1,11 @@
 ﻿'use strict';
 
 //const passport = require('passport');
-const models = require(__rootdir + '/models');
-const error = require(__libdir + '/error.js');
 const _ = require('lodash');
+const error = require(__libdir + '/error.js');
+const page = require(__libdir + '/page.js');
+const assoc = require(__libdir + '/assoc.js');
+const models = require(__rootdir + '/models');
 const Sequelize = models.Sequelize;
 const User = models.User;
 
@@ -97,7 +99,23 @@ exports.info = (req, res) => {
 		.catch(error.handleInternal(req, res));
 };
 
-exports.roles = function (req, res) {
+exports.list = (req, res) => {
+	let {options, invert} = page.get('id', req.query);
+
+	options.include = assoc.deduceInclude(User, 'employee');
+
+	User.findAll(options)
+		.then(users => {
+			let arr = insts.map(x => x.toJSON());
+			if (opts.invert) arr.reverse();
+
+			res.status(200).json({
+				data: arr
+			});
+		});
+};
+
+exports.roles = (req, res) => {
 	models.User.findById(req.params.id, {
 		include: [{ model: models.Role, as: 'roles' }]
 	}).then(user => {

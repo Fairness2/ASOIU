@@ -32,6 +32,8 @@ module.exports = function (sq, DataTypes) {
 			timestamps: true,
 			indexes: [
 				{ fields: ['frcId'] },
+				{ fields: ['frcId', 'year'], where: { approvalDate: { $ne: null } }, unique: true },
+				{ fields: ['year'], where: { approvalDate: { $ne: null }, frcId: null }, unique: true },
 				{ fields: ['number'], /*name: 'Estimate_number',*/ unique: true }
 			],
 			classMethods: {

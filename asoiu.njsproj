@@ -31,6 +31,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="app.js" />
+    <Compile Include="controllers\product.js" />
+    <Compile Include="controllers\period-type.js" />
+    <Compile Include="controllers\period.js" />
+    <Compile Include="controllers\limit.js" />
+    <Compile Include="controllers\frc.js" />
+    <Compile Include="controllers\expense.js" />
+    <Compile Include="controllers\estimate-company.js" />
+    <Compile Include="controllers\estimate.js" />
     <Compile Include="controllers\estimate-frc.js" />
     <Compile Include="controllers\request.js" />
     <Compile Include="controllers\current-request.js" />
@@ -65,11 +73,22 @@
     <Compile Include="models\employee.js" />
     <Compile Include="models\log.js" />
     <Compile Include="models\user.js" />
+    <Compile Include="public\js\estimate.js" />
+    <Compile Include="public\js\estimate_company.js" />
     <Compile Include="public\js\index.js" />
     <Compile Include="public\js\login.js" />
-    <Compile Include="public\js\materialize.js" />
     <Compile Include="public\js\materialize.min.js" />
+    <Compile Include="public\js\request.js" />
     <Compile Include="public\js\vue.js" />
+    <Compile Include="routes\product.js" />
+    <Compile Include="routes\period-type.js" />
+    <Compile Include="routes\period.js" />
+    <Compile Include="routes\limit.js" />
+    <Compile Include="routes\frc.js" />
+    <Compile Include="routes\expense.js" />
+    <Compile Include="routes\estimate.js" />
+    <Compile Include="routes\current-request.js" />
+    <Compile Include="routes\cost-item.js" />
     <Compile Include="routes\role.js" />
     <Compile Include="routes\permission.js" />
     <Compile Include="routes\department.js" />
@@ -78,9 +97,10 @@
     <Compile Include="routes\user.js" />
     <Content Include="config.json" />
     <Content Include="package.json" />
-    <Content Include="public\css\materialize.css" />
     <Content Include="public\css\materialize.min.css" />
     <Content Include="public\css\style.css" />
+    <Content Include="public\estimate.html" />
+    <Content Include="public\estimate_company.html" />
     <Content Include="public\fonts\roboto\Roboto-Bold.eot" />
     <Content Include="public\fonts\roboto\Roboto-Bold.ttf" />
     <Content Include="public\fonts\roboto\Roboto-Bold.woff" />
@@ -104,6 +124,7 @@
     <Content Include="public\img\user.png" />
     <Content Include="public\index.html" />
     <Content Include="public\login.html" />
+    <Content Include="public\request.html" />
     <Content Include="README.md" />
   </ItemGroup>
   <ItemGroup>
