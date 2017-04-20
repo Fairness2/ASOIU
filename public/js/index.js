@@ -22,7 +22,7 @@ var application = new Vue({
       this.add_check = false;
       this.seen_check = true;
       $.ajax({
-        url:'api/request_list?previous=' + 0,
+        url:'api/request?after=' + 0,
         type:'GET',
         timeout: 30000,
         error: function (data) {
@@ -44,7 +44,7 @@ var application = new Vue({
       if (lenghtit == 0)
         num = this.items[lenghtit].num;
       $.ajax({
-        url:'api/request_list?previous=' + num,
+        url:'api/request?after=' + num,
         type:'GET',
         timeout: 30000,
         error: function (data) {
@@ -103,7 +103,7 @@ var cfo = new Vue({
       this.load_items_del = false;
       this.add_del = false
       $.ajax({
-        url:'api/estimate_list?previous=' + 0,
+        url:'api/estimate?after=' + 0,
         type:'GET',
         timeout: 30000,
         error: function (data) {
@@ -125,7 +125,7 @@ var cfo = new Vue({
       if (lenghtit == 0)
         num = this.items_check[lenghtit].num;
       $.ajax({
-        url:'api/estimate_list?previous=' + num,
+        url:'api/estimate?after=' + num,
         type:'GET',
         timeout: 30000,
         error: function (data) {
@@ -154,7 +154,7 @@ var cfo = new Vue({
       this.load_items_del = true;
       this.add_del = false
       $.ajax({
-        url:'api/estimate_list?previous=' + 0,
+        url:'api/estimate?after=' + 0,
         type:'GET',
         timeout: 30000,
         error: function (data) {
@@ -176,7 +176,7 @@ var cfo = new Vue({
       if (lenghtit == 0)
         num = this.items_del[lenghtit].num;
       $.ajax({
-        url:'api/estimate_list?previous=' + num,
+        url:'api/estimate?after=' + num,
         type:'GET',
         timeout: 30000,
         error: function (data) {
@@ -236,7 +236,7 @@ var company = new Vue({
       this.load_items_del = false;
       this.add_del = false
       $.ajax({
-        url:'api/estimate_company_list?previous=' + 0,
+        url:'api/estimate?company=true&after=' + 0,
         type:'GET',
         timeout: 30000,
         error: function (data) {
@@ -258,7 +258,7 @@ var company = new Vue({
       if (lenghtit == 0)
         num = this.items_check[lenghtit].num;
       $.ajax({
-        url:'api/estimate_company_list?previous=' + num,
+        url:'api/estimate?company=true&after=' + num,
         type:'GET',
         timeout: 30000,
         error: function (data) {
@@ -288,7 +288,7 @@ var company = new Vue({
       this.load_items_del = true;
       this.add_del = false
       $.ajax({
-        url:'api/estimate_company_list?previous=' + 0,
+        url:'api/estimate?company=true&after=' + 0,
         type:'GET',
         timeout: 30000,
         error: function (data) {
@@ -310,7 +310,7 @@ var company = new Vue({
       if (lenghtit == 0)
         num = this.items_del[lenghtit].num;
       $.ajax({
-        url:'api/estimate_company_list?previous=' + num,
+        url:'api/estimate?company=true&after=' + num,
         type:'GET',
         timeout: 30000,
         error: function (data) {

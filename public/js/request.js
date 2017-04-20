@@ -98,7 +98,7 @@ var body_con = new Vue({
       if (getval['id']) {
         $.ajax({
           //загрузка уже существующей заявки
-          url:'api/request?id=' + getval['id'],
+          url:'api/request/' + getval['id'],
           type:'GET',
           timeout: 30000,
           error: function (data) {
@@ -125,7 +125,7 @@ var body_con = new Vue({
 
         $.ajax({
           /*список всех статей и их товарный позиций*/
-          url:'api/articles',
+          url:'api/cost-item',
           type:'GET',
           timeout: 30000,
           error: function (data) {

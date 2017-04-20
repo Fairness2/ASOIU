@@ -40,16 +40,19 @@ exports.approve = function (req, res) {
 };
 
 exports.list = function (req, res) {
-	let opts = page.get('number', req.query);
+	let {options:opts, invert} = page.get('number', req.query);
 
 	opts.where = opts.where || {};
-	opts.where.frcId = req.query.frcId || null;
+	if (req.query.company)
+		opts.where.frcId = null;
+	else
+		opts.where.frcId = req.query.frcId;
 
 	Estimate.findAll(
-		opts.options
+		opts
 	).then(insts => {
 		let arr = insts.map(x => x.toJSON());
-		if (opts.invert) arr.reverse();
+		if (invert) arr.reverse();
 
 		res.status(200).json({
 			data: arr

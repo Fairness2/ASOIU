@@ -339,7 +339,7 @@ var save_application = new Vue({
 
       $.ajax({
         url:'api/estimate',
-        type:'PUT',
+        type:'POST',
         data: {
           'name': body_con.name_estimate,
           'year': body_con.year,
@@ -377,7 +377,7 @@ var send_application = new Vue({
     send: function () {
       $.ajax({
         url:'api/estimate_send',
-        type:'PUT',
+        type:'POST',
         data: {
           'name': body_con.name_estimate,
           'year': body_con.year,

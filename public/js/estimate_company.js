@@ -110,7 +110,7 @@ var body_con = new Vue({
         $.ajax({
           /*Тут нужно список заявок, с пометкой, какие включены, сведения о
           дополнительных расходах, и сведения о смете*/
-          url:'api/estimate_company?id=' + getval['id'],
+          url:'api/estimate/' + getval['id'],
           type:'GET',
           timeout: 30000,
           error: function (data) {
@@ -128,7 +128,7 @@ var body_con = new Vue({
         });
         $.ajax({
           /*список дополнительных расходов*/
-          url:'api/article',
+          url:'api/cost-item',
           type:'GET',
           timeout: 30000,
           error: function (data) {
@@ -154,7 +154,7 @@ var body_con = new Vue({
 
         $.ajax({
           /*список всех заявок*/
-          url:'api/estimate_list',
+          url:'api/estimate',
           type:'GET',
           timeout: 30000,
           error: function (data) {
@@ -168,7 +168,7 @@ var body_con = new Vue({
         });
         $.ajax({
           /*список дополнительных расходов*/
-          url:'api/article',
+          url:'api/cost-item',
           type:'GET',
           timeout: 30000,
           error: function (data) {
@@ -222,7 +222,7 @@ var body_con = new Vue({
     //Добавить или удалить данные заявки из сметы
     check_estimate: function (id) {
       $.ajax({
-        url:'api/estimate?id=' + id,
+        url:'api/estimate/' + id,
         type:'GET',
         timeout: 30000,
         error: function (data) {
@@ -297,8 +297,8 @@ var save_application = new Vue({
       }
 
       $.ajax({
-        url:'api/estimate_company',
-        type:'PUT',
+        url:'api/estimate',
+        type:'POST',
         data: {
           'name': body_con.name_estimate,
           'year': body_con.year,
