@@ -36,17 +36,21 @@
             <div class="center-align col s12">
               <h5>Разделы</h5>
             </div>
-            <span class="col s4 center-align">
+            <span class="col s3 center-align">
               <input name="chois" type="radio" id="user_sec" v-on:click="show_section(1)"/>
               <label for="user_sec">Пользователи</label>
             </span>
-            <span class="col s4 center-align">
+            <span class="col s3 center-align">
               <input name="chois" type="radio" id="article_sec" v-on:click="show_section(2)"/>
               <label for="article_sec">Статьи расходов</label>
             </span>
-            <span class="col s4 center-align">
-              <input name="chois" type="radio" id="department" v-on:click="show_section(3)"/>
-              <label for="department">Отделы предприятия</label>
+            <span class="col s3 center-align">
+              <input name="chois" type="radio" id="department_sec" v-on:click="show_section(3)"/>
+              <label for="department_sec">Отделы предприятия и ЦФО</label>
+            </span>
+            <span class="col s3 center-align">
+              <input name="chois" type="radio" id="permission_sec" v-on:click="show_section(4)"/>
+              <label for="permission_sec">Назначение прав</label>
             </span>
            </div>
         </div>
@@ -356,9 +360,248 @@
 
         </div>
 
+
+        <div id="article" v-if="show" class="row">
+
+          <div class="col s12 red lighten-5 z-depth-1 header_section">
+            <span class="col s12 right-align"><h5>Статья</h5></span>
+          </div>
+
+          <div class="col s12 centre-preload" v-if="isload">
+            <div class="preloader-wrapper active">
+              <div class="spinner-layer spinner-blue-only">
+                <div class="circle-clipper left">
+                  <div class="circle"></div>
+                </div><div class="gap-patch">
+                  <div class="circle"></div>
+                </div><div class="circle-clipper right">
+                  <div class="circle"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row" v-if="loaderror">
+              <p class="center-align col s12 red-text">{{message_error}}</p>
+          </div>
+
+          <div v-if="loadtrue">
+            <div class="z-depth-1 col s12">
+              <div class="col s6">
+
+                <div class="input-field col s12">
+                  <input id="article_name" type="text" class="validate" pattern="[а-яА-ЯёЁ\w\d_\-:. ]{4,60}" v-model:value="name">
+                  <label for="article_name">Название</label>
+                </div>
+
+              </div>
+              <div class="col s6">
+
+                <div class="card col s12 black-text">
+                  <span class="col s12 center-align">ЦФО</span>
+                  <p class="red-text" v-if="error_dep">{{message_cfo}}</p>
+                  <p v-for="item in cfos">
+                    <input name="cfo" type="radio" v-bind:id="item.id" v-model:checked="item.check"/>
+                    <label v-bind:for="item.id">{{item.name}}</label>
+                  </p>
+                </div>
+
+              </div>
+              <span class="col s12 center-align red-text">{{message_failure}}</span>
+              <span class="col s12 center-align green-text">{{message_success}}</span>
+              <div class="col s12">
+                <div v-if="new_article">
+                  <a class="waves-effect waves-light btn" v-on:click="create_article"><i class="material-icons left">add</i>Создать</a>
+                </div>
+                <div v-if="!new_article">
+                  <a class="waves-effect waves-light btn light-blue darken-3" v-on:click="change_article"><i class="material-icons left">mode_edit</i>Изменить</a>
+                  <a class="waves-effect waves-light btn red accent-3" v-on:click="del_article"><i class="material-icons">delete</i>Удалить</a>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+
+
+        <div id="article_section" v-if="show" class="row">
+
+          <div class="col s12 red lighten-5 z-depth-1 header_section">
+            <span class="col s1 center-align waves-effect head_icon" v-on:click="new_article"><i class="material-icons small">add</i></span>
+            <span class="col s1 center-align waves-effect"><i class="material-icons small">search</i></span>
+            <span class="col s10 right-align"><h5>Статьи расходов</h5></span>
+          </div>
+          <div class="z-depth-1">
+
+            <div class="col s12 centre-preload" v-if="isload">
+              <div class="preloader-wrapper active">
+                <div class="spinner-layer spinner-blue-only">
+                  <div class="circle-clipper left">
+                    <div class="circle"></div>
+                  </div><div class="gap-patch">
+                    <div class="circle"></div>
+                  </div><div class="circle-clipper right">
+                    <div class="circle"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row" v-if="loaderror">
+                <p class="center-align col s12 red-text">{{message_error}}</p>
+            </div>
+
+            <table class="bordered highlight centered" v-if="loadtrue">
+              <thead>
+                <tr>
+                  <th>Название</th>
+                  <th>ЦФО</th>
+                  <th>Товарные позиции</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="item in articles">
+                  <td v-on:click="article_check(item.id)">{{item.name}}</td>
+                  <td v-on:click="article_check(item.id)">{{item.cfo}}</td>
+                  <td><a class="waves-effect waves-light btn" v-on:click="view_item(item.id, item.name)">Посмотреть</a></td>
+                </tr>
+                <tr v-if="if_message" class="cyan lighten-5">
+                  <td colspan="3"><span class="center-align">{{message}}</span></td>
+                </tr>
+                <tr v-if="add_load" class="indigo lighten-5">
+                  <td colspan="3" class="centre-preload">
+                    <div class="preloader-wrapper small active">
+                      <div class="spinner-layer spinner-green-only">
+                        <div class="circle-clipper left">
+                          <div class="circle"></div>
+                        </div><div class="gap-patch">
+                          <div class="circle"></div>
+                        </div><div class="circle-clipper right">
+                          <div class="circle"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr v-if="!add_load" class="indigo lighten-5">
+                  <td colspan="3"><span class="center-align" v-on:click="add_article">Загрузить следующие</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+
+        <div id="products_section" v-if="show" class="row">
+
+          <div class="col s12 red lighten-5 z-depth-1 header_section">
+            <span class="col s1 center-align waves-effect head_icon" v-on:click="new_product"><i class="material-icons small">add</i></span>
+            <span class="col s1 center-align waves-effect"><i class="material-icons small">search</i></span>
+            <span class="col s10 right-align"><h5>Товарные позиции статьи</h5></span>
+          </div>
+          <div class="z-depth-1">
+
+            <div class="col s12 centre-preload" v-if="isload">
+              <div class="preloader-wrapper active">
+                <div class="spinner-layer spinner-blue-only">
+                  <div class="circle-clipper left">
+                    <div class="circle"></div>
+                  </div><div class="gap-patch">
+                    <div class="circle"></div>
+                  </div><div class="circle-clipper right">
+                    <div class="circle"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row" v-if="loaderror">
+                <p class="center-align col s12 red-text">{{message_error}}</p>
+            </div>
+
+            <table class="bordered highlight centered" v-if="loadtrue">
+              <thead>
+                <tr>
+                  <th colspan="3" class="center-align">{{article_name}}</th>
+                </tr>
+                <tr>
+                  <th>Название</th>
+                  <th>Цена</th>
+                  <th>Удалить</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="item in products">
+                  <td v-on:click="product_check(item.id, item.name, item.price)">{{item.name}}</td>
+                  <td v-on:click="product_check(item.id, item.name, item.price)">{{item.price}}</td>
+                  <td><a class="waves-effect waves-light btn red accent-3" v-on:click="del_product(item.id, item.name)"><i class="material-icons">delete</i>Удалить</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+
       </div>
 
 
+      <!--Окно создать изменить товарную позицию-->
+      <div id="product" class="modal">
+        <div class="modal-content">
+          <div class="row">
+            <h5 class="cel s12 center-align ">Товарная позиция</h5>
+          </div>
+          <div class="row">
+            <div class="col s12 m12 l8 offset-l2">
+              <p>Статья: {{article_name}}</p>
+              <div class="input-field col s12">
+                <input id="product_name" type="text" class="validate" pattern="[а-яА-ЯёЁ\w\d_\-:. ]{4,50}" v-model:value="name">
+                <label for="product_name">Название</label>
+              </div>
+              <div class="input-field col s12">
+                <input id="product_price" type="number" class="validate" min="0" v-model:value="price">
+                <label for="product_name">Цена</label>
+              </div>
+              <p class="center-align green-text">{{message_success}}</p>
+              <p class="center-align red-text">{{message_failure}}</p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div v-if="new_product">
+            <a class="modal-action waves-effect waves-green btn-flat" v-on:click="create_product">Добавить</a>
+          </div>
+          <div v-if="!new_product">
+            <a class="modal-action waves-effect waves-blue btn-flat" v-on:click="update_product">Изменить</a>
+          </div>
+          <a class="modal-action modal-close waves-effect waves-red btn-flat">Отмена</a>
+
+        </div>
+      </div>
+
+      <!--Окно удалить товарную позицию-->
+      <div id="product_del" class="modal">
+        <div class="modal-content">
+          <div class="row">
+            <h5 class="cel s12 center-align ">Удаление товара</h5>
+          </div>
+          <div class="row">
+            <div class="col s12 m12 l8 offset-l2">
+              <p>Вы уверены что хотите удалить товар: {{name}}</p>
+
+              <p class="center-align green-text">{{message_success}}</p>
+              <p class="center-align red-text">{{message_failure}}</p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a class="modal-action waves-effect waves-red btn-flat" v-on:click="del_product">Удалить</a>
+          <a class="modal-action modal-close waves-effect waves-green btn-flat">Отмена</a>
+        </div>
+      </div>
 
 
       <!--Боковое меню -->

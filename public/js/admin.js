@@ -25,16 +25,34 @@ var menu_section = new Vue ({
         employees_section.onloading();
         employees_section.show = true;
         employee.show = false;
+        article_section.show = false;
+        article.show = false;
+        products_section.show = false;
       }else if (secton == 2) {
         users_section.show = false;
         user.show = false;
         employees_section.show = false;
         employee.show = false;
+        article_section.onloading();
+        article_section.show = true;
+        article.show = false;
+        products_section.show = false;
       }else if (secton == 3) {
         users_section.show = false;
         user.show = false;
         employees_section.show = false;
         employee.show = false;
+        article_section.show = false;
+        article.show = false;
+        products_section.show = false;
+      }else if (secton == 4) {
+        users_section.show = false;
+        user.show = false;
+        employees_section.show = false;
+        employee.show = false;
+        article_section.show = false;
+        article.show = false;
+        products_section.show = false;
       }
     }
   }
@@ -564,7 +582,7 @@ var employee = new Vue({
           /*Добавление сотрудника*/
           url:'api/employee/create',
           type:'POST',
-          data: {'fullName': employee.FIO, 'sex': sex, 'birthDate': employee.birthday},
+          data: {'fullName': employee.FIO, 'sex': sex, 'birthDate': employee.birthday, 'department': department},
           timeout: 30000,
           error: function (data) {
             employee.message_failure = 'Создать сотрудника не удалось';
@@ -599,7 +617,7 @@ var employee = new Vue({
           /*Добавление сотрудника*/
           url:'api/employee/update',
           type:'POST',
-          data: {'fullName': employee.FIO, 'sex': sex, 'birthDate': employee.birthday, 'id': employee.id},
+          data: {'fullName': employee.FIO, 'sex': sex, 'birthDate': employee.birthday, 'id': employee.id, 'department': department},
           timeout: 30000,
           error: function (data) {
             employee.message_failure = 'Создать изменить не удалось';
@@ -638,6 +656,455 @@ var employee = new Vue({
         employee.message_success = '';
       }
 
+    }
+  }
+});
+
+var article_section = new Vue({
+  el: '#article_section',
+  data: {
+    show: false,
+    isload: true,
+    loaderror: false,
+    loadtrue: false,
+    if_message: false,
+    add_load: false,
+    message_error: '',
+    message: 'Опачки',
+
+    articles: [
+      {id:'10', name:'Мы команда', cfo:'Наша банда', num:'25'},
+      {id:'11', name:'Жопа', cfo:'ЖОпа', num:'2'}
+    ]
+  },
+  methods: {
+    article_check: function (id) {
+      article.new_article = false;
+      article.id = id;
+      article.onloading(id);
+      article.show = true;
+    },
+
+    new_article: function () {
+      article.new_article = true;
+      article.onloading_new();
+      article.show = true;
+    },
+
+    view_item: function (id, name) {
+      products_section.article_id = id;
+      products_section.article_name = name;
+      products_section.onloading(id);
+      products_section.show = true;
+    },
+
+    onloading: function () {
+      this.isload = true;
+      this.loaderror = false;
+      this.loadtrue = false;
+      $.ajax({
+        /*список статей*/
+        url:'api/cost-item?after=' + 0,
+        type:'GET',
+        timeout: 30000,
+        error: function (data) {
+          article_section.isload = false;
+          article_section.loaderror = true;
+          article_section.loadtrue = true; //не забыть поменять
+          article_section.message_error = 'Пожалуйста перезагрузите страницу';
+        },
+        success:function (res) {
+          //Тут нужно обработать статьи
+          article_section.isload = false;
+          article_section.loaderror = false;
+          article_section.loadtrue = true;
+
+        }
+      });
+    },
+
+    add_article: function () {
+      this.add_load = true;
+      this.if_message = false;
+      var num = this.articles[this.articles.length - 1].num;
+      $.ajax({
+        /*список пользователей*/
+        url:'api/cost-item?after=' + num,
+        type:'GET',
+        timeout: 30000,
+        error: function (data) {
+          article_section.add_load = false;
+          article_section.if_message = true;
+          article_section.message = 'Загрузить не получилось';
+        },
+        success:function (res) {
+          //Тут нужно обработать статьи
+          article_section.add_load = false;
+        }
+      });
+    }
+  }
+});
+
+var article = new Vue({
+  el: '#article',
+  data: {
+    show: false,
+    isload: false,
+    loaderror: false,
+    loadtrue:false,
+    new_article: false,
+    error_dep: false,
+    name: '',
+    id: '',
+    message_dep: '',
+    message_error: '',
+    message_failure: '',
+    message_success: '',
+    isload_too: 0,
+    cfos: [
+      {id:'5ad2349d-af4c-4736-8659-1c73852d999b', name: 'Реклама и Маркетиг', check: false},
+      {id:'63feeeed-bb04-4ab1-998e-f7852890cb95', name: 'Клиринг', check: false}
+    ]
+  },
+  methods: {
+    onloading_new: function () {
+      this.isload = true;
+      this.message_failure = '';
+      this.message_success = '';
+      $.ajax({
+        /*список список отделов*/
+        url:'api/frc',
+        type:'GET',
+        timeout: 30000,
+        error: function (data) {
+          article.isload = false;
+          article.loaderror = true;
+          article.loadtrue = true;//не забыть изменить
+          article.message_error = 'Загрузить не удалась';
+        },
+        success:function (res) {
+          //Тут нужно обработать отделы
+          article.isload = false;
+          article.loaderror = false;
+          article.loadtrue = true;
+
+        }
+      });
+    },
+
+    onloading: function (id) {
+      this.isload = true;
+      this.id = id;
+      this.isload_too = 0;
+      this.message_failure = '';
+      this.message_success = '';
+      $.ajax({
+        /*список список сотрудников отделов*/
+        url:'api/frc',
+        type:'GET',
+        timeout: 30000,
+        error: function (data) {
+          article.isload_too = -1;
+          article.isload = false;
+          article.loaderror = true;
+          article.loadtrue = true;//не забыть изменить
+          article.message_error = 'Загрузить не удалась';
+        },
+        success:function (res) {
+          //Тут нужно обработать отделы
+          if (article.isload_too == 2) {
+            article.isload = false;
+            article.loaderror = false;
+            article.loadtrue = true;
+
+          }else {
+            article.isload_too++;
+
+          }
+        }
+      });
+      $.ajax({
+        /*информация о сотруднике*/
+        url:'api/cost-item?id=' + id,
+        type:'GET',
+        timeout: 30000,
+        error: function (data) {
+          article.isload_too = -1;
+          article.isload = false;
+          article.loaderror = true;
+          article.loadtrue = true;//не забыть изменить
+          article.message_error = 'Загрузить не удалась';
+        },
+        success:function (res) {
+          //Тут нужно обработать сотрудника
+          if (article.isload_too == 2) {
+            article.isload = false;
+            article.loaderror = false;
+            article.loadtrue = true;
+            alert(res);
+          }else {
+            article.isload_too++;
+            alert(res);
+          }
+        }
+      });
+    },
+
+    create_article: function () {
+      var regexp = /^[а-яё\w\d_\-:. ]{4,60}$/i;
+      var cfo = '';
+      for (var i = 0; i < this.cfos.length; i++) {
+        if (this.cfos[i].check) {
+          cfo = this.cfos[i].id;
+          break;
+        }
+      }
+      if (regexp.test(this.name) && cfo != '') {
+        $.ajax({
+          /*Добавление статьи*/
+          url:'api/cast-item/create',
+          type:'POST',
+          data: {'name': article.name, 'frc': cfo},
+          timeout: 30000,
+          error: function (data) {
+            article.message_failure = 'Создать статью не удалось';
+            article.message_success = '';
+          },
+          success:function (res) {
+            article.message_failure = '';
+            article.message_success = 'Статья успешно создана';
+          }
+        });
+      }else {
+        article.message_failure = 'Заполните поля правильно';
+        article.message_success = '';
+      }
+    },
+
+    change_article: function () {
+      var regexp = /^[а-яё\w\d_\-:. ]{4,60}$/i;
+      var cfo = '';
+      for (var i = 0; i < this.cfos.length; i++) {
+        if (this.cfos[i].check) {
+          cfo = this.cfos[i].id;
+          break;
+        }
+      }
+      if (regexp.test(this.name) && cfo != ''&& id != '') {
+        $.ajax({
+          /*изменение  стстьи*/
+          url:'api/cast-item/update',
+          type:'POST',
+          data: {'name': article.name, 'frc': cfo, 'id': article.name.id},
+          timeout: 30000,
+          error: function (data) {
+            article.message_failure = 'Изменить статью не удалось';
+            article.message_success = '';
+          },
+          success:function (res) {
+            article.message_failure = '';
+            article.message_success = 'Статья успешно изменена';
+          }
+        });
+      }else {
+        article.message_failure = 'Заполните поля правильно';
+        article.message_success = '';
+      }
+    },
+
+    del_article: function () {
+      if (this.id != '') {
+        $.ajax({
+          /*Удаление*/
+          url:'api/cost-item',
+          type:'DELETE',
+          data: {'id': article.id},
+          timeout: 30000,
+          error: function (data) {
+            article.message_failure = 'Удалить статью не удалось';
+            article.message_success = '';
+          },
+          success:function (res) {
+            article.message_failure = '';
+            article.message_success = 'Статья успешно удалёна';
+
+          }
+        });
+      }else {
+        article.message_failure = 'Что-то пошло не так';
+        article.message_success = '';
+      }
+
+    }
+  }
+});
+
+var products_section = new Vue({
+  el: '#products_section',
+  data: {
+    show: false,
+    isload: true,
+    loaderror: false,
+    loadtrue: false,
+    message_error: '',
+    article_name: '',
+    article_id: '',
+    products: [
+      {id:'10', name:'Диван', price:'30000'},
+      {id:'101', name:'Кресло', price:'4363'},
+      {id:'102', name:'Стол', price:'2344'}
+    ]
+  },
+  methods: {
+    product_check: function (id, name, price) {
+      product.new_product = false;
+      product.article_id = this.article_id;
+      product.article_name = this.article_name;
+      product.id = id;
+      product.name = name;
+      product.price = price;
+      $('#product').modal('open');
+    },
+
+    new_product: function () {
+      product.new_product = true;
+      product.article_id = this.article_id;
+      product.article_name = this.article_name;
+      product.id = '';
+      product.name = '';
+      product.price = '';
+      $('#product').modal('open');
+    },
+
+    del_product: function (id, name) {
+      product_del.id = id;
+      product_del.name = name;
+      $('#product_del').modal('open');
+    },
+
+    onloading: function () {
+      this.isload = true;
+      this.loaderror = false;
+      this.loadtrue = false;
+      $.ajax({
+        /*список статей*/
+        url:'api/product?cost-item=' + products_section.id,
+        type:'GET',
+        timeout: 30000,
+        error: function (data) {
+          products_section.isload = false;
+          products_section.loaderror = true;
+          products_section.loadtrue = true; //не забыть поменять
+          products_section.message_error = 'Пожалуйста перезагрузите страницу';
+        },
+        success:function (res) {
+          //Тут нужно обработать товарные позиции
+          products_section.isload = false;
+          products_section.loaderror = false;
+          products_section.loadtrue = true;
+
+        }
+      });
+    }
+  }
+});
+
+var product = new Vue({
+  el: '#product',
+  data: {
+    new_product: true,
+    article_name: '',
+    article_id: '',
+    name: '',
+    price: '',
+    id: '',
+    message_failure: '',
+    message_success: ''
+  },
+  methods: {
+    create_product: function () {
+      var regexp = /^[а-яё\w\d_\-:. ]{4,50}$/i;
+
+      if (regexp.test(this.name) && this.price >= 0) {
+        $.ajax({
+          /*Добавление товара*/
+          url:'api/product/create',
+          type:'POST',
+          data: {'name': product.name, 'price': product.price, 'costItemId': product.article_id},
+          timeout: 30000,
+          error: function (data) {
+            product.message_failure = 'Добавить товар не удалось';
+            product.message_success = '';
+          },
+          success:function (res) {
+            product.message_failure = '';
+            product.message_success = 'Товар успешно добавлен';
+          }
+        });
+      }else {
+        product.message_failure = 'Заполните поля правильно';
+        product.message_success = '';
+      }
+    },
+
+    update_product: function () {
+      var regexp = /^[а-яё\w\d_\-:. ]{4,50}$/i;
+
+      if (regexp.test(this.name) && this.price >= 0 && this.id != '') {
+        $.ajax({
+          /*Изменение товара*/
+          url:'api/product/update',
+          type:'POST',
+          data: {'name': product.name, 'price': product.price, 'id': product.id, 'costItemId': product.article_id},
+          timeout: 30000,
+          error: function (data) {
+            product.message_failure = 'Изменить товар не удалось';
+            product.message_success = '';
+          },
+          success:function (res) {
+            product.message_failure = '';
+            product.message_success = 'Товар успешно изменён';
+          }
+        });
+      }else {
+        product.message_failure = 'Заполните поля правильно';
+        product.message_success = '';
+      }
+    }
+  }
+});
+
+var product_del = new Vue({
+  el: '#product_del',
+  data: {
+    id: '',
+    name: '',
+    message_failure: '',
+    message_success: ''
+  },
+  methods: {
+    del_product: function () {
+      if (this.id != '') {
+        $.ajax({
+          /*Добавление статьи*/
+          url:'api/product',
+          type:'DELETE',
+          data: {'id': product_del.id},
+          timeout: 30000,
+          error: function (data) {
+            product_del.message_failure = 'Добавить товар не удалось';
+            product_del.message_success = '';
+          },
+          success:function (res) {
+            product_del.message_failure = '';
+            product_del.message_success = 'Товар успешно добавлен';
+          }
+        });
+      }else {
+        product_del.message_failure = 'Заполните поля правильно';
+        product_del.message_success = '';
+      }
     }
   }
 });
