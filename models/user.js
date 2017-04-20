@@ -1,8 +1,10 @@
 ﻿'use strict';
 
 const config = require(__rootdir + '/config.json').auth;
+const _ = require('lodash');
 const Sequelize = require('sequelize');
 const bcrypt = require('bcrypt');
+const assoc = require(__libdir + '/assoc.js');
 
 module.exports = function (sq, DataTypes) {
 	return sq.define('User',
@@ -58,6 +60,21 @@ module.exports = function (sq, DataTypes) {
 					}
 
 					if (errors.length) throw new Sequelize.ValidationError('Validation error', errors);
+				},
+				getPermissions: id => {
+					return this.
+						findOne({
+							where: { id: id },
+							include: assoc.deduceInclude(this, {
+								roles: {
+									permissions: true
+								}
+							})
+						})
+						.then(user => {
+							if (!user) return;
+							return _.union(_.map(user.roles, role => _.map(role.permission, perm => per.name)));
+						});
 				},
 				associate: models => {
 					models.User.belongsTo(models.Employee, { as: 'employee', foreignKey: 'employeeId' });

@@ -45,19 +45,25 @@ exports.login = (req, res) => {
 
 	console.log(req.body.username);
 
-	User.findOne({ username: req.body.username })
+	User.findOne({
+		where: { username: req.body.username },
+		include: assoc.deduceInclude(User, 'employee')
+	})
 		.then(user => {
 			if (user) {
-				return user
-					.verifyPassword(req.body.password)
-					.then(ok => {
+				return Promise.all([
+					user.verifyPassword(req.body.password),
+					User.getPermissions(user.id)
+				])
+					.then(([ok, perms]) => {
 						if (ok) {
-							req.session.user = user;
+							req.session.user = user.toJSON();
+							req.session.user.permissions = perms;
 
 							res.status(200).json({
-								data: 'Вход выполнен успешно'
+								data: user.toJSON()
 							});
-
+							
 							return true;
 						}
 
@@ -88,7 +94,9 @@ exports.logout = (req, res) => {
 
 // Средний слой должен проверить наличие сессии
 exports.info = (req, res) => {
-	User.findById(req.session.user.id)
+	User.findById(req.params.id || req.session.user.id, {
+		include: assoc.deduceInclude(User, 'roles')
+	})
 		.then(user => {
 			if (user) {
 				res.status(200).json({
@@ -139,10 +147,7 @@ exports.setRoles = (req, res) => {
 		models.Role.findMany({
 			where: { $in: ids }
 		})])
-		.then(vals => {
-			let user = vals[0];
-			let roles = vals[1];
-
+		.then(([user, roles]) => {
 			if (user && roles.length === ids.length) {
 				user.setRoles(roles);
 
