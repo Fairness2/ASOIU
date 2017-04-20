@@ -19,12 +19,15 @@ var menu_section = new Vue ({
   methods: {
     show_section: function (secton) {
       if (secton == 1) {
-        users_section.show = true;
         users_section.onloading();
-      }else if (section == 2) {
+        users_section.show = true;
+        user.show = false;
+      }else if (secton == 2) {
         users_section.show = false;
-      }else if (section == 3) {
+        user.show = false;
+      }else if (secton == 3) {
         users_section.show = false;
+        user.show = false;
       }
     }
   }
@@ -49,10 +52,16 @@ var users_section = new Vue({
   },
   methods: {
     user_check: function (id) {
-      alert(id);
+      user.new_user = false;
+      user.id = id;
+      user.onloading(id);
+      user.show = true;
     },
 
     new_user: function () {
+      user.new_user = true;
+      user.change_passwd = true;
+      user.onloading_new();
       user.show = true;
     },
 
@@ -62,7 +71,7 @@ var users_section = new Vue({
       this.loadtrue = false;
       $.ajax({
         /*список пользователей*/
-        url:'api/user_list?previous=' + 0,
+        url:'api/user/info?after=' + 0,
         type:'GET',
         timeout: 30000,
         error: function (data) {
@@ -86,7 +95,7 @@ var users_section = new Vue({
       var num = this.users[this.users.length - 1].num;
       $.ajax({
         /*список пользователей*/
-        url:'api/user_list?previous=' + num,
+        url:'api/user/info?after=' + num,
         type:'GET',
         timeout: 30000,
         error: function (data) {
@@ -108,12 +117,20 @@ var user = new Vue({
   data: {
     show: false,
     isload: false,
+    loaderror: false,
+    loadtrue:false,
     new_user: false,
     change_passwd: false,
+    error_dep: false,
     login: '',
     passwd: '',
     again_passwd: '',
     id: '',
+    message_dep: '',
+    message_error: '',
+    message_failure: '',
+    message_success: '',
+    isload_too: 0,
     departments: [
       {id:'5ad2349d-af4c-4736-8659-1c73852d999b', name: 'Реклама и Маркетиг', table_show: false,
       employees:[
@@ -128,6 +145,87 @@ var user = new Vue({
     ]
   },
   methods: {
+    onloading_new: function () {
+      this.isload = true;
+      this.message_failure = '';
+      this.message_success = '';
+      $.ajax({
+        /*список список сотрудников отделов*/
+        url:'api/department?with=employee',
+        type:'GET',
+        timeout: 30000,
+        error: function (data) {
+          user.isload = false;
+          user.loaderror = true;
+          user.loadtrue = true;//не забыть изменить
+          user.message_error = 'Загрузить не удалась';
+        },
+        success:function (res) {
+          //Тут нужно обработать пользоваетелей
+          user.isload = false;
+          user.loaderror = false;
+          user.loadtrue = true;
+        }
+      });
+    },
+
+    onloading: function (id) {
+      this.isload = true;
+      this.isload_too = 0;
+      this.message_failure = '';
+      this.message_success = '';
+      $.ajax({
+        /*список список сотрудников отделов*/
+        url:'api/department?with=employee',
+        type:'GET',
+        timeout: 30000,
+        error: function (data) {
+          user.isload_too = -1;
+          user.isload = false;
+          user.loaderror = true;
+          user.loadtrue = true;//не забыть изменить
+          user.message_error = 'Загрузить не удалась';
+        },
+        success:function (res) {
+          //Тут нужно обработать пользоваетелей
+          if (user.isload_too == 2) {
+            user.isload = false;
+            user.loaderror = false;
+            user.loadtrue = true;
+            //не забыть отметить сотрудника
+          }else {
+            user.isload_too++;
+
+          }
+        }
+      });
+      $.ajax({
+        /*информация о пользоваателе*/
+        url:'api/user/info/' + id,
+        type:'GET',
+        timeout: 30000,
+        error: function (data) {
+          user.isload_too = -1;
+          user.isload = false;
+          user.loaderror = true;
+          user.loadtrue = true;//не забыть изменить
+          user.message_error = 'Загрузить не удалась';
+        },
+        success:function (res) {
+          //Тут нужно обработать пользоваетелей
+          if (user.isload_too == 2) {
+            user.isload = false;
+            user.loaderror = false;
+            user.loadtrue = true;
+            alert(res);
+          }else {
+            user.isload_too++;
+            alert(res);
+          }
+        }
+      });
+    },
+
     show_department: function (id) {
       for (var i = 0; i < this.departments.length; i++)
       {
@@ -141,15 +239,107 @@ var user = new Vue({
     },
 
     create_user: function () {
-
+      var regexp = /^[A-Za-z0-9_-]{6,20}$/;
+      var flag = false;
+      if (this.passwd == this.again_passwd) {
+        flag = true;
+      }
+      var employee = '';
+      for (var i = 0; i < this.departments.length; i++) {
+        if (this.departments[i].table_show) {
+          for (var j = 0; i < this.departments[i].employees.length; j++) {
+            if (this.departments[i].employees[j].check) {
+              employee = this.departments[i].employees[j].id;
+              break;
+            }
+          }
+          break;
+        }
+      }
+      if (regexp.test(this.login) && regexp.test(this.passwd) && flag && employee != '') {
+        $.ajax({
+          /*Регистрация*/
+          url:'api/user/register',
+          type:'POST',
+          data: {'username': login, 'password': passwd, 'employeeId': employee},
+          timeout: 30000,
+          error: function (data) {
+            user.message_failure = 'Создать пользователя не удалось';
+            user.message_success = '';
+          },
+          success:function (res) {
+            user.message_failure = '';
+            user.message_success = 'Пользоваетель успешно создан';
+          }
+        });
+      }else {
+        user.message_failure = 'Заполните поля правильно';
+        user.message_success = '';
+      }
     },
 
     change_user: function () {
+      var regexp = /^[A-Za-z0-9_-]{6,20}$/;
+      var flag = false;
+      if (this.change_passwd) {
+        if (this.passwd == this.again_passwd && regexp.test(this.passwd)) {
+          flag = true;
+        }
+      }else {
+        flag = true;
+        this.passwd = '';
+      }
 
+      var employee = '';
+      for (var i = 0; i < this.departments.length; i++) {
+        if (this.departments[i].table_show) {
+          for (var j = 0; i < this.departments[i].employees.length; j++) {
+            if (this.departments[i].employees[j].check) {
+              employee = this.departments[i].employees[j].id;
+              break;
+            }
+          }
+          break;
+        }
+      }
+      if (regexp.test(this.login)  && flag && employee != '') {
+        $.ajax({
+          /*Регистрация*/
+          url:'api/user/update',
+          type:'POST',
+          data: {'username': login, 'password': passwd, 'employeeId': employee, 'id': user.id},
+          timeout: 30000,
+          error: function (data) {
+            user.message_failure = 'Изменить пользователя не удалось';
+            user.message_success = '';
+          },
+          success:function (res) {
+            user.message_failure = '';
+            user.message_success = 'Пользоваетель успешно изменён';
+          }
+        });
+      }else {
+        user.message_failure = 'Заполните поля правильно';
+        user.message_success = '';
+      }
     },
 
     del_user: function () {
-
+      $.ajax({
+        /*Регистрация*/
+        url:'api/user',
+        type:'DELETE',
+        data: {'id': user.id},
+        timeout: 30000,
+        error: function (data) {
+          user.message_failure = 'Удалить пользователя не удалось';
+          user.message_success = '';
+        },
+        success:function (res) {
+          user.message_failure = '';
+          user.message_success = 'Пользоваетель успешно удалён';
+        }
+      });
     }
   }
 });
