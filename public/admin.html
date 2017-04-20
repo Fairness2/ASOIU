@@ -53,6 +53,10 @@
 
         <div id="user" v-if="show" class="row">
 
+          <div class="col s12 red lighten-5 z-depth-1 header_section">
+            <span class="col s12 right-align"><h5>Пользователь</h5></span>
+          </div>
+
           <div class="col s12 centre-preload" v-if="isload">
             <div class="preloader-wrapper active">
               <div class="spinner-layer spinner-blue-only">
@@ -67,63 +71,72 @@
             </div>
           </div>
 
-          <div v-if="!isload">
+          <div class="row" v-if="loaderror">
+              <p class="center-align col s12 red-text">{{message_error}}</p>
+          </div>
 
-            <div class="col s12 red lighten-5 z-depth-1 header_section">
-              <span class="col s12 right-align"><h5>Пользователь</h5></span>
-            </div>
-
-            <div class="col s6">
-              <div class="input-field col s12">
-                <input id="login" type="text" class="validate" pattern="[0-9a-zA-Z_-]{6,20}" v-model:value="login">
-                <label for="login">Логин</label>
-              </div>
-              <p v-if="!new_user">
-                <input name="passwd" type="radio" id="if_passwd" v-model:checked="change_passwd"/>
-                <label for="if_passwd">Изменить пароль</label>
-              </p>
-              <div class="input-field col s12">
-                <input id="passwd" type="password" class="validate" pattern="[0-9a-zA-Z_-]{6,20}" v-model:value="passwd">
-                <label for="passwd">Пароль</label>
-              </div>
-              <div class="input-field col s12">
-                <input id="again_passwd" type="password" class="validate" pattern="[0-9a-zA-Z_-]{6,20}" v-model:value="again_passwd">
-                <label for="again_passwd">Повторите пароль</label>
-              </div>
-            </div>
-            <div class="col s6">
-              <div class="card col s12 black-text">
-                <p class="red-text" v-if="error_art">{{message_dep}}</p>
-                <p v-for="item in departments">
-                  <input name="departments" type="radio" v-bind:id="item.id" v-on:click="show_department(item.id)"/>
-                  <label v-bind:for="item.id">{{item.name}}</label>
+          <div v-if="loadtrue">
+            <div class="z-depth-1 col s12">
+              <div class="col s6">
+                <div class="input-field col s12">
+                  <input id="login" type="text" class="validate" pattern="[0-9a-zA-Z_-]{6,20}" v-model:value="login">
+                  <label for="login">Логин</label>
+                </div>
+                <p v-if="!new_user">
+                  <input name="passwd" type="checkbox" id="if_passwd" v-model:checked="change_passwd"/>
+                  <label for="if_passwd">Изменить пароль</label>
                 </p>
+                <div v-if="change_passwd">
+                  <div class="input-field col s12">
+                    <input id="passwd" type="password" class="validate" pattern="[0-9a-zA-Z_-]{6,20}" v-model:value="passwd">
+                    <label for="passwd">Пароль</label>
+                  </div>
+                  <div class="input-field col s12">
+                    <input id="again_passwd" type="password" class="validate" pattern="[0-9a-zA-Z_-]{6,20}" v-model:value="again_passwd">
+                    <label for="again_passwd">Повторите пароль</label>
+                  </div>
+                </div>
+
               </div>
-              <table class="col s12" v-for="department in departments" v-show="department.table_show">
-                <head>
-                  <tr>
-                    <th>ФИО</th>
-                  </tr>
-                </head>
-                <tbody>
-                  <tr v-for="item in department.employees">
-                    <td><p>
-                      <input name="users" type="radio" v-bind:id="item.id" v-model:checked="item.check"/>
-                      <label v-bind:for="item.id">{{item.name}}</label>
-                    </p></td>
-                  </tr>
-                </tbody>
-              </table>
+              <div class="col s6">
+                <div class="card col s12 black-text">
+                  <p class="red-text" v-if="error_dep">{{message_dep}}</p>
+                  <p v-for="item in departments">
+                    <input name="departments" type="radio" v-bind:id="item.id" v-on:click="show_department(item.id)"/>
+                    <label v-bind:for="item.id">{{item.name}}</label>
+                  </p>
+
+                  <table  class="bordered centered col s12" v-for="department in departments" v-show="department.table_show">
+                    <thead>
+                      <tr>
+                        <th>ФИО</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="item in department.employees">
+                        <td><p>
+                          <input name="users" type="radio" v-bind:id="item.id" v-model:checked="item.check"/>
+                          <label v-bind:for="item.id">{{item.name}}</label>
+                        </p></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <span class="col s12 center-align red-text">{{message_failure}}</span>
+              <span class="col s12 center-align green-text">{{message_success}}</span>
+              <div class="col s12">
+                <div v-if="new_user">
+                  <a class="waves-effect waves-light btn" v-on:click="create_user"><i class="material-icons left">add</i>Создать</a>
+                </div>
+                <div v-if="!new_user">
+                  <a class="waves-effect waves-light btn light-blue darken-3" v-on:click="change_user"><i class="material-icons left">mode_edit</i>Изменить</a>
+                  <a class="waves-effect waves-light btn red accent-3" v-on:click="del_user"><i class="material-icons">delete</i>Удалить</a>
+                </div>
+              </div>
             </div>
-            <div class="col s12">
-              <div v-if="new_user">
-                <a class="waves-effect waves-light btn" v-on:click="create_user"><i class="material-icons left">add</i>Создать</a>
-              </div>
-              <div v-if="!new_user">
-                <a class="waves-effect waves-light btn light-blue darken-3" v-on:click="change_user"><i class="material-icons left">mode_edit</i>Изменить</a>
-                <a class="waves-effect waves-light btn red accent-3" v-on:click="del_user"><i class="material-icons">delete</i>Удалить</a>
-              </div>
-            </div>
+
+
           </div>
         </div>
 
