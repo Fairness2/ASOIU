@@ -104,9 +104,8 @@ exports.setPermissions = function (req, res) {
 			let perms = values[1];
 
 			if (role && perms.length === ids.length) {
-				role.setPermissions(perms);
-
-				return role.save()
+				role.setPermissions(perms)
+					.then(() => role.save())
 					.then(() => {
 						res.status(200).json({
 							data: 'ok'

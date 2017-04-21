@@ -22,7 +22,10 @@ exports.create = function (req, res) {
 		year: req.body.year,
 		requesterId: req.session.user.employeeId,
 		items: req.body.items
-	});
+	},
+		{
+			include: assoc.deduceInclude(Request, 'items')
+		});
 
 	rq.save({ context: req.session })
 		.then(() => {
@@ -83,23 +86,21 @@ exports.update = function (req, res) {
 			inst.set({
 				year: req.body.year
 			}, {
-				context: req.session,
-				individualHooks: true
-			});
+					context: req.session,
+					individualHooks: true
+				});
 
-			inst.setItems(
+			inst
+				.setItems(
 				_.map(
 					req.body.items,
 					item => models.CurrentRequestItem.build({
 						productId: item.productId,
 						periodId: item.periodId,
 						quantity: item.quantity
-					})
-				),
-				{ context: req.session }
-			);
-
-			return inst.save({ context: req.session })
+					})),
+				{ context: req.session })
+				.then(() => inst.save({ context: req.session }))
 				.then(() => {
 					res.status(200).json({
 						data: 'ok'
@@ -127,7 +128,7 @@ exports.list = function (req, res) {
 		res.status(200).json({
 			data: arr
 		});
-		})
+	})
 		.catch(error.handleInternal(req, res));
 };
 

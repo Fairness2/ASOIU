@@ -104,17 +104,17 @@ exports.create = function (req, res) {
 					})));
 
 			// Преобразовываем нашу структуру в экземпляры моделей
-			est.setItems(_.map(estimateItems, (values, costItemId) =>
-				models.EstimateItem.build({
-					costItemId: costItemId,
-					values: _.map(values, (value, periodId) => ({
-						value: value,
-						periodId: periodId
-					}))
-				})),
-				{ context: req.session });
-
-			return est.save({ context: req.session });
+			return est
+				.setItems(_.map(estimateItems, (values, costItemId) =>
+					models.EstimateItem.build({
+						costItemId: costItemId,
+						values: _.map(values, (value, periodId) => ({
+							value: value,
+							periodId: periodId
+						}))
+					})),
+				{ context: req.session })
+				.then(() => est.save({ context: req.session }));
 		})
 		.then(() => {
 			res.status(200).json({
@@ -243,17 +243,17 @@ exports.update = function (req, res) {
 					})));
 
 			// Преобразовываем нашу структуру в экземпляры моделей
-			est.setItems(_.map(estimateItems, (values, costItemId) =>
-				models.EstimateItem.build({
-					costItemId: costItemId,
-					values: _.map(values, (value, periodId) => ({
-						value: value,
-						periodId: periodId
-					}))
-				})),
-				{ context: req.session });
-
-			return est.save({ context: req.session });
+			return est
+				.setItems(_.map(estimateItems, (values, costItemId) =>
+					models.EstimateItem.build({
+						costItemId: costItemId,
+						values: _.map(values, (value, periodId) => ({
+							value: value,
+							periodId: periodId
+						}))
+					})),
+				{ context: req.session })
+				.then(() => est.save({ context: req.session }));
 		})
 		.then(() => {
 			res.status(200).json({
