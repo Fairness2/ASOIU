@@ -10,7 +10,7 @@ module.exports = function (root) {
 	root.use('/department', router);
 
 	router.route('/')
-		.post(auth.check('dep.create'), department.create)
-		.put(auth.check('dep.update'), department.update)
-		.get(auth.check('dep.list'), department.list);
+		.post(/*auth.check('dep.create'),*/ department.create)
+		.put(/*auth.check('dep.update'),*/ department.update)
+		.get(/*auth.check('dep.list'),*/ department.list);
 };
