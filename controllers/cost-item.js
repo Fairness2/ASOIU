@@ -69,7 +69,7 @@ exports.list = function (req, res) {
 
 	opts.options.include = assoc.deduceInclude(CostItem, {
 		frc: true,
-		products: req.query.with && req.query.with.products
+		products: req.query.with && (req.query.with==='products' || req.query.with.products)
 	});
 
 	CostItem
