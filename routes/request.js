@@ -15,4 +15,6 @@ module.exports = function (root) {
 		.post(ctl.create)
 		.put(ctl.update)
 		.get(ctl.list);
+
+	router.get('/:id', ctl.single);
 };

@@ -45,7 +45,7 @@ module.exports = function (sq, DataTypes) {
 			classMethods: {
 				associate: models => {
 					models.Employee.hasOne(models.User, { as: 'user', foreignKey: 'employeeId' });
-					models.Employee.belongsToMany(models.Department, { through: 'EmployeeDepartment', foreignKey: 'employeeId' });
+					models.Employee.belongsToMany(models.Department, { as: 'departments', through: 'EmployeeDepartment', foreignKey: 'employeeId' });
 					models.Employee.hasMany(models.Request, { as: 'requests', foreignKey: 'requesterId' });
 				}
 			},

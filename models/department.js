@@ -45,7 +45,7 @@ module.exports = function (sq, DataTypes) {
 			enableLog: true,
 			classMethods: {
 				associate: models => {
-					models.Department.belongsToMany(models.Employee, { through: 'EmployeeDepartment', foreignKey: 'departmentId' });
+					models.Department.belongsToMany(models.Employee, { as: 'employees', through: 'EmployeeDepartment', foreignKey: 'departmentId' });
 				}
 			},
 			instanceMethods: {
