@@ -119,7 +119,7 @@ var cfo = new Vue({
         success:function (res) {
           //Тут нужно добавить полученные элементы в массим данных
           cfo.load_items_check = false;
-          cfo.message_check = 'Всё типтоп' + JSON.stringify(res);
+          cfo.message_check = '';
           cfo.items_check = [];
           for (var i = 0; i < res.data.length; i++) {
             cfo.items_check.push({num: res.data[i].number, id: res.data[i].id, message: res.data[i].name});
@@ -145,7 +145,10 @@ var cfo = new Vue({
         success:function (res) {
           //Тут нужно добавить полученные элементы в массим данных
           cfo.add_check = false;
-          cfo.message_check = 'Всё типтоп';
+          cfo.message_check = '';
+          for (var i = 0; i < res.data.length; i++) {
+            cfo.items_check.push({num: res.data[i].number, id: res.data[i].id, message: res.data[i].name});
+          }
         }
       });
     },
@@ -174,7 +177,11 @@ var cfo = new Vue({
         success:function (res) {
           //Тут нужно добавить полученные элементы в массим данных
           cfo.load_items_del = false;
-          cfo.message_del = 'Всё типтоп';
+          cfo.message_del = '';
+          cfo.items_del = [];
+          for (var i = 0; i < res.data.length; i++) {
+            cfo.items_del.push({num: res.data[i].number, id: res.data[i].id, message: res.data[i].name});
+          }
         }
       });
     },
@@ -196,7 +203,10 @@ var cfo = new Vue({
         success:function (res) {
           //Тут нужно добавить полученные элементы в массим данных
           cfo.add_del = false;
-          cfo.message_del = 'Всё типтоп';
+          cfo.message_del = '';
+          for (var i = 0; i < res.data.length; i++) {
+            cfo.items_del.push({num: res.data[i].number, id: res.data[i].id, message: res.data[i].name});
+          }
         }
       });
     },
