@@ -122,7 +122,7 @@ exports.create = function (req, res) {
 					});
 				});
 		})
-		.catch(models.Sequelize.ForeignKeyError, error.handleForeign(req, res, {
+		.catch(models.Sequelize.ForeignKeyConstraintError, error.handleForeign(req, res, {
 			costItemId: 'Такой статьи не существует',
 			periodId: 'Такого периода не существует'
 		}))
@@ -261,7 +261,7 @@ exports.update = function (req, res) {
 					});
 				});
 		})
-		.catch(models.Sequelize.ForeignKeyError, error.handleForeign(req, res, {
+		.catch(models.Sequelize.ForeignKeyConstraintError, error.handleForeign(req, res, {
 			costItemId: 'Такой статьи не существует',
 			periodId: 'Такого периода не существует'
 		}))

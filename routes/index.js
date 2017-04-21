@@ -2,9 +2,7 @@
 
 const express = require('express'),
 	fs = require('fs'),
-	path = require('path'),
-	user = require('./user.js'),
-	employee = require('./employee.js');
+	path = require('path');
 
 function requireDir(dirname, modules) {
 	modules = modules || {};

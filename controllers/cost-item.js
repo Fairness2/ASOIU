@@ -14,12 +14,12 @@ exports.create = function (req, res) {
 			parentId: req.body.parentId,
 			frcId: req.body.frcId
 		}, { context: req.session })
-		.then(ci => {
+		.then(costItem => {
 			res.status(200).json({
-				data: ci.id
+				data: costItem.id
 			});
 		})
-		.catch(models.Sequelize.ForeignKeyError, error.handleForeign(req, res, {
+		.catch(models.Sequelize.ForeignKeyConstraintError, error.handleForeign(req, res, {
 			parentId: 'Такой статьи не существует',
 			frcId: 'Такой ЦФО не существует'
 		}))
@@ -49,7 +49,7 @@ exports.update = function (req, res) {
 				});
 			}
 		})
-		.catch(models.Sequelize.ForeignKeyError, error.handleForeign(req, res, {
+		.catch(models.Sequelize.ForeignKeyConstraintError, error.handleForeign(req, res, {
 			parentId: 'Такой статьи не существует',
 			frcId: 'Такой ЦФО не существует'
 		}))

@@ -33,7 +33,7 @@ exports.create = function (req, res) {
 				data: rq.id
 			});
 		})
-		.catch(models.Sequelize.ForeignKeyError, error.handleForeign(req, res, {
+		.catch(models.Sequelize.ForeignKeyConstraintError, error.handleForeign(req, res, {
 			productId: 'Такого товара/услуги не существует',
 			requesterId: 'Такого сотрудника не существует',
 			periodId: 'Такого периода не существует'
@@ -107,7 +107,7 @@ exports.update = function (req, res) {
 					});
 				});
 		})
-		.catch(models.Sequelize.ForeignKeyError, error.handleForeign(req, res, {
+		.catch(models.Sequelize.ForeignKeyConstraintError, error.handleForeign(req, res, {
 			productId: 'Такого товара/услуги не существует',
 			requestId: 'Такой заявки не существует',
 			periodId: 'Такого периода не существует'
