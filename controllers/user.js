@@ -161,7 +161,7 @@ exports.list = (req, res) => {
 	User.findAll(options)
 		.then(users => {
 			let arr = users.map(x => x.toJSON());
-			if (opts.invert) arr.reverse();
+			if (invert) arr.reverse();
 
 			res.status(200).json({
 				data: arr
@@ -173,7 +173,7 @@ exports.list = (req, res) => {
 exports.roles = (req, res) => {
 	models.User
 		.findById(req.params.id, {
-			include: [{ model: models.Role, as: 'roles' }]
+			include: assoc.deduceInclude(models.User, 'roles')
 		})
 		.then(user => {
 			if (user) {
