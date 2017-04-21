@@ -106,6 +106,7 @@ exports.create = function (req, res) {
 			// Преобразовываем нашу структуру в экземпляры моделей
 			return est
 				.save({ context: req.session })
+				.then(() => est.setFrcEstimates(estimates))
 				.then(est => est.setItems(_.map(estimateItems, (values, costItemId) =>
 					models.EstimateItem.build({
 						costItemId: costItemId,
@@ -244,16 +245,16 @@ exports.update = function (req, res) {
 
 			// Преобразовываем нашу структуру в экземпляры моделей
 			return est
-				.setItems(_.map(estimateItems, (values, costItemId) =>
+				.save({ context: req.session })
+				.then(() => est.setFrcEstimates(estimates))
+				.then(()=> est.setItems(_.map(estimateItems, (values, costItemId) =>
 					models.EstimateItem.build({
 						costItemId: costItemId,
 						values: _.map(values, (value, periodId) => ({
 							value: value,
 							periodId: periodId
 						}))
-					})),
-				{ context: req.session })
-				.then(() => est.save({ context: req.session }))
+					})), { context: req.session }))
 				.then(() => {
 					res.status(200).json({
 						data: est.id
