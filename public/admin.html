@@ -186,21 +186,18 @@
                 <tr>
                   <th>ФИО</th>
                   <th>Логин</th>
-                  <th>Департамент</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="item in users" v-on:click="user_check(item.id)">
                   <td>{{item.name}}</td>
                   <td>{{item.login}}</td>
-                  <td>{{item.department}}</td>
                 </tr>
                 <tr v-if="if_message" class="cyan lighten-5">
-                  <td colspan="3"><span class="center-align">{{message}}</span></td>
+                  <td colspan="2"><span class="center-align">{{message}}</span></td>
                 </tr>
                 <tr v-if="add_load" class="indigo lighten-5">
-                  <td></td>
-                  <td class="centre-preload">
+                  <td colspan="2" class="centre-preload">
                     <div class="preloader-wrapper small active">
                       <div class="spinner-layer spinner-green-only">
                         <div class="circle-clipper left">
@@ -213,10 +210,9 @@
                       </div>
                     </div>
                   </td>
-                  <td></td>
                 </tr>
                 <tr v-if="!add_load" class="indigo lighten-5">
-                  <td colspan="3"><span class="center-align" v-on:click="add_users">Загрузить следующие</span></td>
+                  <td colspan="2"><span class="center-align" v-on:click="add_users">Загрузить следующие</span></td>
                 </tr>
               </tbody>
             </table>
