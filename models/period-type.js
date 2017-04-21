@@ -15,7 +15,7 @@ module.exports = function (sq, DataTypes) {
 				allowNull: false,
 				validate: {
 					is: {
-						args: /^[а-яё/w/d\- ]{1,20}$/i,
+						args: /^[а-яё\w\d\- ]{1,20}$/i,
 						msg: 'Недопустимое название динамики периодов'
 					},
 					not: {

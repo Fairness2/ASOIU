@@ -15,7 +15,7 @@ module.exports = function (sq, DataTypes) {
 				allowNull: false,
 				validate: {
 					is: {
-						args: /^[а-яё/w/d\- ]{1,200}$/i,
+						args: /^[а-яё\w\d\- ]{1,200}$/i,
 						msg: 'Недопустимое название подразделения'
 					},
 					not: {
@@ -30,7 +30,7 @@ module.exports = function (sq, DataTypes) {
 				allowNull: false,
 				validate: {
 					is: {
-						args: /^[а-яё/w/d\- ]{1,50}$/i,
+						args: /^[а-яё\w\d\- ]{1,50}$/i,
 						msg: 'Недопустимое название подразделения'
 					},
 					not: {
