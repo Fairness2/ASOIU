@@ -16,10 +16,10 @@ exports.create = function (req, res) {
 				data: role.id
 			});
 		})
-		.catch(models.Sequelize.ValidationError, error.handleValidation(req, res))
 		.catch(models.Sequelize.UniqueConstraintError, error.handleUnique(req, res, {
 			name: 'Роль с таким названием уже существует'
 		}))
+		.catch(models.Sequelize.ValidationError, error.handleValidation(req, res))
 		.catch(error.handleInternal(req, res));
 };
 
@@ -46,6 +46,7 @@ exports.update = function (req, res) {
 		.catch(models.Sequelize.UniqueConstraintError, error.handleUnique(req, res, {
 			name: 'Роль с таким названием уже существует'
 		}))
+		.catch(models.Sequelize.ValidationError, error.handleValidation(req, res))
 		.catch(error.handleInternal(req, res));
 
 	// обновить подразделения?
@@ -103,9 +104,8 @@ exports.setPermissions = function (req, res) {
 			let perms = values[1];
 
 			if (role && perms.length === ids.length) {
-				role.setPermissions(perms);
-
-				return role.save()
+				role.setPermissions(perms)
+					.then(() => role.save())
 					.then(() => {
 						res.status(200).json({
 							data: 'ok'

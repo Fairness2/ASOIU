@@ -51,6 +51,7 @@ exports.update = function (req, res) {
 				});
 			}
 		})
+		.catch(models.Sequelize.ValidationError, error.handleValidation(req, res))
 		.catch(error.handleInternal(req, res));
 };
 

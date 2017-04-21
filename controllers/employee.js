@@ -22,23 +22,30 @@ exports.create = function (req, res) {
 		})
 		: Promise.resolve([]))
 		.then(deps => {
-			if (deps.length === _.uniq(req.body.departments || []).length)
-				return models.Employee
-					.create({
+			if (deps.length === _.uniq(req.body.departments || []).length) {
+				let emp = models.Employee
+					.build({
 						fullName: req.body.fullName,
 						sex: req.body.sex,
 						birthDate: req.body.birthDate,
-						departments: deps
-					}, {
-						context: req.session,
-						include: assoc.deduceInclude(models.Employee, 'departments')
+					});
+
+				/*return emp
+					.setDepartments(deps, {
+						context: req.session
 					})
+					.then(() => emp.save({ context: req.session }))*/
+
+				emp.departments = deps;
+
+				return emp
+					.save({ context: req.session })
 					.then(emp => {
 						res.status(200).json({
 							data: emp.id // можно полагать, что empl всегда не null
 						});
 					})
-			else
+			} else
 				res.status(200).json({
 					errors: ['Некоторых указанных подразделений не существует']
 				});
@@ -80,14 +87,9 @@ exports.update = function (req, res) {
 				birthDate: req.body.birthDate
 			});
 
-			emp.setDepartments(deps, {
-				context: req.session
-			});
-
 			return emp
-				.save({
-					context: req.session
-				})
+				.setDepartments(deps, { context: req.session })
+				.then(() => emp.save({ context: req.session }))
 				.then(() => {
 					res.status(200).json({
 						data: 'ok'
@@ -166,9 +168,9 @@ exports.setDepartments = function (req, res) {
 		})])
 		.then(([emp, deps]) => {
 			if (emp && deps.length === ids.length) {
-				emp.setDepartments(deps, { context: req.session });
-
-				return emp.save({ context: req.session })
+				return emp
+					.setDepartments(deps, { context: req.session })
+					.then(() => emp.save({ context: req.session }))
 					.then(() => {
 						res.status(200).json({
 							data: 'ok'

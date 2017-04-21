@@ -199,9 +199,8 @@ exports.setRoles = (req, res) => {
 		})])
 		.then(([user, roles]) => {
 			if (user && roles.length === ids.length) {
-				user.setRoles(roles);
-
-				return user.save()
+				return user.setRoles(roles)
+					.then(() => user.save())
 					.then(() => {
 						res.status(200).json({
 							data: 'ok'

@@ -43,28 +43,38 @@ exports.create = function (req, res) {
 	])
 		.then(([rq, crs]) => {
 			// надо чтобы сумма товаров в текущих заявках не превышал заявленного изначально
-			if (_.every(req.body.items, item =>
+			if (!_.every(req.body.items, item =>
 				_.some(rq.items, j =>
 					j.productId === item.productId
 					&& j.quantity >= item.quantity + (_.find(crs.items, x => x.productId === item.productId) || { total: 0 }).total
 				)
 			)) {
-				return CurrentRequest
-					.create({
-						year: req.body.year,
-						requestId: req.body.requestId,
-						periodId: req.body.periodId
-					}, { context: req.session })
-					.then(inst => {
-						res.status(200).json({
-							data: inst.id
-						});
-					});
-			} else {
 				res.status(200).json({
 					errors: ['Некоторые товары израсходованы либо не были заявлены']
 				});
+				return;
 			}
+
+			return CurrentRequest
+				.create({
+					year: req.body.year,
+					requestId: req.body.requestId,
+					periodId: req.body.periodId,
+					items: _.map(
+						req.body.items,
+						item => models.CurrentRequestItem.build({
+							productId: item.productId,
+							quantity: item.quantity
+						}))
+				}, {
+					context: req.session,
+					include: assoc.deduceInclude(CurrentRequest, 'items')
+				})
+				.then(inst => {
+					res.status(200).json({
+						data: inst.id
+					});
+				});
 		})
 		.catch(models.Sequelize.ForeignKeyError, error.handleForeign(req, res, {
 			productId: 'Такого товара/услуги не существует',
@@ -133,27 +143,25 @@ exports.update = function (req, res) {
 				return;
 			}
 
-			inst.update({
+			inst.set({
 				year: req.body.year,
 				requestId: req.body.requestId,
 				periodId: req.body.periodId
 			}, {
-				context: req.session,
-				individualHooks: true
+					context: req.session,
+					individualHooks: true
 				});
 
-			inst.setItems(
+			return inst
+				.setItems(
 				_.map(
 					req.body.items,
 					item => models.CurrentRequestItem.build({
 						productId: item.productId,
 						quantity: item.quantity
-					})
-				),
-				{ context: req.session }
-			);
-
-			return inst.save({ context: req.session })
+					})),
+				{ context: req.session })
+				.then(() => inst.save({ context: req.session }))
 				.then(() => {
 					res.status(200).json({
 						data: 'ok'
@@ -172,15 +180,16 @@ exports.update = function (req, res) {
 exports.list = function (req, res) {
 	let opts = page.get('number', req.query);
 
-	CurrentRequest.findAll(
+	CurrentRequest
+		.findAll(
 		opts.options
-	).then(insts => {
-		let arr = insts.map(x => x.toJSON());
-		if (opts.invert) arr.reverse();
+		).then(insts => {
+			let arr = insts.map(x => x.toJSON());
+			if (opts.invert) arr.reverse();
 
-		res.status(200).json({
-			data: arr
-		});
+			res.status(200).json({
+				data: arr
+			});
 		})
 		.catch(error.handleInternal(req, res));
 };
