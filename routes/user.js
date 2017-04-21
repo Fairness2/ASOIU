@@ -12,14 +12,14 @@ module.exports = function (root) {
 	
 	router
 		.post('/register', user.register)
-		.post('/update', auth.check('user.update'), user.update)
+		.post('/update', /*auth.check('user.update'),*/ user.update)
 		.post('/login', user.login)
-		.post('/logout', auth.check(), user.logout)
-		.get('/info/:id', auth.check('user.info'), user.info)
-		.get('/info', auth.check(), user.info)
-		.get('/', auth.check('user.list'), user.list);
+		.post('/logout', /*auth.check(),*/ user.logout)
+		.get('/info/:id', /*auth.check('user.info'),*/ user.info)
+		.get('/info', /*auth.check(),*/ user.info)
+		.get('/', /*auth.check('user.list'),*/ user.list);
 
 	router.route('/roles')
-		.get(auth.check(), user.roles)
-		.put(auth.check('user.set-roles'), user.setRoles);
+		.get(/*auth.check(),*/ user.roles)
+		.put(/*auth.check('user.set-roles'),*/ user.setRoles);
 };

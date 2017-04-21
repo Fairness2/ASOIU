@@ -16,8 +16,8 @@ module.exports = function (sq, DataTypes) {
 				defaultValue: Sequelize.NOW
 			},
 			userId: {
-				type: DataTypes.UUID,
-				allowNull: false
+				type: DataTypes.UUID/*,
+				allowNull: false*/
 			},
 			model: {
 				type: DataTypes.STRING(40),
