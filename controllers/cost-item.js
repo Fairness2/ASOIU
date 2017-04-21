@@ -67,6 +67,9 @@ exports.list = function (req, res) {
 	if (req.query.id)
 		opts.options.where.id = req.query.id;
 
+	if (req.query.frcId)
+		opts.options.where.frcId = req.query.frcId;
+
 	opts.options.include = assoc.deduceInclude(CostItem, {
 		frc: true,
 		products: req.query.with && (req.query.with==='products' || req.query.with.products || null)
