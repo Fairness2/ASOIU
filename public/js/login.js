@@ -36,15 +36,36 @@ var loginin = new Vue({
               loginin.isload = false;
               loginin.message = 'Вход уже выполнен';
             },
-            500: function functionName() {
+            500: function () {
               loginin.isload = false;
               loginin.message = 'Ошибка входа';
             }
           },
           success:function (res) {
-            loginin.isload = false;
-            loginin.message = 'Всё типтоп';
-            location.replace("/");
+
+            var errors = "";
+            if (res.errors) {
+              for (var i = 0; i < res.errors.length; i++) {
+                errors = errors + "\n" + res.errors[i]
+              }
+              loginin.isload = false;
+            }
+            if (res.data) {
+              $.ajax({
+                url: 'api/test/setup',
+                type: 'POST',
+                error: function (data) {
+                  loginin.message = 'Ошибка';
+                  loginin.isload = false;
+                },
+                success: function (res) {
+                  location.replace("/");
+                  loginin.isload = false;
+                }
+              });
+            }
+            loginin.message = errors;
+            //location.replace("/");
           }
         });
       }
