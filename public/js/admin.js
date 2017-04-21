@@ -155,6 +155,7 @@ var users_section = new Vue({
           users_section.isload = false;
           users_section.loaderror = false;
           users_section.loadtrue = true; //не забыть поменять
+          alert(JSON.stringify(res));
         }
       });
     },
