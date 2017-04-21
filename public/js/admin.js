@@ -30,6 +30,8 @@ var menu_section = new Vue ({
         products_section.show = false;
         departments_section.show = false;
         cfos_section.show = false;
+        permissions_section.show = false;
+        roles_section.show = false;
       }else if (secton == 2) {
         users_section.show = false;
         user.show = false;
@@ -41,6 +43,8 @@ var menu_section = new Vue ({
         products_section.show = false;
         departments_section.show = false;
         cfos_section.show = false;
+        permissions_section.show = false;
+        roles_section.show = false;
       }else if (secton == 3) {
         users_section.show = false;
         user.show = false;
@@ -53,6 +57,8 @@ var menu_section = new Vue ({
         departments_section.onloading();
         cfos_section.show = true;
         cfos_section.onloading();
+        permissions_section.show = false;
+        roles_section.show = false;
       }else if (secton == 4) {
         users_section.show = false;
         user.show = false;
@@ -63,6 +69,35 @@ var menu_section = new Vue ({
         products_section.show = false;
         departments_section.show = false;
         cfos_section.show = false;
+        permissions_section.show = true;
+        permissions_section.onloading();
+        roles_section.show = true;
+        roles_section.onloading();
+      }else if (secton == 5) {
+        users_section.show = false;
+        user.show = false;
+        employees_section.show = false;
+        employee.show = false;
+        article_section.show = false;
+        article.show = false;
+        products_section.show = false;
+        departments_section.show = false;
+        cfos_section.show = false;
+        permissions_section.show = false;
+        roles_section.show = false;
+      }
+      else if (secton == 6) {
+        users_section.show = false;
+        user.show = false;
+        employees_section.show = false;
+        employee.show = false;
+        article_section.show = false;
+        article.show = false;
+        products_section.show = false;
+        departments_section.show = false;
+        cfos_section.show = false;
+        permissions_section.show = false;
+        roles_section.show = false;
       }
     }
   }
@@ -1439,6 +1474,322 @@ var cfo_del = new Vue({
       }else {
         cfo_del.message_failure = 'Опс';
         cfo_del.message_success = '';
+      }
+    }
+  }
+});
+
+var permissions_section = new Vue({
+  el: '#permissions_section',
+  data: {
+    show: false,
+    isload: true,
+    loaderror: false,
+    loadtrue: false,
+    message_error: '',
+    permissions: [
+      {id:'10', name:'Дидидидави'},
+      {id:'101', name:'Авиваи'},
+      {id:'102', name:'Блед'},
+    ]
+  },
+  methods: {
+    item_check: function (id, name) {
+      permission.new_product = false;
+      permission.id = id;
+      permission.name = name;
+      $('#permission').modal('open');
+    },
+
+    new_item: function () {
+      permission.new_product = true;
+      permission.id = '';
+      permission.name = '';
+      $('#permission').modal('open');
+    },
+
+    del_item: function (id, name) {
+      permission_del.id = id;
+      permission_del.name = name;
+      $('#permission_del').modal('open');
+    },
+
+    onloading: function () {
+      this.isload = true;
+      this.loaderror = false;
+      this.loadtrue = false;
+      $.ajax({
+        /*список отделов*/
+        url:'api/permission',
+        type:'GET',
+        timeout: 30000,
+        error: function (data) {
+          permissions_section.isload = false;
+          permissions_section.loaderror = true;
+          permissions_section.loadtrue = true; //не забыть поменять
+          permissions_section.message_error = 'Пожалуйста перезагрузите страницу';
+        },
+        success:function (res) {
+          //Тут нужно обработать отделы
+          permissions_section.isload = false;
+          permissions_section.loaderror = false;
+          permissions_section.loadtrue = true;
+
+        }
+      });
+    }
+  }
+});
+
+var permission = new Vue({
+  el: '#permission',
+  data: {
+    new_product: true,
+    name: '',
+    id: '',
+    message_failure: '',
+    message_success: ''
+  },
+  methods: {
+    create_item: function () {
+      var regexp = /^[а-яё\w\d_\-:. ]{1,40}$/i;
+
+      if (regexp.test(this.name)) {
+        $.ajax({
+          /*Добавление разрешения*/
+          url:'api/permission/create',
+          type:'POST',
+          data: {'name': permission.name},
+          timeout: 30000,
+          error: function (data) {
+            permission.message_failure = 'Добавить разрешение не удалось';
+            permission.message_success = '';
+          },
+          success:function (res) {
+            permission.message_failure = '';
+            permission.message_success = 'Разрешение успешно добавлен';
+          }
+        });
+      }else {
+        permission.message_failure = 'Заполните поля правильно';
+        permission.message_success = '';
+      }
+    },
+
+    update_item: function () {
+      var regexp = /^[а-яё\w\d_\-:. ]{1,40}$/i;
+
+      if (regexp.test(this.name) && this.id != '') {
+        $.ajax({
+          /*Изменение разрешения*/
+          url:'api/permission/update',
+          type:'POST',
+          data: {'name': permission.name, 'id': permission.id},
+          timeout: 30000,
+          error: function (data) {
+            permission.message_failure = 'Изменить разрешение не удалось';
+            permission.message_success = '';
+          },
+          success:function (res) {
+            permission.message_failure = '';
+            permission.message_success = 'Разрешение успешно изменён';
+          }
+        });
+      }else {
+        permission.message_failure = 'Заполните поля правильно';
+        permission.message_success = '';
+      }
+    }
+  }
+});
+
+var permission_del = new Vue({
+  el: '#permission_del',
+  data: {
+    id: '',
+    name: '',
+    message_failure: '',
+    message_success: ''
+  },
+  methods: {
+    del_item: function () {
+      if (this.id != '') {
+        $.ajax({
+          /*Удаление разрешения*/
+          url:'api/permission',
+          type:'DELETE',
+          data: {'id': permission_del.id},
+          timeout: 30000,
+          error: function (data) {
+            permission_del.message_failure = 'Удалить Разрешение не удалось';
+            permission_del.message_success = '';
+          },
+          success:function (res) {
+            permission_del.message_failure = '';
+            permission_del.message_success = 'Разрешение успешно удалён';
+          }
+        });
+      }else {
+        permission_del.message_failure = 'Опс';
+        permission_del.message_success = '';
+      }
+    }
+  }
+});
+
+var roles_section = new Vue({
+  el: '#roles_section',
+  data: {
+    show: false,
+    isload: true,
+    loaderror: false,
+    loadtrue: false,
+    message_error: '',
+    roles: [
+      {id:'10', name:'Дидидидави'},
+      {id:'101', name:'Авиваи'},
+      {id:'102', name:'Блед'},
+    ]
+  },
+  methods: {
+    item_check: function (id, name) {
+      role.new_product = false;
+      role.id = id;
+      role.name = name;
+      $('#role').modal('open');
+    },
+
+    new_item: function () {
+      role.new_product = true;
+      role.id = '';
+      role.name = '';
+      $('#role').modal('open');
+    },
+
+    del_item: function (id, name) {
+      role_del.id = id;
+      role_del.name = name;
+      $('#role_del').modal('open');
+    },
+
+    onloading: function () {
+      this.isload = true;
+      this.loaderror = false;
+      this.loadtrue = false;
+      $.ajax({
+        /*список отделов*/
+        url:'api/role',
+        type:'GET',
+        timeout: 30000,
+        error: function (data) {
+          roles_section.isload = false;
+          roles_section.loaderror = true;
+          roles_section.loadtrue = true; //не забыть поменять
+          roles_section.message_error = 'Пожалуйста перезагрузите страницу';
+        },
+        success:function (res) {
+          //Тут нужно обработать отделы
+          roles_section.isload = false;
+          roles_section.loaderror = false;
+          roles_section.loadtrue = true;
+
+        }
+      });
+    }
+  }
+});
+
+var role = new Vue({
+  el: '#role',
+  data: {
+    new_product: true,
+    name: '',
+    id: '',
+    message_failure: '',
+    message_success: ''
+  },
+  methods: {
+    create_item: function () {
+      var regexp = /^[а-яё\w\d_\-:. ]{4,40}$/i;
+
+      if (regexp.test(this.name)) {
+        $.ajax({
+          /*Добавление разрешения*/
+          url:'api/role/create',
+          type:'POST',
+          data: {'name': role.name},
+          timeout: 30000,
+          error: function (data) {
+            role.message_failure = 'Добавить роль не удалось';
+            role.message_success = '';
+          },
+          success:function (res) {
+            role.message_failure = '';
+            role.message_success = 'Роль успешно добавлена';
+          }
+        });
+      }else {
+        role.message_failure = 'Заполните поля правильно';
+        role.message_success = '';
+      }
+    },
+
+    update_item: function () {
+      var regexp = /^[а-яё\w\d_\-:. ]{4,40}$/i;
+
+      if (regexp.test(this.name) && this.id != '') {
+        $.ajax({
+          /*Изменение разрешения*/
+          url:'api/role/update',
+          type:'POST',
+          data: {'name': role.name, 'id': role.id},
+          timeout: 30000,
+          error: function (data) {
+            role.message_failure = 'Изменить роль не удалось';
+            role.message_success = '';
+          },
+          success:function (res) {
+            role.message_failure = '';
+            role.message_success = 'Роль успешно изменёна';
+          }
+        });
+      }else {
+        role.message_failure = 'Заполните поля правильно';
+        role.message_success = '';
+      }
+    }
+  }
+});
+
+var role_del = new Vue({
+  el: '#role_del',
+  data: {
+    id: '',
+    name: '',
+    message_failure: '',
+    message_success: ''
+  },
+  methods: {
+    del_item: function () {
+      if (this.id != '') {
+        $.ajax({
+          /*Удаление разрешения*/
+          url:'api/role',
+          type:'DELETE',
+          data: {'id': role_del.id},
+          timeout: 30000,
+          error: function (data) {
+            role_del.message_failure = 'Удалить роль не удалось';
+            role_del.message_success = '';
+          },
+          success:function (res) {
+            role_del.message_failure = '';
+            role_del.message_success = 'Роль успешно удалёна';
+          }
+        });
+      }else {
+        role_del.message_failure = 'Опс';
+        role_del.message_success = '';
       }
     }
   }
