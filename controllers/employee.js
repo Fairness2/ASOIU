@@ -62,10 +62,10 @@ exports.update = function (req, res) {
 };
 
 exports.list = function (req, res) {
-	let {options, invert} = page.get('cratedAt', req.query);
+	let {options, invert} = page.get('createdAt', req.query);
 
-	if (req.params.id || req.query.id)
-		options.where.id = req.params.id || req.query.id;
+	if (req.query.id)
+		options.where.id = req.query.id;
 
 	models.Employee
 		.findAll(options)
@@ -76,6 +76,23 @@ exports.list = function (req, res) {
 			res.status(200).json({
 				data: arr
 			});
+		})
+		.catch(error.handleInternal(req, res));
+};
+
+exports.single = function (req, res) {
+	models.Employee
+		.findById(req.params.id,
+		{ include: assoc.deduceInclude(models.Employee, 'departments') })
+		.then(emp => {
+			if (emp)
+				res.status(200).json({
+					data: emp.toJSON()
+				});
+			else
+				res.status(200).json({
+					errors: ['Не найден']
+				});
 		})
 		.catch(error.handleInternal(req, res));
 };

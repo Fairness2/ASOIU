@@ -11,6 +11,8 @@ module.exports = function (root) {
 
 	//router.use(auth.authenticate);
 
+	router.get('/:id', employee.single);
+
 	router.route('/')
 		.post(employee.create)
 		.put(employee.update)

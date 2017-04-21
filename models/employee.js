@@ -38,7 +38,7 @@ module.exports = function (sq, DataTypes) {
 			enableLog: true,
 			indexes: [
 				{
-					name: 'Employee_createdAt',
+					//name: 'Employee_createdAt',
 					fields: ['createdAt']
 				}
 			],
