@@ -55,7 +55,7 @@ exports.list = function (req, res) {
 	Estimate.findAll(
 		opts
 	).then(insts => {
-		let arr = insts.map(x => x.toJSON());
+		let arr = _.map(insts, x => x.toJSON());
 		if (invert) arr.reverse();
 
 		res.status(200).json({

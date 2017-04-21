@@ -62,7 +62,7 @@ exports.list = function (req, res) {
 	models.PeriodType
 		.findAll(options)
 		.then(pts => {
-			let arr = pts.map(x => x.toJSON());
+			let arr = _.map(pts, x => x.toJSON());
 			if (invert) arr.reverse();
 
 			res.status(200).json({

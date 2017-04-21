@@ -109,7 +109,7 @@ exports.list = function (req, res) {
 	models.Employee
 		.findAll(options)
 		.then(emps => {
-			let arr = emps.map(x => x.toJSON());
+			let arr = _.map(deps, x => x.toJSON());
 			if (invert) arr.reverse();
 
 			res.status(200).json({

@@ -63,7 +63,7 @@ exports.list = function (req, res) {
 	models.Department.findAll(
 		opts.options
 	).then(deps => {
-		let arr = deps.map(x => x.toJSON());
+		let arr = _.map(deps, x => x.toJSON());
 		if (opts.invert) arr.reverse();
 
 		res.status(200).json({

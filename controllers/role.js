@@ -60,7 +60,7 @@ exports.list = function (req, res) {
 	models.Role
 		.findAll(options)
 		.then(roles => {
-			let arr = roles.map(x => x.toJSON());
+			let arr = _.map(roles, x => x.toJSON());
 			if (invert) arr.reverse();
 
 			res.status(200).json({

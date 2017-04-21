@@ -76,7 +76,7 @@ exports.list = function (req, res) {
 	models.Limit
 		.findAll(options)
 		.then(emps => {
-			let arr = emps.map(x => x.toJSON());
+			let arr = _.map(emps, x => x.toJSON());
 			if (invert) arr.reverse();
 
 			res.status(200).json({

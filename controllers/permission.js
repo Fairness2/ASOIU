@@ -60,7 +60,7 @@ exports.list = function (req, res) {
 	models.Permission.findAll(
 		options
 	).then(perms => {
-		let arr = perms.map(x => x.toJSON());
+		let arr = _.map(perms, x => x.toJSON());
 		if (invert) arr.reverse();
 
 		res.status(200).json({

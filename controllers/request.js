@@ -122,7 +122,7 @@ exports.list = function (req, res) {
 	Request.findAll(
 		opts.options
 	).then(insts => {
-		let arr = insts.map(x => x.toJSON());
+		let arr = _.map(insts, x => x.toJSON());
 		if (opts.invert) arr.reverse();
 
 		res.status(200).json({

@@ -160,7 +160,7 @@ exports.list = (req, res) => {
 
 	User.findAll(options)
 		.then(users => {
-			let arr = users.map(x => x.toJSON());
+			let arr = _.map(users, x => x.toJSON());
 			if (invert) arr.reverse();
 
 			res.status(200).json({

@@ -64,7 +64,7 @@ exports.list = function (req, res) {
 	models.FRC
 		.findAll(options)
 		.then(frcs => {
-			let arr = frcs.map(x => x.toJSON());
+			let arr = _.map(frcs, x => x.toJSON());
 			if (invert) arr.reverse();
 
 			res.status(200).json({
