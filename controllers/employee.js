@@ -2,6 +2,7 @@
 
 const models = require(__rootdir + '/models');
 const page = require(__libdir + '/page.js');
+const assoc = require(__libdir + '/assoc.js');
 const error = require(__libdir + '/error.js');
 const _ = require('lodash');
 
@@ -12,17 +13,35 @@ exports.create = function (req, res) {
 		birthDate: 'Необходимо указать дату рождения сотрудника'
 	})) return;
 
-	models.Employee
-		.create({
-			fullName: req.body.fullName,
-			sex: req.body.sex,
-			birthDate: req.body.birthDate
-			/* подразделения? */
-		}, { context: req.session })
-		.then(emp => {
-			res.status(200).json({
-				data: emp.id // можно полагать, что empl всегда не null
-			});
+	// если указаны подразделения, ищем их, если нет, то возвращаем пусто
+	(req.body.departments ?
+		models.Department.findAll({
+			where: {
+				id: { $in: req.body.departments }
+			}
+		})
+		: Promise.resolve([]))
+		.then(deps => {
+			if (deps.length === _.uniq(req.body.departments || []).length)
+				return models.Employee
+					.create({
+						fullName: req.body.fullName,
+						sex: req.body.sex,
+						birthDate: req.body.birthDate,
+						departments: deps
+					}, {
+						context: req.session,
+						include: assoc.deduceInclude(models.Employee, 'departments')
+					})
+					.then(emp => {
+						res.status(200).json({
+							data: emp.id // можно полагать, что empl всегда не null
+						});
+					})
+			else
+				res.status(200).json({
+					errors: ['Некоторых указанных подразделений не существует']
+				});
 		})
 		.catch(models.Sequelize.ValidationError, error.handleValidation(req, res))
 		.catch(error.handleInternal(req, res));
@@ -33,29 +52,50 @@ exports.update = function (req, res) {
 		id: 'Тебуется указать сотрудника'
 	})) return;
 
-	models.Employee
-		.update({
-			fullName: req.body.fullName,
-			sex: req.body.sex,
-			birthDate: req.body.birthDate
-		}, {
+	Promise.all([
+		models.Employee.findById(req.body.id),
+		models.Department.findAll({
 			where: {
-				id: req.body.id
-			},
-			context: req.session,
-			individualHooks:true
-		})
-		.then((count, rows) => {
-			if (count) {
-				res.status(200).json({
-					data: 'ok'
-				});
-			} else {
+				id: { $in: req.body.departments }
+			}
+		})])
+		.then(([emp, deps]) => {
+			if (!emp) {
 				res.status(200).json({
 					errors: ['Указанный сотрудник не был найден']
 				});
+				return;
 			}
+
+			if (deps.length < _.uniq(req.body.departments || []).length) {
+				res.status(200).json({
+					errors: ['Некоторых указанных подразделений не существует']
+				});
+				return;
+			}
+
+			emp.set({
+				fullName: req.body.fullName,
+				sex: req.body.sex,
+				birthDate: req.body.birthDate
+			});
+
+			emp.setDepartments(deps, {
+				context: req.session
+			});
+
+			return emp
+				.save({
+					context: req.session
+				})
+				.then(() => {
+					res.status(200).json({
+						data: 'ok'
+					});
+				});
+
 		})
+		.catch(models.Sequelize.ValidationError, error.handleValidation(req, res))
 		.catch(error.handleInternal(req, res));
 
 	// обновить подразделения?
