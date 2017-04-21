@@ -125,6 +125,10 @@ exports.update = function (req, res) {
 exports.list = function (req, res) {
 	let opts = page.get('number', req.query);
 
+	opts.options.include = assoc.deduceInclude(Request, {
+		requester: true
+	});
+
 	Request.findAll(
 		opts.options
 	).then(insts => {
@@ -143,6 +147,7 @@ exports.single = function (req, res) {
 		.findOne({
 			where: { id: req.params.id || '' },
 			include: assoc.deduceInclude(Request, {
+				requester: true,
 				items: {
 					product: true,
 					period: true
