@@ -14,10 +14,10 @@ exports.create = function (req, res) {
 				data: perm.id
 			});
 		})
-		.catch(models.Sequelize.ValidationError, error.handleValidation(req, res))
 		.catch(models.Sequelize.UniqueConstraintError, error.handleUnique(req, res, {
 			name: 'Разрешение уже существует'
 		}))
+		.catch(models.Sequelize.ValidationError, error.handleValidation(req, res))
 		.catch(error.handleInternal(req, res));
 };
 
@@ -50,6 +50,7 @@ exports.update = function (req, res) {
 		.catch(models.Sequelize.UniqueConstraintError, error.handleUnique(req, res, {
 			name: 'Разрешение уже существует'
 		}))
+		.catch(models.Sequelize.ValidationError, error.handleValidation(req, res))
 		.catch(error.handleInternal(req, res));
 };
 

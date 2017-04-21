@@ -80,12 +80,12 @@ exports.update = function (req, res) {
 				return;
 			}
 
-			inst.update({
+			inst.set({
 				year: req.body.year
 			}, {
 				context: req.session,
 				individualHooks: true
-				});
+			});
 
 			inst.setItems(
 				_.map(

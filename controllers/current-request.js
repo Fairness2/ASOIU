@@ -133,7 +133,7 @@ exports.update = function (req, res) {
 				return;
 			}
 
-			inst.update({
+			inst.set({
 				year: req.body.year,
 				requestId: req.body.requestId,
 				periodId: req.body.periodId
