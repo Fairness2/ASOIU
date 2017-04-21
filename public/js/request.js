@@ -36,6 +36,7 @@ var body_con = new Vue({
     name_request: '', //название заявки
     year: '', //год заявки
     name_maker: '', //создатель
+    id: '',
     articles: [ //статьи расходов
       {id: '10', name:'Мебель', table_show: false, items:[
           {name: 'Биван', id: '66', //товарные позиции
@@ -95,9 +96,10 @@ var body_con = new Vue({
       var regexp = /^[а-яa-z0-9_-]{1,20}$/i;
       this.tobe = false;
       if (getval['id']) {
+        this.id = getval['id']
         $.ajax({
           //загрузка уже существующей заявки
-          url:'api/request/' + getval['id'],
+          url:'api/request/' + body_con.id,
           type:'GET',
           timeout: 30000,
           error: function (data) {
@@ -113,14 +115,6 @@ var body_con = new Vue({
             body_con.loaderror = false;
           }
         });
-      }
-      else if (getval['name'] && regexp.test(getval['name'])) {
-
-        var date = new Date();
-        this.year = date.getUTCFullYear() + 1;
-        this.name_request = getval['name'];
-        this.name_maker = side_nav.name;
-
         $.ajax({
           /*список всех статей и их товарный позиций*/
           url:'api/cost-item',
@@ -135,17 +129,30 @@ var body_con = new Vue({
 
           }
         });
+      }
+      else {
+        var date = new Date();
+        this.year = date.getUTCFullYear() + 1;
+        this.name_maker = 'Вася';
 
+        $.ajax({
+          /*список всех статей и их товарный позиций*/
+          url:'/api/cost-item?with=products',
+          type:'GET',
+          timeout: 30000,
+          error: function (data) {
+            body_con.error_art = true;
+            body_con.message_art = 'Пожалуйста перезагрузите страницу';
+          },
+          success:function (res) {
+            //Тут нужно обработать список дополнительных расходов
+            alert(JSON.stringify(res));
+          }
+        });
         this.isload = false;
         this.loadtrue = true;
         this.tobe = true;
         this.loaderror = false;
-      }
-      else {
-        this.isload = false;
-        this.loadtrue = false;
-        this.loaderror = true;
-        this.message_error = 'Ошибка!';
       }
     },
 
@@ -182,24 +189,47 @@ var send_application = new Vue({
   },
   methods: {
     save: function () {
-      $.ajax({
-        url:'api/request',
-        type:'PUT',
-        data: {
-          'name': body_con.name_request,
-          'year': body_con.year,
-          'articles': body_con.articles
-        },
-        timeout: 30000,
-        error: function (data) {
-          send_application.message_success = '';
-          send_application.message_error = 'Сохранение не удалось';
-        },
-        success:function (res) {
-          send_application.message_success = 'Сохранение прошло успешно';
-          send_application.message_error = '';
-        }
-      });
+      if (this.id != '') {
+        $.ajax({
+          url:'api/request',
+          type:'PUT',
+          data: {
+            'id': body_con.id,
+            'name': body_con.name_request,
+            'year': body_con.year,
+            'cost-item': body_con.articles
+          },
+          timeout: 30000,
+          error: function (data) {
+            send_application.message_success = '';
+            send_application.message_error = 'Сохранение не удалось';
+          },
+          success:function (res) {
+            send_application.message_success = 'Сохранение прошло успешно';
+            send_application.message_error = '';
+          }
+        });
+      }else {
+        $.ajax({
+          url:'api/request',
+          type:'POST',
+          data: {
+            'name': body_con.name_request,
+            'year': body_con.year,
+            'cost-item': body_con.articles
+          },
+          timeout: 30000,
+          error: function (data) {
+            send_application.message_success = '';
+            send_application.message_error = 'Сохранение не удалось';
+          },
+          success:function (res) {
+            send_application.message_success = 'Сохранение прошло успешно';
+            send_application.message_error = '';
+          }
+        });
+      }
+
     }
   }
 });

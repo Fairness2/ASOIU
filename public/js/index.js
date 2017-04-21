@@ -442,15 +442,17 @@ var win_new_app = new Vue ({
   },
   methods:{
     new_el: function () {
-      var name = $('#name_application').val();
+      /*var name = $('#name_application').val();
       var regexp = /^[а-яa-z0-9_-]{6,20}$/i;
       if (regexp.test(name)) {
         location.replace("/request.html?name=" + name);
       }
       else {
         this.message = 'Не правильно введено название';
-      }
+      }*/
+      location.replace("/request.html");
     }
+
   }
 });
 
