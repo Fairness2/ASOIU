@@ -67,5 +67,6 @@ exports.list = function (req, res) {
 		res.status(200).json({
 			data: arr
 		});
-	});
+		})
+		.catch(error.handleInternal(req, res));
 };
