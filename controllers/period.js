@@ -21,6 +21,9 @@ exports.create = function (req, res) {
 		.catch(models.Sequelize.ForeignKeyConstraintError, error.handleForeign(req, res, {
 			typeId: 'Такого типа динамики не существует'
 		}))
+		.catch(models.Sequelize.UniqueConstraintError, error.handleForeign(req, res, {
+			typeId_number: 'Дублирование периода с тем же номером и типом динамики'
+		}))
 		.catch(models.Sequelize.ValidationError, error.handleValidation(req, res))
 		.catch(error.handleInternal(req, res));
 };
@@ -53,6 +56,9 @@ exports.update = function (req, res) {
 		})
 		.catch(models.Sequelize.ForeignKeyConstraintError, error.handleForeign(req, res, {
 			typeId: 'Такого типа динамики не существует'
+		}))
+		.catch(models.Sequelize.UniqueConstraintError, error.handleForeign(req, res, {
+			typeId_number: 'Дублирование периода с тем же номером и типом динамики'
 		}))
 		.catch(models.Sequelize.ValidationError, error.handleValidation(req, res))
 		.catch(error.handleInternal(req, res));
