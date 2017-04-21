@@ -10,37 +10,31 @@ module.exports = function (sq, DataTypes) {
 				defaultValue: Sequelize.UUIDV4,
 				primaryKey: true
 			},
-			userId: {
-				type: DataTypes.UUID,
-				allowNull: false
-			},
 			ts: {
 				type: DataTypes.DATE,
 				allowNull: false,
 				defaultValue: Sequelize.NOW
 			},
-			object: {
+			userId: {
+				type: DataTypes.UUID,
+				allowNull: false
+			},
+			model: {
 				type: DataTypes.STRING(40),
 				allowNull: false
 			},
-			row: {
-				type: DataTypes.STRING(60),
-				allowNull: false
-			},
-			attrib: {
-				type: DataTypes.STRING(40),
+			rowId: {
+				type: DataTypes.JSON,
 				allowNull: false
 			},
 			action: {
-				type: DataTypes.ENUM('insert', 'update', 'delete'),
+				type: DataTypes.ENUM('create', 'update', 'delete'),
 				allowNull: false
 			},
-			old: {
-				type: DataTypes.STRING(300)
-			},
-			new: {
-				type: DataTypes.STRING(300)
-			},
+			diff: {
+				type: DataTypes.JSON,
+				allowNull: false
+			}
 		}, {
 			freezeTableName: true,
 			timestamps: false,

@@ -14,7 +14,7 @@ exports.create = function (req, res) {
 	models.FRC
 		.create({
 			name: req.body.name
-		})
+		}, { context: req.session })
 		.then(frc => {
 			res.status(200).json({
 				data: frc.id
@@ -36,7 +36,9 @@ exports.update = function (req, res) {
 		}, {
 			where: {
 				id: req.body.id
-			}
+			},
+			context: req.session,
+			individualHooks: true
 		})
 		.then((count, rows) => {
 			if (count) {

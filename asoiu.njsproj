@@ -49,6 +49,7 @@
     <Compile Include="controllers\role.js" />
     <Compile Include="controllers\employee.js" />
     <Compile Include="controllers\user.js" />
+    <Compile Include="lib\audit.js" />
     <Compile Include="lib\assoc.js" />
     <Compile Include="lib\auth.js" />
     <Compile Include="lib\error.js" />

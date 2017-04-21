@@ -35,6 +35,7 @@ module.exports = function (sq, DataTypes) {
 		}, {
 			freezeTableName: true,
 			timestamps: true,
+			enableLog: true,
 			indexes: [
 				{
 					name: 'Employee_createdAt',

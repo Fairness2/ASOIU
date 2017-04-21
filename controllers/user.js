@@ -36,7 +36,7 @@ exports.register = (req, res) => {
 
 exports.update = (req, res) => {
 	if (!error.require(res, req.body, {
-		id: 'Требуется укзаать пользователя'
+		id: 'Требуется указать пользователя'
 	})) return;
 
 	let user = User.build();

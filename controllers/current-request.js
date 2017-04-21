@@ -49,11 +49,12 @@ exports.create = function (req, res) {
 					&& j.quantity >= item.quantity + (_.find(crs.items, x => x.productId === item.productId) || { total: 0 }).total
 				)
 			)) {
-				return CurrentRequest.create({
-					year: req.body.year,
-					requestId: req.body.requestId,
-					periodId: req.body.periodId
-				})
+				return CurrentRequest
+					.create({
+						year: req.body.year,
+						requestId: req.body.requestId,
+						periodId: req.body.periodId
+					}, { context: req.session })
 					.then(inst => {
 						res.status(200).json({
 							data: inst.id
@@ -136,7 +137,10 @@ exports.update = function (req, res) {
 				year: req.body.year,
 				requestId: req.body.requestId,
 				periodId: req.body.periodId
-			});
+			}, {
+				context: req.session,
+				individualHooks: true
+				});
 
 			inst.setItems(
 				_.map(
@@ -145,10 +149,11 @@ exports.update = function (req, res) {
 						productId: item.productId,
 						quantity: item.quantity
 					})
-				)
+				),
+				{ context: req.session }
 			);
 
-			return inst.save()
+			return inst.save({ context: req.session })
 				.then(() => {
 					res.status(200).json({
 						data: 'ok'

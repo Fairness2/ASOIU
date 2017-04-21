@@ -24,7 +24,7 @@ exports.create = function (req, res) {
 		items: req.body.items
 	});
 
-	rq.save()
+	rq.save({ context: req.session })
 		.then(() => {
 			res.status(200).json({
 				data: rq.id
@@ -82,7 +82,10 @@ exports.update = function (req, res) {
 
 			inst.update({
 				year: req.body.year
-			});
+			}, {
+				context: req.session,
+				individualHooks: true
+				});
 
 			inst.setItems(
 				_.map(
@@ -92,10 +95,11 @@ exports.update = function (req, res) {
 						periodId: item.periodId,
 						quantity: item.quantity
 					})
-				)
+				),
+				{ context: req.session }
 			);
 
-			return inst.save()
+			return inst.save({ context: req.session })
 				.then(() => {
 					res.status(200).json({
 						data: 'ok'

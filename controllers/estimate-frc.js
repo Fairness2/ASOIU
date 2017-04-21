@@ -123,9 +123,10 @@ exports.create = function (req, res) {
 						value: value,
 						periodId: periodId
 					}))
-				})));
+				})),
+				{ context: req.session });
 
-			return est.save();
+			return est.save({ context: req.session });
 		})
 		.then(() => {
 			res.status(200).json({
@@ -268,9 +269,10 @@ exports.update = function (req, res) {
 						value: value,
 						periodId: periodId
 					}))
-				})));
+				})),
+				{ context: req.session });
 
-			return est.save();
+			return est.save({ context: req.session });
 		})
 		.then(() => {
 			res.status(200).json({

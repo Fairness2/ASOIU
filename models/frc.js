@@ -23,6 +23,7 @@ module.exports = function (sq, DataTypes) {
 		}, {
 			freezeTableName: true,
 			timestamps: false,
+			enableLog: true,
 			classMethods: {
 				associate: models => {
 					models.FRC.hasMany(models.Estimate, { as: 'estimates', foreignKey: 'frcId' });

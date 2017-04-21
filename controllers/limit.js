@@ -43,7 +43,7 @@ exports.create = function (req, res) {
 					periodId: req.body.periodId,
 					year: req.body.year,
 					value: eiv.value
-				})
+				}, { context: req.session })
 				.then(lim => {
 					res.status(200).json({
 						data: lim
