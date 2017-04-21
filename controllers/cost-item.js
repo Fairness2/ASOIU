@@ -62,22 +62,25 @@ exports.list = function (req, res) {
 
 	// добавляем свои фильтры
 	if (req.query.parentId)
-		opts.options.parentId = req.query.parentId;
+		opts.options.where.parentId = req.query.parentId;
 
 	if (req.query.id)
-		opts.options.id = req.query.id;
+		opts.options.where.id = req.query.id;
 
-	opts.options.include = assoc.deduceInclude(CostItem, 'frc');
+	opts.options.include = assoc.deduceInclude(CostItem, {
+		frc: true,
+		products: req.query.with && req.query.with.products
+	});
 
-	CostItem.findAll(
-		opts.options
-	).then(insts => {
-		let arr = insts.map(x => x.toJSON());
-		if (opts.invert) arr.reverse();
+	CostItem
+		.findAll(opts.options)
+		.then(insts => {
+			let arr = insts.map(x => x.toJSON());
+			if (opts.invert) arr.reverse();
 
-		res.status(200).json({
-			data: arr
-		});
+			res.status(200).json({
+				data: arr
+			});
 		})
 		.catch(error.handleInternal(req, res));
 };

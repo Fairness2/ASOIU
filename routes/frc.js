@@ -11,6 +11,8 @@ module.exports = function (root) {
 
 	//router.use(auth.authenticate);
 
+	router.get('/:id', ctl.single);
+
 	router.route('/')
 		.post(ctl.create)
 		.put(ctl.update)

@@ -63,12 +63,28 @@ exports.list = function (req, res) {
 
 	models.FRC
 		.findAll(options)
-		.then(emps => {
-			let arr = emps.map(x => x.toJSON());
+		.then(frcs => {
+			let arr = frcs.map(x => x.toJSON());
 			if (invert) arr.reverse();
 
 			res.status(200).json({
 				data: arr
+			});
+		})
+		.catch(error.handleInternal(req, res));
+};
+
+exports.single = function (req, res) {
+	models.FRC
+		.findById(req.params.id, {
+			include: req.query.with ? assoc.deduceInclude(models.FRC, {
+				costItems: req.query.with['cost-item'],
+				estimates: req.query.with['estimate']
+			}) : null
+		})
+		.then(frc => {
+			res.status(200).json({
+				data: frc
 			});
 		})
 		.catch(error.handleInternal(req, res));
