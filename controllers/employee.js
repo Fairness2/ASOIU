@@ -22,32 +22,29 @@ exports.create = function (req, res) {
 		})
 		: Promise.resolve([]))
 		.then(deps => {
-			if (deps.length === _.uniq(req.body.departments || []).length) {
-				let emp = models.Employee
-					.build({
-						fullName: req.body.fullName,
-						sex: req.body.sex,
-						birthDate: req.body.birthDate,
-					});
-
-				/*return emp
-					.setDepartments(deps, {
-						context: req.session
-					})
-					.then(() => emp.save({ context: req.session }))*/
-
-				emp.departments = deps;
-
-				return emp
-					.save({ context: req.session })
-					.then(emp => {
-						res.status(200).json({
-							data: emp.id // можно полагать, что empl всегда не null
-						});
-					})
-			} else
+			if (deps.length < _.uniq(req.body.departments || []).length) {
 				res.status(200).json({
 					errors: ['Некоторых указанных подразделений не существует']
+				});
+				return;
+			}
+
+			let emp = models.Employee
+				.build({
+					fullName: req.body.fullName,
+					sex: req.body.sex,
+					birthDate: req.body.birthDate,
+				});
+
+			return emp
+				.save({ context: req.session })
+				.then(emp => emp.setDepartments(deps, {
+					context: req.session
+				}))
+				.then(() => {
+					res.status(200).json({
+						data: emp.id // можно полагать, что empl всегда не null
+					});
 				});
 		})
 		.catch(models.Sequelize.ValidationError, error.handleValidation(req, res))

@@ -18,12 +18,12 @@ exports.create = function (req, res) {
 			quantity: 'Неоходимо количество'
 		}))) return;
 
-	let rq = Request.build({
-		year: req.body.year,
-		requesterId: req.session.user.employeeId,
-		items: req.body.items
-	},
-		{
+	let rq = Request
+		.build({
+			year: req.body.year,
+			requesterId: req.session.user.employeeId,
+			items: req.body.items
+		}, {
 			include: assoc.deduceInclude(Request, 'items')
 		});
 

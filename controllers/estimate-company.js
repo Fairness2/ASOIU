@@ -105,7 +105,8 @@ exports.create = function (req, res) {
 
 			// Преобразовываем нашу структуру в экземпляры моделей
 			return est
-				.setItems(_.map(estimateItems, (values, costItemId) =>
+				.save({ context: req.session })
+				.then(est => est.setItems(_.map(estimateItems, (values, costItemId) =>
 					models.EstimateItem.build({
 						costItemId: costItemId,
 						values: _.map(values, (value, periodId) => ({
@@ -113,13 +114,12 @@ exports.create = function (req, res) {
 							periodId: periodId
 						}))
 					})),
-				{ context: req.session })
-				.then(() => est.save({ context: req.session }));
-		})
-		.then(() => {
-			res.status(200).json({
-				data: est.id
-			});
+					{ context: req.session }))
+				.then(() => {
+					res.status(200).json({
+						data: est.id
+					});
+				});
 		})
 		.catch(models.Sequelize.ForeignKeyError, error.handleForeign(req, res, {
 			costItemId: 'Такой статьи не существует',
@@ -253,12 +253,12 @@ exports.update = function (req, res) {
 						}))
 					})),
 				{ context: req.session })
-				.then(() => est.save({ context: req.session }));
-		})
-		.then(() => {
-			res.status(200).json({
-				data: est.id
-			});
+				.then(() => est.save({ context: req.session }))
+				.then(() => {
+					res.status(200).json({
+						data: est.id
+					});
+				});
 		})
 		.catch(models.Sequelize.ForeignKeyError, error.handleForeign(req, res, {
 			costItemId: 'Такой статьи не существует',
