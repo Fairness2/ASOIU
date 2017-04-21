@@ -40,6 +40,7 @@ module.exports = function (sq, DataTypes) {
 		}, {
 			freezeTableName: true,
 			timestamps: true,
+			enableLog: true,
 			indexes: [
 				{ fields: ['frcId'] },
 				{ fields: ['frcId', 'year'], where: { approvalDate: { $ne: null } }, unique: true },

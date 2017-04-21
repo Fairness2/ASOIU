@@ -18,7 +18,7 @@ exports.create = function (req, res) {
 			sex: req.body.sex,
 			birthDate: req.body.birthDate
 			/* подразделения? */
-		})
+		}, { context: req.session })
 		.then(emp => {
 			res.status(200).json({
 				data: emp.id // можно полагать, что empl всегда не null
@@ -41,7 +41,9 @@ exports.update = function (req, res) {
 		}, {
 			where: {
 				id: req.body.id
-			}
+			},
+			context: req.session,
+			individualHooks:true
 		})
 		.then((count, rows) => {
 			if (count) {
@@ -107,9 +109,9 @@ exports.setDepartments = function (req, res) {
 		})])
 		.then(([emp, deps]) => {
 			if (emp && deps.length === ids.length) {
-				emp.setDepartments(deps);
+				emp.setDepartments(deps, { context: req.session });
 
-				return emp.save()
+				return emp.save({ context: req.session })
 					.then(() => {
 						res.status(200).json({
 							data: 'ok'

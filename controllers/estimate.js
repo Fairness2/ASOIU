@@ -20,7 +20,9 @@ exports.approve = function (req, res) {
 			where: {
 				id: req.body.id,
 				approvalDate: { $eq: null }
-			}
+			},
+			context: req.session,
+			individualHooks: true
 		}).then((count, rows) => {
 			if (count) {
 				req.status(200).json({

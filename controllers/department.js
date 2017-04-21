@@ -8,36 +8,45 @@ const models = require(__rootdir + '/models');
 const Department = models.Department;
 
 exports.create = function (req, res) {
-	Department.create({
-		fullName: req.body.fullName || '',
-		shortName: req.body.shortName || ''
-	}).then(dep => {
-		res.status(200).json({
-			data: dep.id
-		});
-	}).catch(models.Sequelize.UniqueConstraintError, error.handleUnique(req, res, {
-		fullName: 'Подразделение с таким названием уже существует',
-		shortName: 'Подразделение с таким названием уже существует'
-	})).catch(error.handleInternal(req, res));
+	Department
+		.create({
+			fullName: req.body.fullName || '',
+			shortName: req.body.shortName || ''
+		}, { context: req.session })
+		.then(dep => {
+			res.status(200).json({
+				data: dep.id
+			});
+		})
+		.catch(models.Sequelize.UniqueConstraintError, error.handleUnique(req, res, {
+			fullName: 'Подразделение с таким названием уже существует',
+			shortName: 'Подразделение с таким названием уже существует'
+		}))
+		.catch(error.handleInternal(req, res));
 };
 
 exports.update = function (req, res) {
-	Department.update({
-		fullName: req.body.fullName,
-		shortName: req.body.shortName
-	}, {
-		where: { id: req.body.id }
-	}).then((count, list) => {
-		if (count) {
-			res.status(200).json({
-				data: 'ok'
-			});
-		} else {
-			res.status(200).json({
-				errors: ['Подразделение не найдено']
-			});
-		}
-	}).catch(error.handleInternal(req, res));
+	Department
+		.update({
+			fullName: req.body.fullName,
+			shortName: req.body.shortName
+		}, {
+			where: { id: req.body.id },
+			context: req.session,
+			individualHooks: true
+		})
+		.then((count, list) => {
+			if (count) {
+				res.status(200).json({
+					data: 'ok'
+				});
+			} else {
+				res.status(200).json({
+					errors: ['Подразделение не найдено']
+				});
+			}
+		})
+		.catch(error.handleInternal(req, res));
 };
 
 exports.list = function (req, res) {

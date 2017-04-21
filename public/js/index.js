@@ -33,6 +33,7 @@ var application = new Vue({
           //Тут нужно добавить полученные элементы в массим данных
           application.message = 'Всё типтоп';
           application.load_items_check = false;
+          application.message = res
         }
       });
     },

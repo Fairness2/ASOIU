@@ -37,6 +37,7 @@ module.exports = function (sq, DataTypes) {
 		}, {
 			freezeTableName: true,
 			timestamps: false,
+			enableLog: true,
 			classMethods: {
 				associate: models => {
 					models.PeriodType.hasMany(models.Period, { as: 'periods', foreignKey: 'typeId' });

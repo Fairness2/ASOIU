@@ -1,9 +1,45 @@
 ﻿'use strict';
 
+const config = require('../config.json').db;
 const path = require('path');
 const fs = require('fs');
 const Sequelize = require('sequelize');
-const config = require('../config.json').db;
+
+const audit = require(__libdir + '/audit.js')({
+	ignore: [
+		'password',
+		'createdAt',
+		'updatedAt'
+	]
+});
+
+let sequelize = new Sequelize(config.name, config.user, config.password, {
+	host: config.host,
+	dialect: config.dialect,
+	pool: {
+		idle: config.timeout
+	}
+});
+
+const Revisions = require('sequelize-revisions')(sequelize, {
+	exclude: [
+		'id',
+		'createdAt',
+		'updatedAt',
+		'password'
+	]
+});
+
+const ModelProxy = function (model) {
+	this.__proto__ = model;
+
+	this.bind = function (ctx) {
+		return {
+			__proto__: this.__proto__,
+			context: ctx
+		};
+	};
+};
 
 function importDir(dirname, sequelize, models) {
 	models = models || {};
@@ -19,7 +55,7 @@ function importDir(dirname, sequelize, models) {
 			} else {
 				// Импортируем отдельную модель
 				let model = sequelize.import(path.join(dirname, file));
-				models[model.name] = model;
+				models[model.name] = new ModelProxy(model);
 			}
 		});
 
@@ -27,23 +63,24 @@ function importDir(dirname, sequelize, models) {
 }
 
 function init() {
-	let sequelize = new Sequelize(config.name, config.user, config.password, {
-		host: config.host,
-		dialect: config.dialect,
-		pool: {
-			idle: config.timeout
-		}
-	});
-
 	let db = {};
-
+		
 	// Импортируем рекурсивно модели из этой папки и подпапок
 	importDir(__dirname, sequelize, db);
 
-	// Связываем модели друг с другом
+	//Revisions.defineModels(db);
+
 	Object.keys(sequelize.models).forEach(function (modelName) {
-		if ('associate' in db[modelName]) {
-			db[modelName].associate(sequelize.models);
+		if (db[modelName]) {
+			// Связываем модели друг с другом
+			if ('associate' in db[modelName]) {
+				db[modelName].associate(sequelize.models);
+			}
+
+			if (db[modelName].options.enableLog) {
+				//db[modelName].enableRevisions();
+				audit.enable(db[modelName]);
+			}
 		}
 	});
 

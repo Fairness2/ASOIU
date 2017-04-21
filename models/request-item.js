@@ -35,6 +35,7 @@ module.exports = function (sq, DataTypes) {
 		}, {
 			freezeTableName: true,
 			timestamps: false,
+			enableLog: true,
 			indexes: [
 				{ fields: ['requestId'] }
 			],

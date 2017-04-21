@@ -11,7 +11,7 @@ exports.create = function (req, res) {
 		.create({
 			name: req.body.name,
 			length: req.body.length
-		})
+		}, { context: req.session })
 		.then(pt => {
 			res.status(200).json({
 				data: pt.id
@@ -34,7 +34,9 @@ exports.update = function (req, res) {
 			name: req.body.name,
 			length: req.body.length
 		}, {
-			where: { id: req.body.id }
+			where: { id: req.body.id },
+			context: req.session,
+			individualHooks: true
 		})
 		.then((count, list) => {
 			if (count) {

@@ -36,7 +36,7 @@ exports.register = (req, res) => {
 
 exports.update = (req, res) => {
 	if (!error.require(res, req.body, {
-		id: 'Требуется укзаать пользователя'
+		id: 'Требуется указать пользователя'
 	})) return;
 
 	let user = User.build();
@@ -58,7 +58,10 @@ exports.update = (req, res) => {
 			return Promise
 				.try(() => User.validatePassword(req.body.password))
 				.then(user.setPassword.bind(user, req.body.password))
-				.then(user.save.bind(user))
+				.then(user.save.bind(user, {
+					context: req.session,
+					individualHooks: true
+				}))
 				.then(user => {
 					res.status(200).json({
 						data: 'ok' //todo: придумать что-то получше

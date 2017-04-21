@@ -12,7 +12,7 @@ exports.create = function (req, res) {
 			name: req.body.name,
 			costItemId: req.body.costItemId,
 			price: req.body.price
-		})
+		}, { context: req.session })
 		.then(prod => {
 			res.status(200).json({
 				data: prod.id
@@ -36,7 +36,9 @@ exports.update = function (req, res) {
 			costItemId: req.body.costItemId,
 			price: req.body.price
 		}, {
-			where: { id: req.body.id }
+			where: { id: req.body.id },
+			context: req.session,
+			individualHooks: true
 		})
 		.then((count, list) => {
 			if (count) {
