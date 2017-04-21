@@ -278,7 +278,7 @@
                   <span class="col s12 center-align">Отделы</span>
                   <p class="red-text" v-if="error_dep">{{message_dep}}</p>
                   <p v-for="item in departments">
-                    <input name="departments" type="radio" v-bind:id="item.id" v-model:checked="item.check"/>
+                    <input name="departments" type="checkbox" v-bind:id="item.id" v-model:checked="item.check"/>
                     <label v-bind:for="item.id">{{item.name}}</label>
                   </p>
                 </div>
@@ -333,13 +333,11 @@
               <thead>
                 <tr>
                   <th>ФИО</th>
-                  <th>Департамент</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="item in employees" v-on:click="employee_check(item.id)">
                   <td>{{item.name}}</td>
-                  <td>{{item.department}}</td>
                 </tr>
                 <tr v-if="if_message" class="cyan lighten-5">
                   <td colspan="2"><span class="center-align">{{message}}</span></td>

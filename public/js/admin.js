@@ -433,8 +433,8 @@ var employees_section = new Vue({
     message: 'Опачки',
 
     employees: [
-      {id:'10', name:'Вася', department:'грузоперевозки', num:'25'},
-      {id:'11', name:'Аделаида', department:'Клиринг', num:'26'}
+      {id:'10', name:'Вася', num:'25'},
+      {id:'11', name:'Аделаида', num:'26'}
     ]
   },
   methods: {
@@ -457,20 +457,33 @@ var employees_section = new Vue({
       this.loadtrue = false;
       $.ajax({
         /*список пользователей*/
-        url:'api/employee?after=' + 0,
+        url:'api/employee?after=' + encodeURIComponent('1970-01-01 00:00:00+00'),
         type:'GET',
         timeout: 30000,
         error: function (data) {
           employees_section.isload = false;
           employees_section.loaderror = true;
-          employees_section.loadtrue = true; //не забыть поменять
+          employees_section.loadtrue = false; //не забыть поменять
           employees_section.message_error = 'Пожалуйста перезагрузите страницу';
         },
         success:function (res) {
           //Тут нужно обработать пользоваетелей
           employees_section.isload = false;
           employees_section.loaderror = false;
-          employees_section.loadtrue = true; //не забыть поменять
+          employees_section.loadtrue = true;
+          employees_section.employees = [];
+          if (res.data.length == 0) {
+            employees_section.loaderror = true;
+            employees_section.message_error = 'Сотрудников нет';
+          }
+          else {
+            for (var i = 0; i < res.data.length; i++) {
+              employees_section.employees.push(
+                {id: res.data[i].id, name: res.data[i].fullName, num: res.data[i].createdAt}
+              )
+            }
+          }
+
         }
       });
     },
@@ -481,7 +494,7 @@ var employees_section = new Vue({
       var num = this.employees[this.employees.length - 1].num;
       $.ajax({
         /*список пользователей*/
-        url:'api/employee?after=' + num,
+        url:'api/employee?after=' + encodeURIComponent(num),
         type:'GET',
         timeout: 30000,
         error: function (data) {
@@ -492,6 +505,17 @@ var employees_section = new Vue({
         success:function (res) {
           //Тут нужно обработать пользоваетелей
           employees_section.add_load = false;
+          if (res.data.length ==0) {
+            employees_section.if_message = true;
+            employees_section.message = 'Больше сотрудников нет';
+          } else {
+            employees_section.if_message = false;
+            for (var i = 0; i < res.data.length; i++) {
+              employees_section.employees.push(
+                {id: res.data[i].id, name: res.data[i].fullName, num: res.data[i].createdAt}
+              )
+            }
+          }
         }
       });
     }
@@ -546,7 +570,11 @@ var employee = new Vue({
           employee.isload = false;
           employee.loaderror = false;
           employee.loadtrue = true;
-
+          employee.departments = [];
+          for (var i = 0; i < res.data.length; i++) {
+            employee.departments.push(
+              {id: res.data[i].id, name: res.data[i].shortName, check: false});
+          }
         }
       });
     },
@@ -566,19 +594,23 @@ var employee = new Vue({
           employee.isload_too = -1;
           employee.isload = false;
           employee.loaderror = true;
-          employee.loadtrue = true;//не забыть изменить
+          employee.loadtrue = false;//не забыть изменить
           employee.message_error = 'Загрузить не удалась';
         },
         success:function (res) {
           //Тут нужно обработать отделы
+          employee.departments = [];
+          for (var i = 0; i < res.data.length; i++) {
+            employee.departments.push(
+              {id: res.data[i].id, name: res.data[i].shortName, check: false});
+          }
           if (employee.isload_too == 1) {
             employee.isload = false;
             employee.loaderror = false;
             employee.loadtrue = true;
-
+            employee.checked_department();
           }else {
             employee.isload_too++;
-
           }
         }
       });
@@ -600,13 +632,17 @@ var employee = new Vue({
             employee.isload = false;
             employee.loaderror = false;
             employee.loadtrue = true;
-            alert(res);
+            employee.checked_department();
           }else {
             employee.isload_too++;
             alert(res);
           }
         }
       });
+    },
+
+    checked_department: function () {
+
     },
 
     create_employee: function () {
@@ -1213,12 +1249,17 @@ var departments_section = new Vue({
           departments_section.isload = false;
           departments_section.loaderror = false;
           departments_section.loadtrue = true;
-          departments_section.departments = [];
-          for (var i = 0; i < res.data.length; i++) {
-            departments_section.departments.push(
-              {id: res.data[i].id, fullname: res.data[i].fullname, shortname: res.data[i].shortname});
+          if (res.data.length == 0) {
+            departments_section.loaderror = false;
+            departments_section.loadtrue = false;
+            departments_section.message_error = 'Отделов нет';
+          } else {
+            departments_section.departments = [];
+            for (var i = 0; i < res.data.length; i++) {
+              departments_section.departments.push(
+                {id: res.data[i].id, fullname: res.data[i].fullName, shortname: res.data[i].shortName});
+            }
           }
-
         }
       });
     }
@@ -1243,22 +1284,24 @@ var department = new Vue({
       if (regexpfull.test(this.fullname) && regexpshort.test(this.shortname)) {
         $.ajax({
           /*Добавление отдела*/
-          url:'api/department/create',
+          url:'api/department',
           type:'POST',
-          data: {'fullname': department.fullname, 'shortname': department.shortname},
+          data: {'fullName': department.fullname, 'shortName': department.shortname},
           timeout: 30000,
           error: function (data) {
-            product.message_failure = 'Добавить отдел не удалось';
-            product.message_success = '';
+            department.message_failure = 'Добавить отдел не удалось';
+            department.message_success = '';
           },
           success:function (res) {
-            product.message_failure = '';
-            product.message_success = 'Отдел успешно добавлен';
+            department.message_failure = '';
+            department.message_success = 'Отдел успешно добавлен';
+            departments_section.onloading();
+            $('#department').modal('close');
           }
         });
       }else {
-        product.message_failure = 'Заполните поля правильно';
-        product.message_success = '';
+        department.message_failure = 'Заполните поля правильно';
+        department.message_success = '';
       }
     },
 
@@ -1269,22 +1312,24 @@ var department = new Vue({
       if (regexpfull.test(this.fullname) && regexpshort.test(this.shortname) && this.id != '') {
         $.ajax({
           /*Изменение отдела*/
-          url:'api/department/update',
-          type:'POST',
-          data: {'fullname': department.fullname, 'shortname': department.shortname, 'id': product.id},
+          url:'api/department',
+          type:'PUT',
+          data: {'fullName': department.fullname, 'shortName': department.shortname, 'id': department.id},
           timeout: 30000,
           error: function (data) {
-            product.message_failure = 'Изменить отдел не удалось';
-            product.message_success = '';
+            department.message_failure = 'Изменить отдел не удалось';
+            department.message_success = '';
           },
           success:function (res) {
-            product.message_failure = '';
-            product.message_success = 'Отдел успешно изменён';
+            department.message_failure = '';
+            department.message_success = 'Отдел успешно изменён';
+            departments_section.onloading();
+            $('#department').modal('close');
           }
         });
       }else {
-        product.message_failure = 'Заполните поля правильно';
-        product.message_success = '';
+        department.message_failure = 'Заполните поля правильно';
+        department.message_success = '';
       }
     }
   }
@@ -1314,6 +1359,8 @@ var department_del = new Vue({
           success:function (res) {
             department_del.message_failure = '';
             department_del.message_success = 'Отдел успешно удалён';
+            departments_section.onloading();
+            $('#department_del').modal('close');
           }
         });
       }else {
@@ -1381,7 +1428,17 @@ var cfos_section = new Vue({
           cfos_section.isload = false;
           cfos_section.loaderror = false;
           cfos_section.loadtrue = true;
-
+          if (res.data.length == 0) {
+            cfos_section.loaderror = false;
+            cfos_section.loadtrue = false;
+            cfos_section.message_error = 'Отделов нет';
+          } else {
+            cfos_section.cfos = [];
+            for (var i = 0; i < res.data.length; i++) {
+              cfos_section.cfos.push(
+                {id: res.data[i].id, name: res.data[i].name});
+            }
+          }
         }
       });
     }
@@ -1404,7 +1461,7 @@ var cfo = new Vue({
       if (regexp.test(this.name)) {
         $.ajax({
           /*Добавление цфо*/
-          url:'api/frc/create',
+          url:'api/frc',
           type:'POST',
           data: {'name': cfo.name},
           timeout: 30000,
@@ -1415,6 +1472,8 @@ var cfo = new Vue({
           success:function (res) {
             cfo.message_failure = '';
             cfo.message_success = 'ЦФО успешно добавлен';
+            cfos_section.onloading();
+            $('#cfo').modal('close');
           }
         });
       }else {
@@ -1429,8 +1488,8 @@ var cfo = new Vue({
       if (regexp.test(this.name) && this.id != '') {
         $.ajax({
           /*Изменение ЦФО*/
-          url:'api/frc/update',
-          type:'POST',
+          url:'api/frc',
+          type:'PUT',
           data: {'name': cfo.name, 'id': cfo.id},
           timeout: 30000,
           error: function (data) {
@@ -1440,6 +1499,8 @@ var cfo = new Vue({
           success:function (res) {
             cfo.message_failure = '';
             cfo.message_success = 'ЦФО успешно изменён';
+            cfos_section.onloading();
+            $('#cfo').modal('close');
           }
         });
       }else {
@@ -1474,6 +1535,8 @@ var cfo_del = new Vue({
           success:function (res) {
             cfo_del.message_failure = '';
             cfo_del.message_success = 'ЦФО успешно удалён';
+            cfos_section.onloading();
+            $('#cfo_del').modal('close');
           }
         });
       }else {
