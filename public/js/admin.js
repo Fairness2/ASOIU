@@ -690,7 +690,7 @@ var employee = new Vue({
       if (regexp.test(this.FIO) && this.birthday != '' && department != '') {
         $.ajax({
           /*Добавление сотрудника*/
-          url:'api/employee',
+          url:'/api/employee',
           type:'POST',
           data: {'fullName': employee.FIO, 'sex': sex, 'birthDate': employee.birthday, 'department': department},
           timeout: 30000,
@@ -722,10 +722,11 @@ var employee = new Vue({
           department.push(this.departments[i].id);
         }
       }
+      alert(employee.birthday);
       if (regexp.test(this.FIO) && this.birthday != '' && this.id != '') {
         $.ajax({
           /*Добавление сотрудника*/
-          url:'api/employee',
+          url:'/api/employee',
           type:'PUT',
           data: {'fullName': employee.FIO, 'sex': sex, 'birthDate': employee.birthday, 'id': employee.id, 'department': department},
           timeout: 30000,
@@ -815,7 +816,7 @@ var article_section = new Vue({
       this.loadtrue = false;
       $.ajax({
         /*список статей*/
-        url:'api/cost-item?after=' + 0,
+        url:'api/cost-item',
         type:'GET',
         timeout: 30000,
         error: function (data) {
@@ -829,7 +830,7 @@ var article_section = new Vue({
           article_section.isload = false;
           article_section.loaderror = false;
           article_section.loadtrue = true;
-
+          alert(JSON.stringify(res));
         }
       });
     },
