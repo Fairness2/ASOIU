@@ -145,8 +145,39 @@ var body_con = new Vue({
             body_con.message_art = 'Пожалуйста перезагрузите страницу';
           },
           success:function (res) {
-            //Тут нужно обработать список дополнительных расходов
-            alert(JSON.stringify(res));
+            body_con.articles = [];
+            var products = [];
+            for (var i = 0; i < res.data.length; i++) {
+              products = [];
+              for (var j = 0; j < res.data[i].products.length; j++) {
+                products.push(
+                  {
+                    id: res.data[i].products[j].id,
+                    name: res.data[i].products[j].name,
+                    january: '0',
+                    february: '0',
+                    march: '0',
+                    april: '0',
+                    may: '0',
+                    june: '0',
+                    july: '0',
+                    august: '0',
+                    september: '0',
+                    october: '0',
+                    november: '0',
+                    december: '0'
+                  }
+                );
+              }
+              body_con.articles.push(
+                {
+                  id: res.data[i].id,
+                  name: res.data[i].name,
+                  table_show: false,
+                  items: products
+                }
+              );
+            }
           }
         });
         this.isload = false;
