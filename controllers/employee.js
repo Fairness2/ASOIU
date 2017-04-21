@@ -56,7 +56,7 @@ exports.update = function (req, res) {
 		models.Employee.findById(req.body.id),
 		models.Department.findAll({
 			where: {
-				id: { $in: req.body.departments }
+				id: { $in: req.body.departments || [] }
 			}
 		})])
 		.then(([emp, deps]) => {

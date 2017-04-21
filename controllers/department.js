@@ -22,6 +22,7 @@ exports.create = function (req, res) {
 			fullName: 'Подразделение с таким названием уже существует',
 			shortName: 'Подразделение с таким названием уже существует'
 		}))
+		.catch(models.Sequelize.ValidationError, error.handleValidation(req, res))
 		.catch(error.handleInternal(req, res));
 };
 
@@ -46,6 +47,7 @@ exports.update = function (req, res) {
 				});
 			}
 		})
+		.catch(models.Sequelize.ValidationError, error.handleValidation(req, res))
 		.catch(error.handleInternal(req, res));
 };
 
