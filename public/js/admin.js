@@ -918,7 +918,7 @@ var article = new Vue({
           /*Добавление статьи*/
           url:'api/cost-item',
           type:'POST',
-          data: {'name': article.name, 'frc': cfo},
+          data: {'name': article.name, 'frcId': cfo},
           timeout: 30000,
           error: function (data) {
             article.message_failure = 'Создать статью не удалось';
@@ -927,6 +927,7 @@ var article = new Vue({
           success:function (res) {
             article.message_failure = '';
             article.message_success = 'Статья успешно создана';
+            article_section.onloading();
           }
         });
       }else {
@@ -949,7 +950,7 @@ var article = new Vue({
           /*изменение  стстьи*/
           url:'api/cost-item',
           type:'PUT',
-          data: {'name': article.name, 'frc': cfo, 'id': article.id},
+          data: {'name': article.name, 'frcId': cfo, 'id': article.id},
           timeout: 30000,
           error: function (data) {
             article.message_failure = 'Изменить статью не удалось';
@@ -958,6 +959,7 @@ var article = new Vue({
           success:function (res) {
             article.message_failure = '';
             article.message_success = 'Статья успешно изменена';
+            article_section.onloading();
           }
         });
       }else {
@@ -1042,13 +1044,13 @@ var products_section = new Vue({
       this.loadtrue = false;
       $.ajax({
         /*список статей*/
-        url:'api/product?cost-item=' + products_section.id,
+        url:'api/product?costItemId=' + products_section.article_id,
         type:'GET',
         timeout: 30000,
         error: function (data) {
           products_section.isload = false;
           products_section.loaderror = true;
-          products_section.loadtrue = true; //не забыть поменять
+          products_section.loadtrue = false; //не забыть поменять
           products_section.message_error = 'Пожалуйста перезагрузите страницу';
         },
         success:function (res) {
@@ -1056,7 +1058,12 @@ var products_section = new Vue({
           products_section.isload = false;
           products_section.loaderror = false;
           products_section.loadtrue = true;
-
+          products_section.products = [];
+          for (var i = 0; i < res.data.length; i++) {
+            products_section.products.push(
+              {id: res.data[i].id, name: res.data[i].name, price: res.data[i].price}
+            );
+          }
         }
       });
     }
@@ -1078,11 +1085,11 @@ var product = new Vue({
   methods: {
     create_product: function () {
       var regexp = /^[а-яё\w\d_\-:. ]{4,50}$/i;
-
+      alert(product.name + product.price + product.article_id)
       if (regexp.test(this.name) && this.price >= 0) {
         $.ajax({
           /*Добавление товара*/
-          url:'api/product/create',
+          url:'api/product',
           type:'POST',
           data: {'name': product.name, 'price': product.price, 'costItemId': product.article_id},
           timeout: 30000,
@@ -1093,6 +1100,7 @@ var product = new Vue({
           success:function (res) {
             product.message_failure = '';
             product.message_success = 'Товар успешно добавлен';
+            products_section.onloading();
           }
         });
       }else {
@@ -1107,8 +1115,8 @@ var product = new Vue({
       if (regexp.test(this.name) && this.price >= 0 && this.id != '') {
         $.ajax({
           /*Изменение товара*/
-          url:'api/product/update',
-          type:'POST',
+          url:'api/product',
+          type:'PUT',
           data: {'name': product.name, 'price': product.price, 'id': product.id, 'costItemId': product.article_id},
           timeout: 30000,
           error: function (data) {
@@ -1118,6 +1126,7 @@ var product = new Vue({
           success:function (res) {
             product.message_failure = '';
             product.message_success = 'Товар успешно изменён';
+            products_section.onloading();
           }
         });
       }else {
