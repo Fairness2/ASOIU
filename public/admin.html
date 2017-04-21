@@ -112,23 +112,19 @@
               </div>
               <div class="col s6">
                 <div class="card col s12 black-text">
-                  <span class="col s12 center-align">Отделы</span>
+                  <span class="col s12 center-align">Сотрудники</span>
                   <p class="red-text" v-if="error_dep">{{message_dep}}</p>
-                  <p v-for="item in departments">
-                    <input name="departments" type="radio" v-bind:id="item.id" v-on:click="show_department(item.id)"/>
-                    <label v-bind:for="item.id">{{item.name}}</label>
-                  </p>
 
-                  <table  class="bordered centered col s12" v-for="department in departments" v-show="department.table_show">
+                  <table  class="bordered centered col s12">
                     <thead>
                       <tr>
                         <th>ФИО</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="item in department.employees">
+                      <tr v-for="item in employees">
                         <td><p>
-                          <input name="users" type="radio" v-bind:id="item.id" v-model:checked="item.check"/>
+                          <input type="checkbox" v-bind:id="item.id" v-model:checked="item.check" v-on:click="checked(item.id)"/>
                           <label v-bind:for="item.id">{{item.name}}</label>
                         </p></td>
                       </tr>
@@ -189,30 +185,9 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="item in users" v-on:click="user_check(item.id)">
+                <tr v-for="item in users" v-on:click="user_check(item.id, item.id_employee, item.login)">
                   <td>{{item.name}}</td>
                   <td>{{item.login}}</td>
-                </tr>
-                <tr v-if="if_message" class="cyan lighten-5">
-                  <td colspan="2"><span class="center-align">{{message}}</span></td>
-                </tr>
-                <tr v-if="add_load" class="indigo lighten-5">
-                  <td colspan="2" class="centre-preload">
-                    <div class="preloader-wrapper small active">
-                      <div class="spinner-layer spinner-green-only">
-                        <div class="circle-clipper left">
-                          <div class="circle"></div>
-                        </div><div class="gap-patch">
-                          <div class="circle"></div>
-                        </div><div class="circle-clipper right">
-                          <div class="circle"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-                <tr v-if="!add_load" class="indigo lighten-5">
-                  <td colspan="2"><span class="center-align" v-on:click="add_users">Загрузить следующие</span></td>
                 </tr>
               </tbody>
             </table>
