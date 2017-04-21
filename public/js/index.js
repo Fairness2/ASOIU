@@ -34,7 +34,7 @@ var application = new Vue({
           application.load_items_check = false;
           application.items = [];
           for (var i = 0; i < res.data.length; i++) {
-            application.items.push({num: res.data[i].number, id: res.data[i].id});
+            application.items.push({num: res.data[i].number, id: res.data[i].id, year: res.data[i].year});
           }
         }
       });
@@ -59,7 +59,7 @@ var application = new Vue({
           application.add_check = false;
           //application.message = 'Всё типтоп';
           for (var i = 0; i < res.data.length; i++) {
-            application.items.push({num: res.data[i].number, id: res.data[i].id});
+            application.items.push({num: res.data[i].number, id: res.data[i].id, year: res.data[i].year});
           }
         }
       });
@@ -119,7 +119,11 @@ var cfo = new Vue({
         success:function (res) {
           //Тут нужно добавить полученные элементы в массим данных
           cfo.load_items_check = false;
-          cfo.message_check = 'Всё типтоп';
+          cfo.message_check = 'Всё типтоп' + JSON.stringify(res);
+          cfo.items_check = [];
+          for (var i = 0; i < res.data.length; i++) {
+            cfo.items_check.push({num: res.data[i].number, id: res.data[i].id, message: res.data[i].name});
+          }
         }
       });
     },

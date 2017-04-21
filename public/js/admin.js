@@ -1205,7 +1205,7 @@ var departments_section = new Vue({
         error: function (data) {
           departments_section.isload = false;
           departments_section.loaderror = true;
-          departments_section.loadtrue = true; //не забыть поменять
+          departments_section.loadtrue = false; //не забыть поменять
           departments_section.message_error = 'Пожалуйста перезагрузите страницу';
         },
         success:function (res) {
@@ -1213,6 +1213,11 @@ var departments_section = new Vue({
           departments_section.isload = false;
           departments_section.loaderror = false;
           departments_section.loadtrue = true;
+          departments_section.departments = [];
+          for (var i = 0; i < res.data.length; i++) {
+            departments_section.departments.push(
+              {id: res.data[i].id, fullname: res.data[i].fullname, shortname: res.data[i].shortname});
+          }
 
         }
       });
