@@ -90,10 +90,11 @@ exports.login = (req, res) => {
 
 	console.log(req.body.username);
 
-	User.findOne({
-		where: { username: req.body.username },
-		include: assoc.deduceInclude(User, 'employee')
-	})
+	User
+		.findOne({
+			where: { username: req.body.username },
+			include: assoc.deduceInclude(User, 'employee')
+		})
 		.then(user => {
 			if (user) {
 				return Promise.all([
@@ -165,23 +166,27 @@ exports.list = (req, res) => {
 			res.status(200).json({
 				data: arr
 			});
-		});
+		})
+		.catch(error.handleInternal(req, res));
 };
 
 exports.roles = (req, res) => {
-	models.User.findById(req.params.id, {
-		include: [{ model: models.Role, as: 'roles' }]
-	}).then(user => {
-		if (user) {
-			res.status(200).json({
-				data: user.roles
-			});
-		} else {
-			res.status(200).json({
-				errors: ['Пользователь не найден']
-			});
-		}
-	}).catch(error.handleInternal(req, res));
+	models.User
+		.findById(req.params.id, {
+			include: [{ model: models.Role, as: 'roles' }]
+		})
+		.then(user => {
+			if (user) {
+				res.status(200).json({
+					data: user.roles
+				});
+			} else {
+				res.status(200).json({
+					errors: ['Пользователь не найден']
+				});
+			}
+		})
+		.catch(error.handleInternal(req, res));
 }
 
 exports.setRoles = (req, res) => {
