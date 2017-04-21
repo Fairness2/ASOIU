@@ -259,7 +259,7 @@ var user = new Vue({
         },
         success:function (res) {
           //Тут нужно обработать пользоваетелей
-          if (user.isload_too == 2) {
+          if (user.isload_too == 1) {
             user.isload = false;
             user.loaderror = false;
             user.loadtrue = true;
@@ -284,7 +284,7 @@ var user = new Vue({
         },
         success:function (res) {
           //Тут нужно обработать пользоваетелей
-          if (user.isload_too == 2) {
+          if (user.isload_too == 1) {
             user.isload = false;
             user.loaderror = false;
             user.loadtrue = true;
@@ -571,7 +571,7 @@ var employee = new Vue({
         },
         success:function (res) {
           //Тут нужно обработать отделы
-          if (employee.isload_too == 2) {
+          if (employee.isload_too == 1) {
             employee.isload = false;
             employee.loaderror = false;
             employee.loadtrue = true;
@@ -596,7 +596,7 @@ var employee = new Vue({
         },
         success:function (res) {
           //Тут нужно обработать сотрудника
-          if (employee.isload_too == 2) {
+          if (employee.isload_too == 1) {
             employee.isload = false;
             employee.loaderror = false;
             employee.loadtrue = true;
@@ -858,7 +858,7 @@ var article = new Vue({
         },
         success:function (res) {
           //Тут нужно обработать отделы
-          if (article.isload_too == 2) {
+          if (article.isload_too == 1) {
             article.isload = false;
             article.loaderror = false;
             article.loadtrue = true;
@@ -883,7 +883,7 @@ var article = new Vue({
         },
         success:function (res) {
           //Тут нужно обработать сотрудника
-          if (article.isload_too == 2) {
+          if (article.isload_too == 1) {
             article.isload = false;
             article.loaderror = false;
             article.loadtrue = true;
@@ -1792,5 +1792,154 @@ var role_del = new Vue({
         role_del.message_success = '';
       }
     }
+  }
+});
+
+/*var permissions_appointment = new Vue({
+  el: '#permissions_appointment',
+  data: {
+    show: false,
+    isload: true,
+    loaderror: false,
+    loadtrue: false,
+    message_error: '',
+    loadtoo: 0,
+    roles: [
+      {id:'10', name:'Дидидидави', check: false},
+      {id:'101', name:'Авиваи', check: false},
+      {id:'102', name:'Блед', check: false},
+    ]
+    permissions: [
+      {id:'101', name:'Дидидидави', check: false},
+      {id:'1011', name:'Авиваи', check: false},
+      {id:'1021', name:'Блед', check: false},
+    ]
+    permissions_check: [
+      {id:'101', name:'Дидидидави', check: false},
+    ]
+  },
+  methods: {
+    onloading: function () {
+      this.isload = true;
+      this.loaderror = false;
+      this.loadtrue = false;
+      this.loadtoo = 0;
+      $.ajax({
+        //список ролей
+        url:'api/role',
+        type:'GET',
+        timeout: 30000,
+        error: function (data) {
+          permissions_appointment.loadtoo = -1;
+          permissions_appointment.isload = false;
+          permissions_appointment.loaderror = true;
+          permissions_appointment.loadtrue = true; //не забыть поменять
+          permissions_appointment.message_error = 'Пожалуйста перезагрузите страницу';
+        },
+        success:function (res) {
+          if (permissions_appointment.loadtoo == 2) {
+            //Тут нужно обработать роли
+            permissions_appointment.isload = false;
+            permissions_appointment.loaderror = false;
+            permissions_appointment.loadtrue = true;
+
+          }else {
+            permissions_appointment.loadtoo++;
+
+          }
+        }
+      });
+      $.ajax({
+        //список уже назначенных разрешений
+        url:'api/role/permissions?id=',
+        type:'GET',
+        timeout: 30000,
+        error: function (data) {
+          permissions_appointment.loadtoo = -1;
+          permissions_appointment.isload = false;
+          permissions_appointment.loaderror = true;
+          permissions_appointment.loadtrue = true; //не забыть поменять
+          permissions_appointment.message_error = 'Пожалуйста перезагрузите страницу';
+        },
+        success:function (res) {
+          if (permissions_appointment.loadtoo == 2) {
+            //Тут нужно обработать роли
+            permissions_appointment.isload = false;
+            permissions_appointment.loaderror = false;
+            permissions_appointment.loadtrue = true;
+
+          }else {
+            permissions_appointment.loadtoo++;
+
+          }
+        }
+      });
+      $.ajax({
+        //список разрешений
+        url:'api/permission',
+        type:'GET',
+        timeout: 30000,
+        error: function (data) {
+          permissions_appointment.loadtoo = -1;
+          permissions_appointment.isload = false;
+          permissions_appointment.loaderror = true;
+          permissions_appointment.loadtrue = true; //не забыть поменять
+          permissions_appointment.message_error = 'Пожалуйста перезагрузите страницу';
+        },
+        success:function (res) {
+          if (permissions_appointment.loadtoo == 2) {
+            //Тут нужно обработать разрешения
+            permissions_appointment.isload = false;
+            permissions_appointment.loaderror = false;
+            permissions_appointment.loadtrue = true;
+
+          }else {
+            permissions_appointment.loadtoo++;
+
+          }
+        }
+      });
+    },
+
+    save: function () {
+      var role = '';
+      for (var i = 0; i < this.roles.length; i++) {
+        if (this.roles[i].check) {
+          role = this.roles[i].id;
+          break;
+        }
+      }
+      var permission = [];
+      for (var i = 0; i < this.roles.length; i++) {
+        if (this.roles[i].check) {
+          permission.push(this.roles[i].id)
+        }
+      }
+      $.ajax({
+        //Назначение разрешений на роль
+        url:'api/setpermissions',
+        type:'GET',
+        timeout: 30000,
+        error: function (data) {
+          permissions_appointment.loadtoo = -1;
+          permissions_appointment.isload = false;
+          permissions_appointment.loaderror = true;
+          permissions_appointment.loadtrue = true; //не забыть поменять
+          permissions_appointment.message_error = 'Пожалуйста перезагрузите страницу';
+        },
+        success:function (res) {
+          if (permissions_appointment.loadtoo == 1) {
+            //Тут нужно обработать разрешения
+            permissions_appointment.isload = false;
+            permissions_appointment.loaderror = false;
+            permissions_appointment.loadtrue = true;
+
+          }else {
+            permissions_appointment.loadtoo = 1;
+
+          }
+        }
+      });
+    }*/
   }
 });
