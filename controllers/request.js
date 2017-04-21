@@ -30,7 +30,10 @@ exports.create = function (req, res) {
 			include: assoc.deduceInclude(Request, 'items')
 		});
 
-	rq.save({ context: req.session })
+	rq.save({
+		context: req.session,
+		include: assoc.deduceInclude(Request, 'items')
+	})
 		.then(() => {
 			res.status(200).json({
 				data: rq.id
