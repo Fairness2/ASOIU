@@ -33,9 +33,16 @@ var application = new Vue({
           //var objres = JSON.stringify(res);
           application.load_items_check = false;
           application.items = [];
-          for (var i = 0; i < res.data.length; i++) {
-            application.items.push({num: res.data[i].number, id: res.data[i].id, year: res.data[i].year});
+          application.message = '';
+          if (res.data.length == 0) {
+            application.message = 'Нет заявок';
+
+          } else {
+            for (var i = 0; i < res.data.length; i++) {
+              application.items.push({num: res.data[i].number, id: res.data[i].id, year: res.data[i].year});
+            }
           }
+
         }
       });
     },
@@ -43,9 +50,11 @@ var application = new Vue({
     add_items_check: function () {
       this.add_check = true;
       var num = 0;
-      var lenghtit = this.items.lenght;
-      if (lenghtit == 0)
-        num = this.items[lenghtit].num;
+      var lenghtit = this.items.length;
+      if (lenghtit != 0)
+      {
+        num = this.items[lenghtit-1].num;
+      }
       $.ajax({
         url:'api/request?after=' + num,
         type:'GET',
@@ -58,8 +67,13 @@ var application = new Vue({
           //Тут нужно добавить полученные элементы в массим данных
           application.add_check = false;
           //application.message = 'Всё типтоп';
-          for (var i = 0; i < res.data.length; i++) {
-            application.items.push({num: res.data[i].number, id: res.data[i].id, year: res.data[i].year});
+          if (res.data.length == 0) {
+            application.message = 'Больше заявок нет';
+          }
+          else {
+            for (var i = 0; i < res.data.length; i++) {
+              application.items.push({num: res.data[i].number, id: res.data[i].id, year: res.data[i].year});
+            }
           }
         }
       });
@@ -119,11 +133,16 @@ var cfo = new Vue({
         success:function (res) {
           //Тут нужно добавить полученные элементы в массим данных
           cfo.load_items_check = false;
-          cfo.message_check = 'Всё типтоп' + JSON.stringify(res);
+          cfo.message_check = '';
           cfo.items_check = [];
-          for (var i = 0; i < res.data.length; i++) {
-            cfo.items_check.push({num: res.data[i].number, id: res.data[i].id, message: res.data[i].name});
+          if (res.data.length == 0) {
+            cfo.message_check = 'Смет нет';
+          } else {
+            for (var i = 0; i < res.data.length; i++) {
+              cfo.items_check.push({num: res.data[i].number, id: res.data[i].id, message: res.data[i].name});
+            }
           }
+
         }
       });
     },
@@ -131,9 +150,10 @@ var cfo = new Vue({
     add_items_check: function () {
       this.add_check = true;
       var num = 0;
-      var lenghtit = this.items_check.lenght;
-      if (lenghtit == 0)
-        num = this.items_check[lenghtit].num;
+      var lenghtit = this.items_check.length;
+      if (lenghtit != 0){
+        num = this.items_check[lenghtit-1].num;
+      }
       $.ajax({
         url:'api/estimate?after=' + num,
         type:'GET',
@@ -145,7 +165,13 @@ var cfo = new Vue({
         success:function (res) {
           //Тут нужно добавить полученные элементы в массим данных
           cfo.add_check = false;
-          cfo.message_check = 'Всё типтоп';
+          if (res.data.length == 0) {
+            cfo.message_check = 'Больше смет нет';
+          }else {
+            for (var i = 0; i < res.data.length; i++) {
+              cfo.items_check.push({num: res.data[i].number, id: res.data[i].id, message: res.data[i].name});
+            }
+          }
         }
       });
     },
@@ -174,7 +200,16 @@ var cfo = new Vue({
         success:function (res) {
           //Тут нужно добавить полученные элементы в массим данных
           cfo.load_items_del = false;
-          cfo.message_del = 'Всё типтоп';
+          cfo.message_del = '';
+          cfo.items_del = [];
+          if (res.data.length == 0) {
+            cfo.message_del = 'Смет нет';
+          } else {
+            for (var i = 0; i < res.data.length; i++) {
+              cfo.items_del.push({num: res.data[i].number, id: res.data[i].id, message: res.data[i].name});
+            }
+          }
+
         }
       });
     },
@@ -182,9 +217,10 @@ var cfo = new Vue({
     add_items_del: function () {
       this.add_del = true;
       var num = 0;
-      var lenghtit = this.items_del.lenght;
-      if (lenghtit == 0)
-        num = this.items_del[lenghtit].num;
+      var lenghtit = this.items_del.length;
+      if (lenghtit != 0){
+        num = this.items_del[lenghtit-1].num;
+      }
       $.ajax({
         url:'api/estimate?after=' + num,
         type:'GET',
@@ -196,7 +232,13 @@ var cfo = new Vue({
         success:function (res) {
           //Тут нужно добавить полученные элементы в массим данных
           cfo.add_del = false;
-          cfo.message_del = 'Всё типтоп';
+          if (res.data.length == 0) {
+            cfo.message_del = 'Больше заявок нет';
+          } else {
+            for (var i = 0; i < res.data.length; i++) {
+              cfo.items_del.push({num: res.data[i].number, id: res.data[i].id, message: res.data[i].name});
+            }
+          }
         }
       });
     },
@@ -256,7 +298,16 @@ var company = new Vue({
         success:function (res) {
           //Тут нужно добавить полученные элементы в массим данных
           company.load_items_check = false;
-          company.message_check = 'Всё типтоп';
+          company.message_check = '';
+          company.items_check = [];
+          if (res.data.length == 0) {
+            company.message_check = 'Смет нет';
+          } else {
+            for (var i = 0; i < res.data.length; i++) {
+              company.items_check.push({num: res.data[i].number, id: res.data[i].id, message: res.data[i].name});
+            }
+          }
+
         }
       });
     },
@@ -264,9 +315,9 @@ var company = new Vue({
     add_items_check: function () {
       this.add_check = true;
       var num = 0;
-      var lenghtit = this.items_check.lenght;
-      if (lenghtit == 0)
-        num = this.items_check[lenghtit].num;
+      var lenghtit = this.items_check.length;
+      if (lenghtit != 0)
+        num = this.items_check[lenghtit-1].num;
       $.ajax({
         url:'api/estimate?company=true&after=' + num,
         type:'GET',
@@ -279,7 +330,14 @@ var company = new Vue({
         success:function (res) {
           //Тут нужно добавить полученные элементы в массим данных
           company.add_check = false;
-          company.message_check = 'Всё типтоп';
+          company.message_check = '';
+          if (res.data.length == 0) {
+            company.message_check = 'Смет больше нет';
+          } else {
+            for (var i = 0; i < res.data.length; i++) {
+              company.items_check.push({num: res.data[i].number, id: res.data[i].id, message: res.data[i].name});
+            }
+          }
         }
       });
     },
@@ -308,7 +366,15 @@ var company = new Vue({
         success:function (res) {
           //Тут нужно добавить полученные элементы в массим данных
           company.load_items_del = false;
-          company.message_del = 'Всё типтоп';
+          company.message_del = '';
+          company.items_del = [];
+          if (res.data.length == 0) {
+            company.message_del = 'Смет нет';
+          } else {
+            for (var i = 0; i < res.data.length; i++) {
+              company.items_del.push({num: res.data[i].number, id: res.data[i].id, message: res.data[i].name});
+            }
+          }
         }
       });
     },
@@ -316,9 +382,9 @@ var company = new Vue({
     add_items_del: function () {
       this.add_del = true;
       var num = 0;
-      var lenghtit = this.items_del.lenght;
-      if (lenghtit == 0)
-        num = this.items_del[lenghtit].num;
+      var lenghtit = this.items_del.length;
+      if (lenghtit != 0)
+        num = this.items_del[lenghtit-1].num;
       $.ajax({
         url:'api/estimate?company=true&after=' + num,
         type:'GET',
@@ -330,7 +396,14 @@ var company = new Vue({
         success:function (res) {
           //Тут нужно добавить полученные элементы в массим данных
           company.add_del = false;
-          company.message_del = 'Всё типтоп';
+          company.message_del = '';
+          if (res.data.length == 0) {
+            company.message_del = 'Смет больше нет';
+          } else {
+            for (var i = 0; i < res.data.length; i++) {
+              company.items_del.push({num: res.data[i].number, id: res.data[i].id, message: res.data[i].name});
+            }
+          }
         }
       });
     },
