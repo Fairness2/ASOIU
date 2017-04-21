@@ -64,6 +64,9 @@ exports.list = function (req, res) {
 	if (req.query.id)
 		options.where.id = req.query.id;
 
+	if (req.query.typeId)
+		options.where.typeId = req.query.typeId;
+
 	models.Period
 		.findAll(options)
 		.then(ps => {
