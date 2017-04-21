@@ -58,7 +58,10 @@ exports.update = (req, res) => {
 			return Promise
 				.try(() => User.validatePassword(req.body.password))
 				.then(user.setPassword.bind(user, req.body.password))
-				.then(user.save.bind(user))
+				.then(user.save.bind(user, {
+					context: req.session,
+					individualHooks: true
+				}))
 				.then(user => {
 					res.status(200).json({
 						data: 'ok' //todo: придумать что-то получше

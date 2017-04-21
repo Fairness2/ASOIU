@@ -3,8 +3,15 @@
 const config = require('../config.json').db;
 const path = require('path');
 const fs = require('fs');
-const audit = require(__libdir + '/audit.js');
 const Sequelize = require('sequelize');
+
+const audit = require(__libdir + '/audit.js')({
+	ignore: [
+		'password',
+		'createdAt',
+		'updatedAt'
+	]
+});
 
 let sequelize = new Sequelize(config.name, config.user, config.password, {
 	host: config.host,
