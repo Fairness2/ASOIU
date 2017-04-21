@@ -47,7 +47,7 @@ exports.list = function (req, res) {
 	opts.where = opts.where || {};
 	if (req.query.company)
 		opts.where.frcId = null;
-	else
+	else if (req.query.frcId)
 		opts.where.frcId = req.query.frcId;
 
 	Estimate.findAll(
