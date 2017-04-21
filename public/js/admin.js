@@ -747,15 +747,17 @@ var article_section = new Vue({
     message: 'Опачки',
 
     articles: [
-      {id:'10', name:'Мы команда', cfo:'Наша банда', num:'25'},
-      {id:'11', name:'Жопа', cfo:'ЖОпа', num:'2'}
+      {id:'10', name:'Мы команда', cfo:'Наша банда', cfo_id:'25'},
+      {id:'11', name:'Жопа', cfo:'ЖОпа', cfo_id:'2'}
     ]
   },
   methods: {
-    article_check: function (id) {
+    article_check: function (id, cfo_id, name) {
       article.new_article = false;
       article.id = id;
-      article.onloading(id);
+      article.cfo_id = cfo_id;
+      article.name = name;
+      article.onloading();
       article.show = true;
     },
 
@@ -778,7 +780,7 @@ var article_section = new Vue({
       this.loadtrue = false;
       $.ajax({
         /*список статей*/
-        url:'api/cost-item',
+        url:'/api/cost-item',
         type:'GET',
         timeout: 30000,
         error: function (data) {
@@ -792,28 +794,12 @@ var article_section = new Vue({
           article_section.isload = false;
           article_section.loaderror = false;
           article_section.loadtrue = true;
-          alert(JSON.stringify(res));
-        }
-      });
-    },
-
-    add_article: function () {
-      this.add_load = true;
-      this.if_message = false;
-      var num = this.articles[this.articles.length - 1].num;
-      $.ajax({
-        /*список пользователей*/
-        url:'api/cost-item?after=' + num,
-        type:'GET',
-        timeout: 30000,
-        error: function (data) {
-          article_section.add_load = false;
-          article_section.if_message = true;
-          article_section.message = 'Загрузить не получилось';
-        },
-        success:function (res) {
-          //Тут нужно обработать статьи
-          article_section.add_load = false;
+          article_section.articles = [];
+          for (var i = 0; i < res.data.length; i++) {
+            article_section.articles.push(
+              {id: res.data[i].id, name: res.data[i].name, cfo: res.data[i].frc.name, cfo_id: res.data[i].frc.id}
+            );
+          }
         }
       });
     }
@@ -831,6 +817,7 @@ var article = new Vue({
     error_dep: false,
     name: '',
     id: '',
+    cfo_id: '',
     message_dep: '',
     message_error: '',
     message_failure: '',
@@ -844,6 +831,9 @@ var article = new Vue({
   methods: {
     onloading_new: function () {
       this.isload = true;
+      this.name = '';
+      this.id = '';
+      this.cfo_id = '';
       this.message_failure = '';
       this.message_success = '';
       $.ajax({
@@ -862,15 +852,17 @@ var article = new Vue({
           article.isload = false;
           article.loaderror = false;
           article.loadtrue = true;
-
+          article.cfos = [];
+          for (var i = 0; i < res.data.length; i++) {
+            article.cfos.push(
+              {id: res.data[i].id, name: res.data[i].name, check: false});
+          }
         }
       });
     },
 
-    onloading: function (id) {
+    onloading: function () {
       this.isload = true;
-      this.id = id;
-      this.isload_too = 0;
       this.message_failure = '';
       this.message_success = '';
       $.ajax({
@@ -887,42 +879,29 @@ var article = new Vue({
         },
         success:function (res) {
           //Тут нужно обработать отделы
-          if (article.isload_too == 1) {
-            article.isload = false;
-            article.loaderror = false;
-            article.loadtrue = true;
-
-          }else {
-            article.isload_too++;
-
-          }
-        }
-      });
-      $.ajax({
-        /*информация о сотруднике*/
-        url:'api/cost-item?id=' + id,
-        type:'GET',
-        timeout: 30000,
-        error: function (data) {
-          article.isload_too = -1;
           article.isload = false;
-          article.loaderror = true;
-          article.loadtrue = true;//не забыть изменить
-          article.message_error = 'Загрузить не удалась';
-        },
-        success:function (res) {
-          //Тут нужно обработать сотрудника
-          if (article.isload_too == 1) {
-            article.isload = false;
-            article.loaderror = false;
-            article.loadtrue = true;
-            alert(res);
-          }else {
-            article.isload_too++;
-            alert(res);
+          article.loaderror = false;
+          article.loadtrue = true;
+          article.cfos = [];
+          for (var i = 0; i < res.data.length; i++) {
+            if (res.data[i].id == article.cfo_id) {
+              article.cfos.push(
+                {id: res.data[i].id, name: res.data[i].name, check: true});
+            }else {
+              article.cfos.push(
+                {id: res.data[i].id, name: res.data[i].name, check: false});
+            }
           }
         }
       });
+    },
+
+    checked: function (id) {
+      for (var i = 0; i < this.cfos.length; i++) {
+        if (this.cfos[i].id != id) {
+          this.cfos[i].check = false;
+        }
+      }
     },
 
     create_article: function () {
@@ -937,7 +916,7 @@ var article = new Vue({
       if (regexp.test(this.name) && cfo != '') {
         $.ajax({
           /*Добавление статьи*/
-          url:'api/cast-item/create',
+          url:'api/cost-item',
           type:'POST',
           data: {'name': article.name, 'frc': cfo},
           timeout: 30000,
@@ -965,12 +944,12 @@ var article = new Vue({
           break;
         }
       }
-      if (regexp.test(this.name) && cfo != ''&& id != '') {
+      if (regexp.test(this.name) && cfo != ''&& this.id != '') {
         $.ajax({
           /*изменение  стстьи*/
-          url:'api/cast-item/update',
-          type:'POST',
-          data: {'name': article.name, 'frc': cfo, 'id': article.name.id},
+          url:'api/cost-item',
+          type:'PUT',
+          data: {'name': article.name, 'frc': cfo, 'id': article.id},
           timeout: 30000,
           error: function (data) {
             article.message_failure = 'Изменить статью не удалось';

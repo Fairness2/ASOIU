@@ -378,7 +378,7 @@
                   <span class="col s12 center-align">ЦФО</span>
                   <p class="red-text" v-if="error_dep">{{message_cfo}}</p>
                   <p v-for="item in cfos">
-                    <input name="cfo" type="radio" v-bind:id="item.id" v-model:checked="item.check"/>
+                    <input type="checkbox" v-bind:id="item.id" v-model:checked="item.check" v-on:click="checked(item.id)"/>
                     <label v-bind:for="item.id">{{item.name}}</label>
                   </p>
                 </div>
@@ -439,31 +439,11 @@
               </thead>
               <tbody>
                 <tr v-for="item in articles">
-                  <td v-on:click="article_check(item.id)">{{item.name}}</td>
-                  <td v-on:click="article_check(item.id)">{{item.cfo}}</td>
+                  <td v-on:click="article_check(item.id, item.cfo_id, item.name)">{{item.name}}</td>
+                  <td v-on:click="article_check(item.id, item.cfo_id, item.name)">{{item.cfo}}</td>
                   <td><a class="waves-effect waves-light btn" v-on:click="view_item(item.id, item.name)">Посмотреть</a></td>
                 </tr>
-                <tr v-if="if_message" class="cyan lighten-5">
-                  <td colspan="3"><span class="center-align">{{message}}</span></td>
-                </tr>
-                <tr v-if="add_load" class="indigo lighten-5">
-                  <td colspan="3" class="centre-preload">
-                    <div class="preloader-wrapper small active">
-                      <div class="spinner-layer spinner-green-only">
-                        <div class="circle-clipper left">
-                          <div class="circle"></div>
-                        </div><div class="gap-patch">
-                          <div class="circle"></div>
-                        </div><div class="circle-clipper right">
-                          <div class="circle"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-                <tr v-if="!add_load" class="indigo lighten-5">
-                  <td colspan="3"><span class="center-align" v-on:click="add_article">Загрузить следующие</span></td>
-                </tr>
+
               </tbody>
             </table>
           </div>
