@@ -18,10 +18,13 @@ exports.create = function (req, res) {
 			quantity: 'Неоходимо количество'
 		}))) return;
 
+	//todo: включить сессии
+	let emplId = req.session && req.session.user && req.session.user.employeeId || req.body.employeeId;
+
 	let rq = Request
 		.build({
 			year: req.body.year,
-			requesterId: req.session.user.employeeId,
+			requesterId: emplId,
 			items: req.body.items
 		}, {
 			include: assoc.deduceInclude(Request, 'items')

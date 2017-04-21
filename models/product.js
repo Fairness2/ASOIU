@@ -30,7 +30,7 @@ module.exports = function (sq, DataTypes) {
 				defaultValue: 0,
 				validate: {
 					min: {
-						args: 0,
+						args: [0],
 						msg: 'Цена не может быть отрицательной'
 					}
 				}
