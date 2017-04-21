@@ -248,6 +248,10 @@ var cfo = new Vue({
         alert(id)
         win_del_est_cfo.id = id;
         $('#del_estimate_cfo').modal('open');
+    },
+    new_estimate_cfo: function () {
+      win_new_est_cfo.onloading();
+      $('#new_estimate_cfo').modal('open');
     }
   }
 });
@@ -461,14 +465,57 @@ var win_new_est_cfo = new Vue ({
   el: '#new_estimate_cfo',
   data:{
     message: '',
-    isload: false
+    isload: true,
+    cfos: [
+      {id:'10', name:'Дидидидави' , check: false},
+      {id:'101', name:'Авиваи', check: false},
+      {id:'102', name:'Блед', check: false},
+    ]
   },
   methods:{
+    onloading: function () {
+      this.isload = true;
+      $.ajax({
+        /*список список отделов*/
+        url:'api/frc',
+        type:'GET',
+        timeout: 30000,
+        error: function (data) {
+          win_new_est_cfo.isload = false;
+          win_new_est_cfo.message = 'Загрузить не удалась';
+        },
+        success:function (res) {
+          //Тут нужно обработать отделы
+          win_new_est_cfo.isload = false;
+          win_new_est_cfo.cfos = [];
+          for (var i = 0; i < res.data.length; i++) {
+            win_new_est_cfo.cfos.push(
+              {id: res.data[i].id, name: res.data[i].name, check: false});
+          }
+        }
+      });
+    },
+
+    checked: function (id) {
+      for (var i = 0; i < this.cfos.length; i++) {
+        if (this.cfos[i].id != id) {
+          this.cfos[i].check = false;
+        }
+      }
+    },
+
     new_el: function () {
       var name = $('#name_estimate_cfo').val();
       var regexp = /^[а-яa-z0-9_-]{6,20}$/i;
-      if (regexp.test(name)) {
-        location.replace("/estimate.html?name=" + name);
+      var cfo = '';
+      for (var i = 0; i < this.cfos.length; i++) {
+        if (this.cfos[i].check) {
+          cfo = this.cfos[i].id;
+          break;
+        }
+      }
+      if (regexp.test(name) && cfo != '') {
+        location.replace("/estimate.html?name=" + name + "&cfo=" + cfo);
       }
       else {
         this.message = 'Не правильно введено название';

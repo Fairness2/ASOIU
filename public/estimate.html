@@ -63,10 +63,7 @@
                 <blockquote>
                   <p>Смета: {{name_estimate}}</p>
                   <p>Год: {{year}}</p>
-                  <p>ЦФО: {{cfo}}</p>
-                  <p>Создал(а): {{name_maker}}</p>
                   <p>Дата создания: {{creation_date}}</p>
-                  <p>Изменил(а): {{name_changer}}</p>
                   <p>Дата изменения: {{change_date}}</p>
                 </blockquote>
             </div>
@@ -142,7 +139,7 @@
                    <tr>
                      <th class="col s1"></th>
                      <th class="col s6 center-align"><span>Название</span></th>
-                     <th class="col s5 center-align"><span>Подразделение</span></th>
+                     <th class="col s5 center-align"><span>Заявитель</span></th>
                    </tr>
                  </thead>
                  <tbody>
@@ -158,7 +155,7 @@
                        <a v-bind:href="'/request?id=' + item.id" class="waves-effect">{{item.name}}</a>
                      </td>
                      <td class="col s5 center-align">
-                       <span class="">{{item.department}}</span>
+                       <span class="">{{item.employee}}</span>
                      </td>
                    </tr>
                  </tbody>

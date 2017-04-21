@@ -97,8 +97,8 @@ var body_con = new Vue({
       }
     ],
     requests: [ //список заявок
-      {id:24432, name:'Вася', department: 'Васильев остров', ischeck: false, num: '10'},
-      {id:3464573, name:'Гена', department: 'Генадьевск', ischeck: true, num: '10'}
+      {id:24432, name:'Вася', employee: 'Васильев остров', ischeck: false},
+      {id:3464573, name:'Гена', employee: 'Генадьевск', ischeck: true}
     ]
   },
 
@@ -133,7 +133,7 @@ var body_con = new Vue({
         });
         $.ajax({
           /*список дополнительных расходов*/
-          url:'api/cost-item?frc=' + ,
+          url:'api/cost-item?frc=',
           type:'GET',
           timeout: 30000,
           error: function (data) {
@@ -146,7 +146,7 @@ var body_con = new Vue({
           }
         });
       }
-      else if (getval['name'] && regexp.test(getval['name'])) {
+      else if (getval['name'] && regexp.test(getval['name']) && getval['cfo']) {
 
         var date = new Date();
         this.year = date.getUTCFullYear() + 1;
@@ -156,11 +156,11 @@ var body_con = new Vue({
 
         this.name_maker = side_nav.name;
         this.name_changer = side_nav.name;
-        this.cfo = side_nav.department; //Пока так
+        this.cfo = getval['cfo']; //Пока так
 
         $.ajax({
           /*список дополнительных расходов*/
-          url:'api/cost-item',
+          url:'api/cost-item?with=products&frcId=' + body_con.cfo,
           type:'GET',
           timeout: 30000,
           error: function (data) {
@@ -169,14 +169,47 @@ var body_con = new Vue({
           },
           success:function (res) {
             //Тут нужно обработать список статей расходов
-
+            body_con.articles = [];
+            var products = [];
+            for (var i = 0; i < res.data.length; i++) {
+              products = [];
+              for (var j = 0; j < res.data[i].products.length; j++) {
+                products.push(
+                  {
+                    id: res.data[i].products[j].id,
+                    price: res.data[i].products[j].price,
+                    name: res.data[i].products[j].name,
+                    january: '0',
+                    february: '0',
+                    march: '0',
+                    april: '0',
+                    may: '0',
+                    june: '0',
+                    july: '0',
+                    august: '0',
+                    september: '0',
+                    october: '0',
+                    november: '0',
+                    december: '0'
+                  }
+                );
+              }
+              body_con.articles.push(
+                {
+                  id: res.data[i].id,
+                  name: res.data[i].name,
+                  table_show: false,
+                  items: products
+                }
+              );
+            }
           }
         });
 
 
         $.ajax({
           /*список всех заявок*/
-          url:'api/request',
+          url:'api/request?limit=all',
           type:'GET',
           timeout: 30000,
           error: function (data) {
@@ -185,6 +218,17 @@ var body_con = new Vue({
           },
           success:function (res) {
             //Тут нужно обработать список дополнительных расходов
+            body_con.requests = [];
+            for (var i = 0; i < res.data.length; i++) {
+              body_con.requests.push(
+                {
+                  id: res.data[i].id,
+                  name: res.data[i].number,
+                  employee: res.data[i].requester.fullName,
+                  ischeck: false
+                }
+              );
+            }
 
           }
         });
@@ -258,8 +302,7 @@ var body_con = new Vue({
             //тут если убрана
           }
         }
-      });
-      alert ('Дарова');
+      });      
     },
 
     //Кнопка сохранить
