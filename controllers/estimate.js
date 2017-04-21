@@ -42,15 +42,15 @@ exports.approve = function (req, res) {
 };
 
 exports.list = function (req, res) {
-	let {options:opts, invert} = page.get('number', req.query);
+	let {options: opts, invert} = page.get('number', req.query);
 
-	opts.where = opts.where || {};
 	if (req.query.company)
 		opts.where.frcId = null;
 	else if (req.query.frcId)
 		opts.where.frcId = req.query.frcId;
 	else
 		opts.where.frcId = { $ne: null };
+
 
 	Estimate.findAll(
 		opts
@@ -61,22 +61,25 @@ exports.list = function (req, res) {
 		res.status(200).json({
 			data: arr
 		});
-		})
+	})
 		.catch(error.handleInternal(req, res));
 };
 
 exports.single = function (req, res) {
-	Estimate.findOne({
-		where: { id: req.params.id || '' },
-		include: assoc.deduceInclude(Estimate, {
-			items: {
-				costItem: true,
-				values: {
-					period: true
-				}
-			}
+	Estimate
+		.findOne({
+			where: { id: req.params.id || '' },
+			include: assoc.deduceInclude(Estimate, {
+				items: {
+					costItem: true,
+					values: {
+						period: true
+					}
+				},
+				companyEstimates: req.query.with.companyEstimates,
+				frcEstimates: req.query.with.frcEstimates
+			})
 		})
-	})
 		.then(estimate => {
 			if (!estimate) {
 				res.status(200).json({
