@@ -116,8 +116,8 @@ var users_section = new Vue({
     message: 'Опачки',
 
     users: [
-      {id:'10', name:'Вася', login:'Vasek228', department:'грузоперевозки', num:'25'},
-      {id:'11', name:'Аделаида', login:'Adya_Sexy', department:'Клиринг', num:'26'}
+      {id:'10', name:'Вася', login:'Vasek228', num:'25'},
+      {id:'11', name:'Аделаида', login:'Adya_Sexy', num:'26'}
     ]
   },
   methods: {
@@ -141,7 +141,7 @@ var users_section = new Vue({
       this.loadtrue = false;
       $.ajax({
         /*список пользователей*/
-        url:'api/user?after=' + 0,
+        url:'/api/user',
         type:'GET',
         timeout: 30000,
         error: function (data) {
@@ -543,13 +543,17 @@ var employee = new Vue({
     departments: [
       {id:'5ad2349d-af4c-4736-8659-1c73852d999b', name: 'Реклама и Маркетиг', check: false},
       {id:'63feeeed-bb04-4ab1-998e-f7852890cb95', name: 'Клиринг', check: false}
-    ]
+    ],
+    departments_old: []
   },
   methods: {
     onloading_new: function () {
       this.isload = true;
       this.message_failure = '';
       this.message_success = '';
+      employee.id = '';
+      employee.FIO = '';
+      employee.birthday = '';
       $('.datepicker').pickadate({
        selectMonths: true, // Creates a dropdown to control month
        selectYears: 15 // Creates a dropdown of 15 years to control year
@@ -585,6 +589,10 @@ var employee = new Vue({
       this.isload_too = 0;
       this.message_failure = '';
       this.message_success = '';
+      $('.datepicker').pickadate({
+       selectMonths: true, // Creates a dropdown to control month
+       selectYears: 15 // Creates a dropdown of 15 years to control year
+      });
       $.ajax({
         /*список список сотрудников отделов*/
         url:'api/department',
@@ -628,22 +636,43 @@ var employee = new Vue({
         },
         success:function (res) {
           //Тут нужно обработать сотрудника
+          employee.id = id;
+          employee.FIO = res.data.fullName;
+          employee.birthday = res.data.birthDate.substr(0, 10);
+          if (res.data.sex == true) {
+            employee.sex = true;
+            $("#sex1").attr("checked","checked");
+            $("#sex2").removeAttr("checked");
+
+          }else {
+            employee.sex = false;
+            $("#sex2").attr("checked","checked");
+            $("#sex1").removeAttr("checked");
+          }
+          employee.departments_old = [];
+          for (var i = 0; i < res.data.departments.length; i++) {
+            employee.departments_old.push(res.data.departments[i].id);
+          }
           if (employee.isload_too == 1) {
             employee.isload = false;
             employee.loaderror = false;
             employee.loadtrue = true;
             employee.checked_department();
-            alert(JSON.stringify(res));
           }else {
             employee.isload_too++;
-            alert(JSON.stringify(res));
           }
         }
       });
     },
 
     checked_department: function () {
-
+      for (var i = 0; i < employee.departments_old.length; i++) {
+        for (var j = 0; j < employee.departments.length; j++) {
+          if (employee.departments[j].id == employee.departments_old[i]) {
+            employee.departments[j].check = true;
+          }
+        }
+      }
     },
 
     create_employee: function () {
@@ -652,17 +681,16 @@ var employee = new Vue({
       if ($("#sex1").prop("checked")){
         sex = true;
       }
-      var department = '';
+      var department = [];
       for (var i = 0; i < this.departments.length; i++) {
         if (this.departments[i].check) {
-          department = this.departments[i].id;
-          break;
+          department.push(this.departments[i].id);
         }
       }
       if (regexp.test(this.FIO) && this.birthday != '' && department != '') {
         $.ajax({
           /*Добавление сотрудника*/
-          url:'api/employee/create',
+          url:'api/employee',
           type:'POST',
           data: {'fullName': employee.FIO, 'sex': sex, 'birthDate': employee.birthday, 'department': department},
           timeout: 30000,
@@ -673,6 +701,7 @@ var employee = new Vue({
           success:function (res) {
             employee.message_failure = '';
             employee.message_success = 'Сотрудник успешно создан';
+            employees_section.onloading();
           }
         });
       }else {
@@ -687,18 +716,17 @@ var employee = new Vue({
       if ($("#sex1").prop("checked")){
         sex = true;
       }
-      var department = '';
+      var department = [];
       for (var i = 0; i < this.departments.length; i++) {
         if (this.departments[i].check) {
-          department = this.departments[i].id;
-          break;
+          department.push(this.departments[i].id);
         }
       }
-      if (regexp.test(this.FIO) && this.birthday != '' && department != '' && id != '') {
+      if (regexp.test(this.FIO) && this.birthday != '' && this.id != '') {
         $.ajax({
           /*Добавление сотрудника*/
-          url:'api/employee/update',
-          type:'POST',
+          url:'api/employee',
+          type:'PUT',
           data: {'fullName': employee.FIO, 'sex': sex, 'birthDate': employee.birthday, 'id': employee.id, 'department': department},
           timeout: 30000,
           error: function (data) {
@@ -708,6 +736,7 @@ var employee = new Vue({
           success:function (res) {
             employee.message_failure = '';
             employee.message_success = 'Сотрудник успешно изменён';
+            employees_section.onloading();
           }
         });
       }else {
