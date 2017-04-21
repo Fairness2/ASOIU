@@ -48,6 +48,7 @@ var body_con = new Vue({
     message_request: '', //сообщени о заявок
     message_article: '', //Сообщение статей расходов
     message_additional: '', //Сообщение доп расходов
+    id: '',
     articles: [ //статьи расходов
       {id: '10', name:'Мебель', table_show: false, items:[
           {name: 'Биван', id: '66', //товарные позиции
@@ -98,34 +99,6 @@ var body_con = new Vue({
     requests: [ //список заявок
       {id:24432, name:'Вася', department: 'Васильев остров', ischeck: false, num: '10'},
       {id:3464573, name:'Гена', department: 'Генадьевск', ischeck: true, num: '10'}
-    ],
-    additional_articles: [ //дополнительные расходы
-      {name: 'Интернетики', id: '666',
-      january: '2000', //Тоже наверное цена
-      february: '2000',
-      march: '2000',
-      april: '2000',
-      may: '2000',
-      june: '2000',
-      july: '2000',
-      august: '2000',
-      september: '2000',
-      october: '2000',
-      november: '2000',
-      december: '2000'},
-      {name: 'Вода', id: '13',
-      january: '2000',
-      february: '2000',
-      march: '2000',
-      april: '2000',
-      may: '2000',
-      june: '2000',
-      july: '2000',
-      august: '2000',
-      september: '2000',
-      october: '2000',
-      november: '2000',
-      december: '2000'}
     ]
   },
 
@@ -138,10 +111,11 @@ var body_con = new Vue({
       var regexp = /^[а-яa-z0-9_-]{1,20}$/i;
       //this.tobe = false;
       if (getval['id']) {
+        this.id = getval['id'];
         $.ajax({
           /*Тут нужно список заявок, с пометкой, какие включены, сведения о
           дополнительных расходах, и сведения о смете*/
-          url:'api/estimate/' + getval['id'],
+          url:'api/estimate/' + body_con.id,
           type:'GET',
           timeout: 30000,
           error: function (data) {
@@ -159,7 +133,7 @@ var body_con = new Vue({
         });
         $.ajax({
           /*список дополнительных расходов*/
-          url:'api/article',
+          url:'api/cost-item?frc=' + ,
           type:'GET',
           timeout: 30000,
           error: function (data) {
@@ -198,7 +172,7 @@ var body_con = new Vue({
 
           }
         });
-		  
+
 
         $.ajax({
           /*список всех заявок*/

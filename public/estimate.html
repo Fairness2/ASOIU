@@ -80,10 +80,6 @@
                 <input name="chois" type="radio" id="request" v-on:click="show_section(2)"/>
                 <label for="request">Заявки</label>
               </span>
-              <span class="col s4 center-align">
-                <input name="chois" type="radio" id="costs" v-on:click="show_section(3)"/>
-                <label for="costs">Добавочные расходы</label>
-              </span>
              </div>
 
              <div class="col s12" v-if="table">
@@ -164,48 +160,6 @@
                      <td class="col s5 center-align">
                        <span class="">{{item.department}}</span>
                      </td>
-                   </tr>
-                 </tbody>
-               </table>
-             </div>
-
-             <div class="col s12" v-show="costs">
-               <table class="striped table-tab">
-                 <thead>
-                   <tr>
-                     <th class="col s2"><span>Дополнительные расходы</span></th>
-                     <th><span>Январь</span></th>
-                     <th><span>Февраль</span></th>
-                     <th><span>Март</span></th>
-                     <th><span>Апрель</span></th>
-                     <th><span>Май</span></th>
-                     <th><span>Июнь</span></th>
-                     <th><span>Июль</span></th>
-                     <th><span>Август</span></th>
-                     <th><span>Сентябрь</span></th>
-                     <th><span>Октябрь</span></th>
-                     <th><span>Нябрь</span></th>
-                     <th><span>Декабрь</span></th>
-                   </tr>
-                 </thead>
-                 <tbody>
-                   <tr>
-                     <td class="col s12 red-text center-align" v-if="error_additional"><span>{{message_additional}}</span></td>
-                   </tr>
-                   <tr v-for="item in additional_articles">
-                     <td><span>{{item.name}}</span></td>
-                     <td><input type="number" class="validate" v-model:value="item.january"></td>
-                     <td><input type="number" class="validate" v-model:value="item.february"></td>
-                     <td><input type="number" class="validate" v-model:value="item.march"></td>
-                     <td><input type="number" class="validate" v-model:value="item.april"></td>
-                     <td><input type="number" class="validate" v-model:value="item.may"></td>
-                     <td><input type="number" class="validate" v-model:value="item.june"></td>
-                     <td><input type="number" class="validate" v-model:value="item.july"></td>
-                     <td><input type="number" class="validate" v-model:value="item.august"></td>
-                     <td><input type="number" class="validate" v-model:value="item.september"></td>
-                     <td><input type="number" class="validate" v-model:value="item.october"></td>
-                     <td><input type="number" class="validate" v-model:value="item.november"></td>
-                     <td><input type="number" class="validate" v-model:value="item.december"></td>
                    </tr>
                  </tbody>
                </table>
