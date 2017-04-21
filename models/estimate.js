@@ -51,9 +51,9 @@ module.exports = function (sq, DataTypes) {
 				associate: models => {
 					models.Estimate.belongsTo(models.FRC, { as: 'frc', foreignKey: 'frcId' });
 					models.Estimate.hasMany(models.EstimateItem, { as: 'items', foreignKey: 'estimateId' });
-					models.Estimate.belongsToMany(models.Request, { as: requests, through: 'RequestEstimate', foreignKey: 'estimateId' });
-					models.Estimate.belongsToMany(models.Estimate, { as: frcEstimates, through: 'EstimateEstimate', foreignKey: 'companyEstimateId' });
-					models.Estimate.belongsToMany(models.Estimate, { as: companyEstimates, through: 'EstimateEstimate', foreignKey: 'frcEstimateId' });
+					models.Estimate.belongsToMany(models.Request, { as: 'requests', through: 'RequestEstimate', foreignKey: 'estimateId' });
+					models.Estimate.belongsToMany(models.Estimate, { as: 'frcEstimates', through: 'EstimateEstimate', foreignKey: 'companyEstimateId' });
+					models.Estimate.belongsToMany(models.Estimate, { as: 'companyEstimates', through: 'EstimateEstimate', foreignKey: 'frcEstimateId' });
 				}
 			},
 			instanceMethods: {
