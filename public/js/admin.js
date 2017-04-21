@@ -1309,8 +1309,8 @@ var department = new Vue({
   },
   methods: {
     create_department: function () {
-      var regexpfull = /^[а-яё/w/d\- ]{1,200}$/i;
-      var regexpshort = /^[а-яё/w/d\- ]{1,50}$/i;
+      var regexpfull = /^[а-яё\w\d\- ]{1,200}$/i;
+      var regexpshort = /^[а-яё\w\d\- ]{1,50}$/i;
 
       if (regexpfull.test(this.fullname) && regexpshort.test(this.shortname)) {
         $.ajax({
@@ -1337,8 +1337,8 @@ var department = new Vue({
     },
 
     update_department: function () {
-      var regexpfull = /^[а-яё/w/d\- ]{1,200}$/i;
-      var regexpshort = /^[а-яё/w/d\- ]{1,50}$/i;
+      var regexpfull = /^[а-яё\w\d\- ]{1,200}$/i;
+      var regexpshort = /^[а-яё\w\d\- ]{1,50}$/i;
 
       if (regexpfull.test(this.fullname) && regexpshort.test(this.shortname) && this.id != '') {
         $.ajax({
