@@ -6,9 +6,7 @@ var application = new Vue({
     load_items_check: false, //загрузка первой партии элементов
     add_check: false, //загрузка дополнительных партий элементов
     message: '',
-    items:[
-      {message: 'Вот', id: 'f3bb93ef-ef44-4cb1-bf42-60603c6bb023', num:'10'}
-    ]
+    items:[]
   },
   methods:{
     hiden_v: function () {
@@ -25,15 +23,19 @@ var application = new Vue({
         url:'api/request?after=' + 0,
         type:'GET',
         timeout: 30000,
+
         error: function (data) {
           application.message = 'Ошибка';
           application.load_items_check = false;
         },
         success:function (res) {
           //Тут нужно добавить полученные элементы в массим данных
-          application.message = 'Всё типтоп';
+          //var objres = JSON.stringify(res);
           application.load_items_check = false;
-          application.message = res
+          application.items = [];
+          for (var i = 0; i < res.data.length; i++) {
+            application.items.push({num: res.data[i].number, id: res.data[i].id});
+          }
         }
       });
     },
@@ -55,7 +57,10 @@ var application = new Vue({
         success:function (res) {
           //Тут нужно добавить полученные элементы в массим данных
           application.add_check = false;
-          application.message = 'Всё типтоп';
+          //application.message = 'Всё типтоп';
+          for (var i = 0; i < res.data.length; i++) {
+            application.items.push({num: res.data[i].number, id: res.data[i].id});
+          }
         }
       });
     },
