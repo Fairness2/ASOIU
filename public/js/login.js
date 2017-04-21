@@ -43,8 +43,8 @@ var loginin = new Vue({
           },
           success:function (res) {
             loginin.isload = false;
-            loginin.message = 'Всё типтоп' + res;
-            //location.replace("/");
+            loginin.message = 'Всё типтоп';
+            location.replace("/");
           }
         });
       }
