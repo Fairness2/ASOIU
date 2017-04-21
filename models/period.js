@@ -45,7 +45,8 @@ module.exports = function (sq, DataTypes) {
 			timestamps: false,
 			enableLog: true,
 			indexes: [
-				{ fields: ['typeId'] }
+				{ fields: ['typeId'] },
+				{ fields: ['typeId', 'number'], unique: true }
 			],
 			classMethods: {
 				associate: models => {
