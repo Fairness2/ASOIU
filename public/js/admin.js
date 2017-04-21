@@ -562,7 +562,7 @@ var employee = new Vue({
         error: function (data) {
           employee.isload = false;
           employee.loaderror = true;
-          employee.loadtrue = true;//не забыть изменить
+          employee.loadtrue = false;//не забыть изменить
           employee.message_error = 'Загрузить не удалась';
         },
         success:function (res) {
@@ -616,7 +616,7 @@ var employee = new Vue({
       });
       $.ajax({
         /*информация о сотруднике*/
-        url:'api/employee?id=' + id,
+        url:'api/employee/' + encodeURIComponent(id),
         type:'GET',
         timeout: 30000,
         error: function (data) {
@@ -633,9 +633,10 @@ var employee = new Vue({
             employee.loaderror = false;
             employee.loadtrue = true;
             employee.checked_department();
+            alert(JSON.stringify(res));
           }else {
             employee.isload_too++;
-            alert(res);
+            alert(JSON.stringify(res));
           }
         }
       });
