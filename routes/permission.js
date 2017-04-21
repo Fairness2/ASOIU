@@ -12,6 +12,7 @@ module.exports = function (root) {
 	//router.use(auth.authenticate);
 
 	router.route('/')
+		.post(permission.create)
 		.put(permission.update)
 		.get(permission.list);
 };

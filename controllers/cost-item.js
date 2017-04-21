@@ -3,6 +3,7 @@
 const _ = require('lodash');
 const error = require(__libdir + '/error.js');
 const page = require(__libdir + '/page.js');
+const assoc = require(__libdir + '/assoc.js');
 const models = require(__rootdir + '/models');
 const CostItem = models.CostItem;
 
@@ -65,6 +66,8 @@ exports.list = function (req, res) {
 
 	if (req.query.id)
 		opts.options.id = req.query.id;
+
+	opts.options.include = assoc.deduceInclude(CostItem, 'frc');
 
 	CostItem.findAll(
 		opts.options
