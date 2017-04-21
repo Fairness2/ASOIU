@@ -21,15 +21,6 @@ let sequelize = new Sequelize(config.name, config.user, config.password, {
 	}
 });
 
-const Revisions = require('sequelize-revisions')(sequelize, {
-	exclude: [
-		'id',
-		'createdAt',
-		'updatedAt',
-		'password'
-	]
-});
-
 const ModelProxy = function (model) {
 	this.__proto__ = model;
 
@@ -67,9 +58,7 @@ function init() {
 		
 	// Импортируем рекурсивно модели из этой папки и подпапок
 	importDir(__dirname, sequelize, db);
-
-	//Revisions.defineModels(db);
-
+	
 	Object.keys(sequelize.models).forEach(function (modelName) {
 		if (db[modelName]) {
 			// Связываем модели друг с другом
@@ -78,7 +67,6 @@ function init() {
 			}
 
 			if (db[modelName].options.enableLog) {
-				//db[modelName].enableRevisions();
 				audit.enable(db[modelName]);
 			}
 		}
