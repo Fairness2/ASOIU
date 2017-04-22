@@ -90,6 +90,7 @@ module.exports = function (sq, DataTypes) {
 					return bcrypt.hash(password, config.saltRounds)
 						.then(hashed => {
 							this.password = hashed;
+							return this;
 						});
 				},
 				toJSON: function () {
