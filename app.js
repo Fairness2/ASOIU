@@ -1,4 +1,6 @@
-﻿'use strict';
+'use strict';
+
+console.log(process.version);
 
 // Корневой каталог
 global.__rootdir = __dirname;
@@ -18,6 +20,10 @@ const config = require('./config.json'),
 // Sequelize использует bluebirdовские обещания,
 // поэтому мы тоже будем использовать их для совместимости
 global.Promise = Sequelize.Promise;
+
+// Для c9
+config.server.port = process.env.PORT || config.server.port;
+config.server.host = process.env.IP || config.server.host;
 
 const sessionConfig = {
 	secret: config.auth.secret,
@@ -64,9 +70,10 @@ app.use(function (err, req, res, next) {
 db.sync()
 	.then(() => {
 		app.listen(config.server.port, config.server.host, function () {
-			console.log('Server listening on %s:%d', config.server.host, config.server.port);
+			console.log('Server listening on %s:%d', process.env.IP, process.env.PORT);
 		})
 	})
 	.catch(e => {
 		console.log('Database syncing error: ' + e);
+		process.exit(1);
 	});
