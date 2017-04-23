@@ -19,7 +19,7 @@ exports.create = function (req, res) {
 		}))) return;
 
 	//todo: включить сессии
-	let emplId = req.session && req.session.user && req.session.user.employeeId || req.body.employeeId;
+	let emplId = req.session && req.session.user && req.session.user.employeeId || req.body.requesterId;
 
 	let rq = Request
 		.build({

@@ -108,7 +108,7 @@ exports.setup = function (req, res) {
 						employeeId: emp.id
 					})
 					.setPassword('admin')
-					.then(() => user.save()))
+					.then(u => u.save()))
 				.then(user =>
 					Promise.all([
 						role.setPermissions(perms.map(x => x[0])),
