@@ -79,35 +79,17 @@
                   <thead>
                     <tr>
                       <th class="col s2"><span>Товарная позиция</span></th>
-                      <th><span>Январь</span></th>
-                      <th><span>Февраль</span></th>
-                      <th><span>Март</span></th>
-                      <th><span>Апрель</span></th>
-                      <th><span>Май</span></th>
-                      <th><span>Июнь</span></th>
-                      <th><span>Июль</span></th>
-                      <th><span>Август</span></th>
-                      <th><span>Сентябрь</span></th>
-                      <th><span>Октябрь</span></th>
-                      <th><span>Нябрь</span></th>
-                      <th><span>Декабрь</span></th>
+                      <th v-for="item in periods"><span>{{item.name}}</span></th>
+
                     </tr>
                   </thead>
                   <tbody>
                     <tr v-for="item in article.items">
                       <td><span>{{item.name}}</span></td>
-                      <td><input type="number" min="0" max="999" class="validate" v-model:value="item.january"></td>
-                      <td><input type="number" min="0" max="999" class="validate" v-model:value="item.february"></td>
-                      <td><input type="number" min="0" max="999" class="validate" v-model:value="item.march"></td>
-                      <td><input type="number" min="0" max="999" class="validate" v-model:value="item.april"></td>
-                      <td><input type="number" min="0" max="999" class="validate" v-model:value="item.may"></td>
-                      <td><input type="number" min="0" max="999" class="validate" v-model:value="item.june"></td>
-                      <td><input type="number" min="0" max="999" class="validate" v-model:value="item.july"></td>
-                      <td><input type="number" min="0" max="999" class="validate" v-model:value="item.august"></td>
-                      <td><input type="number" min="0" max="999" class="validate" v-model:value="item.september"></td>
-                      <td><input type="number" min="0" max="999" class="validate" v-model:value="item.october"></td>
-                      <td><input type="number" min="0" max="999" class="validate" v-model:value="item.november"></td>
-                      <td><input type="number" min="0" max="999" class="validate" v-model:value="item.december"></td>
+
+                      <td v-for="priod in item.periods"><input type="number" min="0" max="999" class="validate" v-model:value="item.periods.value"></td>
+
+
                     </tr>
                   </tbody>
                 </table>

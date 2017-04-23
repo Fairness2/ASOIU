@@ -37,50 +37,32 @@ var body_con = new Vue({
     year: '', //год заявки
     name_maker: '', //создатель
     id: '',
+    periods:[
+      {id: 'dfbrd3FWA', name: 'Январь'},
+      {id: 'beasvzb', name: 'Февраль'},
+      {id: 'fdbsrd434z', name: 'Апрель'},
+      {id: 'v5hw5sgb', name: 'Май'},
+    ],
     articles: [ //статьи расходов
       {id: '10', name:'Мебель', table_show: false, items:[
           {name: 'Биван', id: '66', //товарные позиции
-          january: '2',
-          february: '2',
-          march: '2',
-          april: '2',
-          may: '2',
-          june: '2',
-          july: '2',
-          august: '2',
-          september: '2',
-          october: '2',
-          november: '2',
-          december: '2'}
+          periods: [
+            {id: 'dfbrd3FWA', value: '2'},
+            {id: 'beasvzb', value: '2'},
+            {id: 'fdbsrd434z', value: '2'},
+            {id: 'v5hw5sgb', value: '2'},
+          ]
+          }
         ]
       },
       {id: '11', name:'Попаболь', table_show: false, items:[
           {name: 'БОЛЬ', id: '666',
-          january: '2',
-          february: '2',
-          march: '2',
-          april: '2',
-          may: '2',
-          june: '2',
-          july: '2',
-          august: '2',
-          september: '2',
-          october: '2',
-          november: '2',
-          december: '2'},
-          {name: 'ЕЩЁ БОЛЬ', id: '13',
-          january: '2',
-          february: '2',
-          march: '2',
-          april: '2',
-          may: '2',
-          june: '2',
-          july: '2',
-          august: '2',
-          september: '2',
-          october: '2',
-          november: '2',
-          december: '2'}
+          periods: [
+            {id: 'dfbrd3FWA', value: '2'},
+            {id: 'beasvzb', value: '2'},
+            {id: 'fdbsrd434z', value: '2'},
+            {id: 'v5hw5sgb', value: '2'},
+          ]}
         ]
       }
     ]
@@ -92,9 +74,31 @@ var body_con = new Vue({
       this.isload = true;
       this.loadtrue = false;
       this.loaderror = false;
-      var getval = getUrlVars();
-      var regexp = /^[а-яa-z0-9_-]{1,20}$/i;
       this.tobe = false;
+      $.ajax({
+        url: '/api/period',
+        type: 'GET',
+        timeout: 30000,
+        error: function (data) {
+          body_con.error_art = true;
+          body_con.message_art = 'Пожалуйста перезагрузите страницу';
+        },
+        success:function (res) {
+          //тут нужны периоды
+          body_con.periods = [];
+          for (var i = 0; i < res.data.length; i++) {
+            body_con.periods.push(
+              {id: res.data[i].id, name: res.data[i].name}
+            );
+
+          }
+          body_con.time_to_load2();
+        }
+      });
+    },
+
+    time_to_load2: function () {
+      var getval = getUrlVars();
       if (getval['id']) {
         this.id = getval['id']
         $.ajax({
@@ -110,23 +114,8 @@ var body_con = new Vue({
           },
           success:function (res) {
             //Тут нужно получить данные заявки и обработать
-            body_con.isload = false;
-            body_con.loadtrue = true;
-            body_con.loaderror = false;
-          }
-        });
-        $.ajax({
-          /*список всех статей и их товарный позиций*/
-          url:'api/cost-item',
-          type:'GET',
-          timeout: 30000,
-          error: function (data) {
-            body_con.error_art = true;
-            body_con.message_art = 'Пожалуйста перезагрузите страницу';
-          },
-          success:function (res) {
-            //Тут нужно обработать список дополнительных расходов
-
+            alert(JSON.stringify(res));
+            body_con.time_to_index(res.data);
           }
         });
       }
@@ -134,7 +123,6 @@ var body_con = new Vue({
         var date = new Date();
         this.year = date.getUTCFullYear() + 1;
         this.name_maker = 'Вася';
-
         $.ajax({
           /*список всех статей и их товарный позиций*/
           url:'/api/cost-item?with=products',
@@ -147,6 +135,12 @@ var body_con = new Vue({
           success:function (res) {
             body_con.articles = [];
             var products = [];
+            var periods_item = [];
+            for (var i = 0; i < body_con.periods.length; i++) {
+              periods_item.push(
+                {id: body_con.periods[i].id, value: ''}
+              );
+            }
             for (var i = 0; i < res.data.length; i++) {
               products = [];
               for (var j = 0; j < res.data[i].products.length; j++) {
@@ -154,18 +148,7 @@ var body_con = new Vue({
                   {
                     id: res.data[i].products[j].id,
                     name: res.data[i].products[j].name,
-                    january: '0',
-                    february: '0',
-                    march: '0',
-                    april: '0',
-                    may: '0',
-                    june: '0',
-                    july: '0',
-                    august: '0',
-                    september: '0',
-                    october: '0',
-                    november: '0',
-                    december: '0'
+                    periods: periods_item
                   }
                 );
               }
@@ -185,6 +168,54 @@ var body_con = new Vue({
         this.tobe = true;
         this.loaderror = false;
       }
+    },
+
+    time_to_index: function (data) {
+      $.ajax({
+        /*список всех статей и их товарный позиций*/
+        url:'/api/cost-item?with=products',
+        type:'GET',
+        timeout: 30000,
+        error: function (data) {
+          body_con.error_art = true;
+          body_con.message_art = 'Пожалуйста перезагрузите страницу';
+        },
+        success:function (res) {
+          body_con.articles = [];
+          var products = [];
+          var periods_item = [];
+          for (var i = 0; i < body_con.periods.length; i++) {
+            //должно быть заполнение из заявки
+            periods_item.push(
+              {id: body_con.periods[i].id, value: ''}
+            );
+          }
+          for (var i = 0; i < res.data.length; i++) {
+            products = [];
+            for (var j = 0; j < res.data[i].products.length; j++) {
+              products.push(
+                {
+                  id: res.data[i].products[j].id,
+                  name: res.data[i].products[j].name,
+                  periods: periods_item
+                }
+              );
+            }
+            body_con.articles.push(
+              {
+                id: res.data[i].id,
+                name: res.data[i].name,
+                table_show: false,
+                items: products
+              }
+            );
+          }
+        }
+      });
+      this.isload = false;
+      this.loadtrue = true;
+      this.tobe = true;
+      this.loaderror = false;
     },
 
     //Показать таблицу с товарными позициями по статье
