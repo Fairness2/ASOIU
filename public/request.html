@@ -87,7 +87,7 @@
                     <tr v-for="item in article.items">
                       <td><span>{{item.name}}</span></td>
 
-                      <td v-for="priod in item.periods"><input type="number" min="0" max="999" class="validate" v-model:value="item.periods.value"></td>
+                      <td v-for="priod in item.periods"><input type="number" min="0" max="999" class="validate" v-model:value="priod.value"></td>
 
 
                     </tr>
@@ -111,8 +111,6 @@
             <div class="col s12 m12 l8 offset-l2">
               <p class="red-text">Внимание! После сохранения редактировать заявку нельзя</p>
 
-              <p>Название: {{name}}</p>
-              <p>Год: {{year}}</p>
               <p class="center-align green-text">{{message_success}}</p>
               <p class="center-align red-text">{{message_error}}</p>
             </div>

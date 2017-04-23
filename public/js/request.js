@@ -92,85 +92,12 @@ var body_con = new Vue({
             );
 
           }
-          body_con.time_to_load2();
+          body_con.time_to_load1();
         }
       });
     },
 
-    time_to_load2: function () {
-      var getval = getUrlVars();
-      if (getval['id']) {
-        this.id = getval['id']
-        $.ajax({
-          //загрузка уже существующей заявки
-          url:'api/request/' + body_con.id,
-          type:'GET',
-          timeout: 30000,
-          error: function (data) {
-            body_con.isload = false;
-            body_con.loadtrue = false;
-            body_con.loaderror = true;
-            body_con.message_error = 'Ошибка';
-          },
-          success:function (res) {
-            //Тут нужно получить данные заявки и обработать
-            alert(JSON.stringify(res));
-            body_con.time_to_index(res.data);
-          }
-        });
-      }
-      else {
-        var date = new Date();
-        this.year = date.getUTCFullYear() + 1;
-        this.name_maker = 'Вася';
-        $.ajax({
-          /*список всех статей и их товарный позиций*/
-          url:'/api/cost-item?with=products',
-          type:'GET',
-          timeout: 30000,
-          error: function (data) {
-            body_con.error_art = true;
-            body_con.message_art = 'Пожалуйста перезагрузите страницу';
-          },
-          success:function (res) {
-            body_con.articles = [];
-            var products = [];
-            var periods_item = [];
-            for (var i = 0; i < body_con.periods.length; i++) {
-              periods_item.push(
-                {id: body_con.periods[i].id, value: ''}
-              );
-            }
-            for (var i = 0; i < res.data.length; i++) {
-              products = [];
-              for (var j = 0; j < res.data[i].products.length; j++) {
-                products.push(
-                  {
-                    id: res.data[i].products[j].id,
-                    name: res.data[i].products[j].name,
-                    periods: periods_item
-                  }
-                );
-              }
-              body_con.articles.push(
-                {
-                  id: res.data[i].id,
-                  name: res.data[i].name,
-                  table_show: false,
-                  items: products
-                }
-              );
-            }
-          }
-        });
-        this.isload = false;
-        this.loadtrue = true;
-        this.tobe = true;
-        this.loaderror = false;
-      }
-    },
-
-    time_to_index: function (data) {
+    time_to_load1: function () {
       $.ajax({
         /*список всех статей и их товарный позиций*/
         url:'/api/cost-item?with=products',
@@ -185,7 +112,6 @@ var body_con = new Vue({
           var products = [];
           var periods_item = [];
           for (var i = 0; i < body_con.periods.length; i++) {
-            //должно быть заполнение из заявки
             periods_item.push(
               {id: body_con.periods[i].id, value: ''}
             );
@@ -210,8 +136,63 @@ var body_con = new Vue({
               }
             );
           }
+          body_con.time_to_load2();
         }
       });
+    },
+
+    time_to_load2: function () {
+      var getval = getUrlVars();
+      if (getval['id']) {
+        this.id = getval['id']
+        $.ajax({
+          //загрузка уже существующей заявки
+          url:'api/request/' + body_con.id,
+          type:'GET',
+          timeout: 30000,
+          error: function (data) {
+            body_con.isload = false;
+            body_con.loadtrue = false;
+            body_con.loaderror = true;
+            body_con.message_error = 'Ошибка';
+          },
+          success:function (res) {
+            //Тут нужно получить данные заявки и обработать
+            body_con.name_maker = res.data.requester.fullName;
+            body_con.year = res.data.year;
+            body_con.time_to_index(res.data.items);
+          }
+        });
+      }
+      else {
+        var date = new Date();
+        this.year = date.getUTCFullYear() + 1;
+        this.name_maker = 'Вася';
+        this.isload = false;
+        this.loadtrue = true;
+        this.tobe = true;
+        this.loaderror = false;
+      }
+    },
+
+    time_to_index: function (items) {
+
+      for (var i = 0; i < items.length; i++) {
+        for (var j = 0; j < body_con.articles.length; j++) {
+          if (items[i].product.costItemId == body_con.articles[j].id) {
+            for (var g = 0; g < body_con.articles[j].items.length; g++) {
+              if (items[i].productId == body_con.articles[j].items[g].id) {
+                for (var q = 0; q < body_con.articles[j].items[g].periods.length; q++) {
+                  if (items[i].periodId == body_con.articles[j].items[g].periods[q].id) {
+                    body_con.articles[j].items[g].periods[q].value = items[i].quantity;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
       this.isload = false;
       this.loadtrue = true;
       this.tobe = true;
@@ -232,8 +213,6 @@ var body_con = new Vue({
     },
 
     save: function () {
-      send_application.name = this.name_estimate;
-      send_application.year = this.year;
       $('#send_application').modal('open');
     }
 
@@ -244,8 +223,6 @@ var body_con = new Vue({
 var send_application = new Vue({
   el: '#send_application',
   data:{
-    name: '',
-    year: '',
     message_success: '',
     message_error: ''
   },
@@ -256,10 +233,9 @@ var send_application = new Vue({
           url:'api/request',
           type:'PUT',
           data: {
-            'id': body_con.id,
-            'name': body_con.name_request,
             'year': body_con.year,
-            'cost-item': body_con.articles
+            'items': body_con.articles,
+            'id': body_con.id
           },
           timeout: 30000,
           error: function (data) {
@@ -276,9 +252,8 @@ var send_application = new Vue({
           url:'api/request',
           type:'POST',
           data: {
-            'name': body_con.name_request,
             'year': body_con.year,
-            'cost-item': body_con.articles
+            'items': body_con.articles
           },
           timeout: 30000,
           error: function (data) {
