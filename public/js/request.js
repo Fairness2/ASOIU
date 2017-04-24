@@ -65,7 +65,10 @@ var body_con = new Vue({
           ]}
         ]
       }
-    ]
+    ],
+    cfos: [],
+    message_cfo: '',
+    view: false
   },
 
   methods:{
@@ -93,6 +96,77 @@ var body_con = new Vue({
 
           }
           body_con.time_to_load1();
+        }
+      });
+      $.ajax({
+        /*список список отделов*/
+        url:'api/frc',
+        type:'GET',
+        timeout: 30000,
+        error: function (data) {
+          body_con.message_cfo = 'Пожалуйста перезагрузите страницу';
+        },
+        success:function (res) {
+          //Тут нужно обработать отделы
+          body_con.message_cfo = '';
+          body_con.cfos = [];
+          for (var i = 0; i < res.data.length; i++) {
+            body_con.cfos.push(
+              {id: res.data[i].id, name: res.data[i].name, check: false});
+          }
+        }
+      });
+    },
+
+    checked: function (id) {
+      for (var i = 0; i < this.cfos.length; i++) {
+        if (this.cfos[i].id != id) {
+          this.cfos[i].check = false;
+        }
+      }
+      this.time_to_cfo(id);
+    },
+
+    time_to_cfo: function (id) {
+      $.ajax({
+        /*список всех статей и их товарный позиций*/
+        url:'/api/cost-item?with=products&frcId=' + id,
+        type:'GET',
+        timeout: 30000,
+        error: function (data) {
+          body_con.error_art = true;
+          body_con.message_art = 'Пожалуйста перезагрузите страницу';
+        },
+        success:function (res) {
+          body_con.articles = [];
+          var products = [];
+          var periods_item = [];
+          for (var i = 0; i < body_con.periods.length; i++) {
+            periods_item.push(
+              {id: body_con.periods[i].id, value: ''}
+            );
+          }
+          for (var i = 0; i < res.data.length; i++) {
+            products = [];
+            for (var j = 0; j < res.data[i].products.length; j++) {
+              products.push(
+                {
+                  id: res.data[i].products[j].id,
+                  name: res.data[i].products[j].name,
+                  periods: JSON.parse(JSON.stringify(periods_item))
+                }
+              );
+            }
+            body_con.articles.push(
+              {
+                id: res.data[i].id,
+                name: res.data[i].name,
+                table_show: false,
+                items: JSON.parse(JSON.stringify(products))
+              }
+            );
+          }
+          body_con.time_to_load2();
         }
       });
     },
@@ -145,6 +219,7 @@ var body_con = new Vue({
       var getval = getUrlVars();
       if (getval['id']) {
         this.id = getval['id']
+        this.view = true;
         $.ajax({
           //загрузка уже существующей заявки
           url:'api/request/' + body_con.id,
