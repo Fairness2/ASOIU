@@ -10,16 +10,16 @@ const Request = models.Request;
 exports.create = function (req, res) {
 	if (!error.require(res, req.body, {
 		year: 'Необходим год',
-		articles: [x => _.isArray(x) && x.length, 'Необходима хотя бы 1 статья']
+		items: [x => _.isArray(x) && x.length, 'Необходима хотя бы 1 статья']
 	}) ||
-		!_.every(req.body.articles, costItem => error.require(costItem, {
+		!_.every(req.body.items, costItem => error.require(costItem, {
 			items: [x => _.isArray(x) && x.length, 'Необходима хотя бы 1 позиция']
 		}) &&
-			_.every(costItem.items, item => error.require(item, {
+			_.every(costItem.items, product => error.require(product, {
 				id: 'Необходимо указать товар',
 				periods: [x => _.isArray(x) && x.length, 'Необходим хотя бы 1 период']
 			}) &&
-				_.every(item.periods, period => error.require(period, {
+				_.every(product.periods, period => error.require(period, {
 					id: 'Необходим период',
 					value: 'Необходимо значение'
 				}))))
@@ -27,11 +27,11 @@ exports.create = function (req, res) {
 
 	// делаем за Того человека его работу (плющим вложенные массивы)
 	req.body.items = [];
-	_.forEach(req.body.articles, costItem =>
-		_.forEach(costItem.items, item =>
-			_.forEach(item.periods, period => {
+	_.forEach(req.body.items, costItem =>
+		_.forEach(costItem.items, product =>
+			_.forEach(product.periods, period => {
 				req.body.items.push({
-					productId: item.id,
+					productId: product.id,
 					periodId: period.id,
 					quantity: period.value
 				});
@@ -71,16 +71,16 @@ exports.update = function (req, res) {
 	if (!error.require(res, req.body, {
 		id: 'Необходимо указать изменяемую заявку',
 		year: 'Необходим год',
-		articles: [x => _.isArray(x) && x.length, 'Необходима хотя бы 1 статья']
+		items: [x => _.isArray(x) && x.length, 'Необходима хотя бы 1 статья']
 	}) ||
-		!_.every(req.body.articles, costItem => error.require(costItem, {
+		!_.every(req.body.items, costItem => error.require(costItem, {
 			items: [x => _.isArray(x) && x.length, 'Необходима хотя бы 1 позиция']
 		}) &&
-			_.every(costItem.items, item => error.require(item, {
+			_.every(costItem.items, product => error.require(product, {
 				id: 'Необходимо указать товар',
 				periods: [x => _.isArray(x) && x.length, 'Необходим хотя бы 1 период']
 			}) &&
-				_.every(item.periods, period => error.require(period, {
+				_.every(product.periods, period => error.require(period, {
 					id: 'Необходим период',
 					value: 'Необходимо значение'
 				}))))
@@ -88,11 +88,11 @@ exports.update = function (req, res) {
 
 	// делаем за Того человека его работу
 	req.body.items = [];
-	_.forEach(req.body.articles, costItem =>
-		_.forEach(costItem.items, item =>
-			_.forEach(item.periods, period => {
+	_.forEach(req.body.items, costItem =>
+		_.forEach(costItem.items, product =>
+			_.forEach(product.periods, period => {
 				req.body.items.push({
-					productId: item.id,
+					productId: product.id,
 					periodId: period.id,
 					quantity: period.value
 				});

@@ -129,16 +129,16 @@ exports.list = function (req, res) {
 		requester: true
 	});
 
-	Request.findAll(
-		opts.options
-	).then(insts => {
-		let arr = _.map(insts, x => x.toJSON());
-		if (opts.invert) arr.reverse();
+	Request
+		.findAll(opts.options)
+		.then(insts => {
+			let arr = _.map(insts, x => x.toJSON());
+			if (opts.invert) arr.reverse();
 
-		res.status(200).json({
-			data: arr
-		});
-	})
+			res.status(200).json({
+				data: arr
+			});
+		})
 		.catch(error.handleInternal(req, res));
 };
 
