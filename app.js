@@ -71,7 +71,7 @@ db.sync()
 	.then(() => {
 		app.listen(config.server.port, config.server.host, function () {
 			console.log('Server listening on %s:%d', process.env.IP, process.env.PORT);
-		})
+		});
 	})
 	.catch(e => {
 		console.log('Database syncing error: ' + e);
