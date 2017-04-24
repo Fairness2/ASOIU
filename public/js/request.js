@@ -247,7 +247,7 @@ var send_application = new Vue({
             send_application.message_error = '';
           }
         });
-      }else {        
+      }else {
         $.ajax({
           url:'api/request',
           type:'POST',
@@ -263,6 +263,7 @@ var send_application = new Vue({
           success:function (res) {
             send_application.message_success = 'Сохранение прошло успешно';
             send_application.message_error = '';
+            location.replace("/");
           }
         });
       }
