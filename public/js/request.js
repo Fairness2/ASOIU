@@ -123,7 +123,7 @@ var body_con = new Vue({
                 {
                   id: res.data[i].products[j].id,
                   name: res.data[i].products[j].name,
-                  periods: periods_item
+                  periods: JSON.parse(JSON.stringify(periods_item))
                 }
               );
             }
@@ -132,7 +132,7 @@ var body_con = new Vue({
                 id: res.data[i].id,
                 name: res.data[i].name,
                 table_show: false,
-                items: products
+                items: JSON.parse(JSON.stringify(products))
               }
             );
           }
