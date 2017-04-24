@@ -228,7 +228,7 @@ var send_application = new Vue({
   },
   methods: {
     save: function () {
-      if (this.id != '') {
+      if (body_con.id != '') {
         $.ajax({
           url:'api/request',
           type:'PUT',
@@ -247,7 +247,7 @@ var send_application = new Vue({
             send_application.message_error = '';
           }
         });
-      }else {
+      }else {        
         $.ajax({
           url:'api/request',
           type:'POST',
