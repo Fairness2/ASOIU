@@ -59,6 +59,18 @@
                   <p>Создал(а): {{name_maker}}</p>
                 </blockquote>
             </div>
+
+            <div class="row">
+              <div class="col s12" v-if="view">
+                <span class="col s12">ЦФО</span>
+                <p>{{message_cfo}}</p>
+                <div class="input-field col s12" v-for="item in cfos">
+                  <input type="checkbox" v-bind:id="item.id" v-model="item.check" v-on:click="checked(item.id)">
+                  <label v-bind:for="item.id">{{item.name}}</label>
+                </div>
+              </div>
+            </div>
+
             <div class="section col s12">
               <a class="waves-effect waves-light btn blue darken-4" v-if="tobe" v-on:click="save">Сохранить</a>
             </div>
