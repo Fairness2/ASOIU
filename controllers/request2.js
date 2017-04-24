@@ -26,15 +26,16 @@ exports.create = function (req, res) {
 	) return;
 
 	// делаем за Того человека его работу (плющим вложенные массивы)
-	req.body.items = [];
+	let items = [];
 	_.forEach(req.body.items, costItem =>
 		_.forEach(costItem.items, product =>
 			_.forEach(product.periods, period => {
-				req.body.items.push({
-					productId: product.id,
-					periodId: period.id,
-					quantity: period.value
-				});
+				if (period.value > 0)
+					items.push({
+						productId: product.id,
+						periodId: period.id,
+						quantity: 0 + period.value
+					});
 			})));
 
 	//todo: включить сессии
@@ -47,7 +48,7 @@ exports.create = function (req, res) {
 				.build({
 					year: req.body.year,
 					requesterId: emplId,
-					items: req.body.items
+					items: items
 				}, {
 					include: assoc.deduceInclude(Request, 'items')
 				});
@@ -91,15 +92,16 @@ exports.update = function (req, res) {
 	) return;
 
 	// делаем за Того человека его работу
-	req.body.items = [];
+	let items = [];
 	_.forEach(req.body.items, costItem =>
 		_.forEach(costItem.items, product =>
 			_.forEach(product.periods, period => {
-				req.body.items.push({
-					productId: product.id,
-					periodId: period.id,
-					quantity: period.value
-				});
+				if (period.value > 0)
+					items.push({
+						productId: product.id,
+						periodId: period.id,
+						quantity: 0 + period.value
+					});
 			})));
 
 	Promise.all([
@@ -141,7 +143,7 @@ exports.update = function (req, res) {
 			inst
 				.setItems(
 				_.map(
-					req.body.items,
+					items,
 					item => models.CurrentRequestItem.build({
 						productId: item.productId,
 						periodId: item.periodId,
