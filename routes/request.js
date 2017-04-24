@@ -2,6 +2,7 @@
 
 const express = require('express');
 const ctl = require(__rootdir + '/controllers/request.js');
+const ctl2 = require(__rootdir + '/controllers/request2.js');
 const auth = require(__libdir + '/auth.js');
 
 module.exports = function (root) {
@@ -12,8 +13,8 @@ module.exports = function (root) {
 	//router.use(auth.authenticate);
 
 	router.route('/')
-		.post(ctl.create)
-		.put(ctl.update)
+		.post(ctl2.create)
+		.put(ctl2.update)
 		.get(ctl.list);
 
 	router.get('/:id', ctl.single);

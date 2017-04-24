@@ -31,6 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="app.js" />
+    <Compile Include="controllers\request2.js" />
     <Compile Include="controllers\test.js" />
     <Compile Include="controllers\product.js" />
     <Compile Include="controllers\period-type.js" />
