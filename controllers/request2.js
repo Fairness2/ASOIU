@@ -105,11 +105,7 @@ exports.update = function (req, res) {
 			})));
 
 	Promise.all([
-		Request.findOne({
-			where: {
-				id: req.body.id
-			}
-		}),
+		Request.findById(req.body.id),
 		models.CurrentRequest.count({
 			where: { requestId: req.body.id }
 		})])
@@ -133,25 +129,22 @@ exports.update = function (req, res) {
 				return;
 			}
 
-			inst.set({
-				year: req.body.year
-			}, {
-					context: req.session,
-					individualHooks: true
-				});
+			inst.year = req.body.year;
 
-			return inst
-				.save({ context: req.session })
-				.then(() => inst.setItems(
-					_.map(
+			return models.RequestItem
+				.destroy({
+					where: { requestId: req.body.id }
+				})
+				.then(() => inst.save({ context: req.session }))
+				.then(() =>
+					Promise.all(_.map(
 						items,
-						item => models.RequestItem.build({
+						item => models.RequestItem.create({
 							productId: item.productId,
 							periodId: item.periodId,
 							quantity: item.quantity,
 							requestId: req.body.id
-						})),
-					{ context: req.session }))
+						}, { context: req.session }))))
 				.then(() => {
 					res.status(200).json({
 						data: 'ok'

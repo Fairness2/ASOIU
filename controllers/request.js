@@ -91,7 +91,7 @@ exports.update = function (req, res) {
 				.save({ context: req.session })
 				.then(() => inst.setItems(
 					_.map(
-						req.body.items,
+						items,
 						item => models.RequestItem.build({
 							productId: item.productId,
 							periodId: item.periodId,
