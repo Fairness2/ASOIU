@@ -119,12 +119,20 @@ var body_con = new Vue({
     },
 
     checked: function (id) {
+      var flag = false;
       for (var i = 0; i < this.cfos.length; i++) {
         if (this.cfos[i].id != id) {
           this.cfos[i].check = false;
         }
+        else if (this.cfos[i].check == false) {
+          flag = true;
+        }
       }
-      this.time_to_cfo(id);
+      if (flag) {
+        this.time_to_load1();
+      } else {
+        this.time_to_cfo(id);
+      }
     },
 
     time_to_cfo: function (id) {
