@@ -46,7 +46,7 @@ module.exports = function (sq, DataTypes) {
 			],
 			classMethods: {
 				associate: models => {
-					models.Request.hasMany(models.RequestItem, { as: 'items', foreignKey: 'requestId' });
+					models.Request.hasMany(models.RequestItem, { as: 'items', foreignKey: 'requestId', onDelete: 'cascade' });
 					models.Request.hasMany(models.CurrentRequest, { as: 'currentRequests', foreignKey: 'requestId' });
 					models.Request.belongsTo(models.Employee, { as: 'requester', foreignKey: 'requesterId' });
 					models.Request.belongsToMany(models.Estimate, { as: 'estimates', through: 'RequestEstimate', foreignKey: 'requestId' });

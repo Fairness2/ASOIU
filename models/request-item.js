@@ -41,7 +41,7 @@ module.exports = function (sq, DataTypes) {
 			],
 			classMethods: {
 				associate: models => {
-					models.RequestItem.belongsTo(models.Request, { as: 'request', foreignKey: 'requestId' });
+					models.RequestItem.belongsTo(models.Request, { as: 'request', foreignKey: 'requestId', onDelete: 'cascade' });
 					models.RequestItem.belongsTo(models.Product, { as: 'product', foreignKey: 'productId' });
 					models.RequestItem.belongsTo(models.Period, { as: 'period', foreignKey: 'periodId' });
 				}
