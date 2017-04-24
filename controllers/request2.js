@@ -39,24 +39,28 @@ exports.create = function (req, res) {
 
 	//todo: включить сессии
 	let emplId = req.session && req.session.user && req.session.user.employeeId || req.body.requesterId;
+	let prom = emplId ? Promise.resolve(emplId) : models.Employee.findOne().then(emp => emp.id);
 
-	let rq = Request
-		.build({
-			year: req.body.year,
-			requesterId: emplId,
-			items: req.body.items
-		}, {
-			include: assoc.deduceInclude(Request, 'items')
-		});
+	prom
+		.then(emplId => {
+			let rq = Request
+				.build({
+					year: req.body.year,
+					requesterId: emplId,
+					items: req.body.items
+				}, {
+					include: assoc.deduceInclude(Request, 'items')
+				});
 
-	rq.save({
-		context: req.session,
-		include: assoc.deduceInclude(Request, 'items')
-	})
-		.then(() => {
-			res.status(200).json({
-				data: rq.id
-			});
+			rq.save({
+				context: req.session,
+				include: assoc.deduceInclude(Request, 'items')
+			})
+				.then(() => {
+					res.status(200).json({
+						data: rq.id
+					});
+				});
 		})
 		.catch(models.Sequelize.ForeignKeyConstraintError, error.handleForeign(req, res, {
 			productId: 'Такого товара/услуги не существует',
