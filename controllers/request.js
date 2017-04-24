@@ -146,13 +146,26 @@ exports.single = function (req, res) {
 	Request
 		.findOne({
 			where: { id: req.params.id || '' },
-			include: assoc.deduceInclude(Request, {
-				requester: true,
-				items: {
-					product: true,
-					period: true
-				}
-			})
+			include: [
+				{ model: models.Employee, as: 'requester' },
+				{
+					model: models.RequestItem,
+					as: 'items',
+					include: [
+						{
+							model: models.Product,
+							as: 'product',
+							include: req.query.frcId
+								? [{
+									model: models.CostItem,
+									as: 'costItem',
+									where: { frcId: req.query.frcId }
+								}]
+								: []
+						},
+						{ model: models.Period, as: 'period' }
+					]
+				}]
 		})
 		.then(request => {
 			if (!request) {
