@@ -149,7 +149,7 @@ exports.update = function (req, res) {
 							productId: item.productId,
 							periodId: item.periodId,
 							quantity: item.quantity,
-							requesterId: req.body.id
+							requestId: req.body.id
 						})),
 					{ context: req.session }))
 				.then(() => {

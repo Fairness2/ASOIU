@@ -81,7 +81,7 @@ var application = new Vue({
 
     check: function (id) {
         //Тут нужно направить на страницу с элементом
-        alert(id)
+        //alert(id)
         location.replace("/request.html?id=" + id);
     },
   }
@@ -178,7 +178,7 @@ var cfo = new Vue({
 
     check: function (id) {
         //Тут нужно направить на страницу с элементом
-        alert(id)
+        //alert(id)
         location.replace("/estimate.html?id=" + id);
     },
 
@@ -245,7 +245,7 @@ var cfo = new Vue({
 
     del: function (id) {
         //Тут нужно направить на страницу с элементом
-        alert(id)
+        //alert(id)
         win_del_est_cfo.id = id;
         $('#del_estimate_cfo').modal('open');
     },
@@ -348,7 +348,7 @@ var company = new Vue({
 
     check: function (id) {
         //Тут нужно направить на страницу с элементом
-        alert(id)
+        //alert(id)
         location.replace("/estimate_company.html?id=" + id);
     },
 
@@ -414,7 +414,7 @@ var company = new Vue({
 
     del: function (id) {
         //Тут нужно направить на страницу с элементом
-        alert(id)
+        //alert(id)
         win_del_est_com.id = id;
         $('#win_del_est_com').modal('open');
     },
