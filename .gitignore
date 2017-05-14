@@ -260,3 +260,5 @@ paket-files/
 __pycache__/
 *.pyc
 /__.sequelizerc
+/controllers/employee (Конфликтующая копия с компьютера Мозг2 2017-04-25).js
+/controllers/request (Конфликтующая копия с компьютера Мозг2 2017-04-25).js

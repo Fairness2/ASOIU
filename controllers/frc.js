@@ -7,9 +7,9 @@ const assoc = require(__libdir + '/assoc.js');
 const models = require(__rootdir + '/models');
 
 exports.create = function (req, res) {
-	if (!error.require(res, req.body, {
+	/*if (!error.require(res, req.body, {
 		name: 'Необходимо название'
-	})) return;
+	})) return;*/
 
 	models.FRC
 		.create({
